@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CACore" Collapsed="true">
+    <Position X="0.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACgAAAAAAAAACABAAQEAgwCEAAAAEAAABCCABACKAc=</HashCode>
+      <FileName>CACore.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAInput" Collapsed="true">
+    <Position X="2.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAgAAAQAAAAAAAAAAAAAEAABDAAAAJBCABAAAAE=</HashCode>
+      <FileName>CAInput.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CASound" Collapsed="true">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAAACAAAAAAAAAAAAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>CASound.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CASoundMgr" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgkAAAAAAIQCgACAEAAAAAAAAAACAAIBICIBAAAAE=</HashCode>
+      <FileName>CASoundMgr.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CASingleton&lt;T&gt;" Collapsed="true">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CAStd.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CATimer" Collapsed="true">
+    <Position X="7" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAKBAQAAAAAAAABAAAAABACABAAQAk=</HashCode>
+      <FileName>CATimer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAWindow" Collapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACIAAQQBAAABAAAAAAAAAAAAApACABAgAAU=</HashCode>
+      <FileName>CAWindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="__unnamed_enum_000b_1" Collapsed="true">
+    <Position X="5.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAgAAAAAAEAAAAAAAgAAAABAAAEAAAAAAAAAQAA=</HashCode>
+      <FileName>CAInput.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="맑은 고딕" Size="9" />
+</ClassDiagram>
