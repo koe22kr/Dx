@@ -6,5 +6,5 @@ public:
     Sample();
     virtual ~Sample();
 };
-
+//test
 WINRUN_DEFAULT
