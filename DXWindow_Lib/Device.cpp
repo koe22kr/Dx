@@ -1,6 +1,7 @@
-#include "Sample.h"
+#include "Device.h"
 
-bool Sample::Create_Device()
+
+bool Device::Create_Device()
 {
     UINT Create_Device_Flags = 0;
 
@@ -46,7 +47,7 @@ bool Sample::Create_Device()
     return true;
 }
 
-bool Sample::Create_DXGIFactory()
+bool Device::Create_DXGIFactory()
 {
     hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&m_pFactory);
     if (FAILED(hr))
@@ -56,7 +57,7 @@ bool Sample::Create_DXGIFactory()
     }
     return true;
 }
-bool Sample::Create_Swap_Chain()
+bool Device::Create_Swap_Chain()
 {
 
     if (m_pFactory == nullptr)
@@ -65,36 +66,36 @@ bool Sample::Create_Swap_Chain()
         return false;
     }
 
-    
+
 
     DXGI_SWAP_CHAIN_DESC Swap_Chain_Desc;
     ZeroMemory(&Swap_Chain_Desc, sizeof(DXGI_SWAP_CHAIN_DESC));
- 
+
     //DXGI_MODE_DESC;
     //    UINT Width;
     //    UINT Height;
     Swap_Chain_Desc.BufferDesc.Width = g_rtClient.right;
     Swap_Chain_Desc.BufferDesc.Height = g_rtClient.bottom;
-  
+
     //    DXGI_RATIONAL RefreshRate;
     //        UINT Numerator;
     //        UINT Denominator;
     Swap_Chain_Desc.BufferDesc.RefreshRate.Denominator = 1;
     Swap_Chain_Desc.BufferDesc.RefreshRate.Numerator = 60;
-   
+
     //    DXGI_FORMAT Format = DXGI_FORMAT_R8G8_UNORM;
     //    DXGI_MODE_SCANLINE_ORDER ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
     //    DXGI_MODE_SCALING Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
     Swap_Chain_Desc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
     Swap_Chain_Desc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
     Swap_Chain_Desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-   
+
     //DXGI_SAMPLE_DESC SampleDesc;
     //    UINT Count;
     //    UINT Quality;
     Swap_Chain_Desc.SampleDesc.Count = 1;
     Swap_Chain_Desc.SampleDesc.Quality = 0;
-   
+
 
     //    DXGI_USAGE BufferUsage;
     //
@@ -106,13 +107,13 @@ bool Sample::Create_Swap_Chain()
     //    #define DXGI_USAGE_DISCARD_ON_PRESENT       0x00000200UL
     //    #define DXGI_USAGE_UNORDERED_ACCESS         0x00000400UL
     Swap_Chain_Desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-   
+
     //UINT BufferCount;
     Swap_Chain_Desc.BufferCount = 1;
-    
+
     //HWND OutputWindow;
     Swap_Chain_Desc.OutputWindow = g_hWnd;
-    
+
     //BOOL Windowed;
     Swap_Chain_Desc.Windowed = true;
 
@@ -123,30 +124,30 @@ bool Sample::Create_Swap_Chain()
     //DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL = 3,
     //DXGI_SWAP_EFFECT_FLIP_DISCARD = 4};
     Swap_Chain_Desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-    
+
     //DXGI_SWAP_CHAIN_FLAG;
     //UINT Flags = DXGI_SWAP_CHAIN_FLAG_NONPREROTATED;
     Swap_Chain_Desc.Flags = 0;
-    
 
 
 
 
 
-   hr = m_pFactory->CreateSwapChain(
+
+    hr = m_pFactory->CreateSwapChain(
         /* [in] */ m_pDevice,
         /* [in] */ &Swap_Chain_Desc,
         /* [out] */&m_pSwap_Chain
     );
-   if (FAILED(hr))
-   {
-       MessageBox(g_hWnd, L"Create_Swap_Chain_Fail_", L"Device", MB_OK);
-       return false;
-   }
-   return true;
+    if (FAILED(hr))
+    {
+        MessageBox(g_hWnd, L"Create_Swap_Chain_Fail_", L"Device", MB_OK);
+        return false;
+    }
+    return true;
 }
 
-bool Sample::Set_Render_Target_View()
+bool Device::Set_Render_Target_View()
 {
 
     ID3D11Texture2D* pBack_buf;
@@ -176,65 +177,71 @@ bool Sample::Set_Render_Target_View()
         /* [_In_range_(0, D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT) ] */
         1,
         /* [_In_reads_opt_(NumViews)]ID3D11RenderTargetView *const  */
-           &m_pRender_Target_View,
+        &m_pRender_Target_View,
         /* [_In_opt_  ID3D11DepthStencilView] */
-         NULL
+        NULL
     );
     return true;
 }
-bool Sample::Set_View_Port(float pos_x, float pos_y, float width, float height, float min_depth, float max_depth)
+bool Device::Set_View_Port(float pos_x, float pos_y, float width, float height, float min_depth, float max_depth)
 {
-   //FLOAT TopLeftX;
-   //FLOAT TopLeftY;
-   //FLOAT Width;
-   //FLOAT Height;
-   //FLOAT MinDepth;
-   //FLOAT MaxDepth;
+    //FLOAT TopLeftX;
+    //FLOAT TopLeftY;
+    //FLOAT Width;
+    //FLOAT Height;
+    //FLOAT MinDepth;
+    //FLOAT MaxDepth;
     m_View_Port.TopLeftX = pos_x;
     m_View_Port.TopLeftY = pos_y;
     m_View_Port.Width = width;
     m_View_Port.Height = height;
     m_View_Port.MinDepth = min_depth;
     m_View_Port.MaxDepth = max_depth;
-    m_pImmediate_Device_Context->RSSetViewports(1,&m_View_Port);
+    m_pImmediate_Device_Context->RSSetViewports(1, &m_View_Port);
 
     return true;
 }
 
-bool Sample::Init()
+bool Device::Init()
 {
     Create_DXGIFactory();
-    
+
     Create_Device();
-    
+
     Create_Swap_Chain();
-    
+
     Set_Render_Target_View();
-    
+
     Set_View_Port();
+    //Set_View_Port(100, 100, 100, 100, 0, 1.0);
+
     
-    m_pFactory->MakeWindowAssociation(g_hWnd, 0);//펙토리 - > 알트엔터 막기?
     return true;
 }
-bool Sample::Frame()
+bool Device::Frame()
 {
     return true;
 }
-bool Sample::Render()
+bool Device::Pre_Render()
 {
-    float ClearColor[4] = { 0.0f,0.6f,0.6f,1 };//RGBA
+    float ClearColor[4] = { 0.6f,0.2f,0.6f,1 };//RGBA
     m_pImmediate_Device_Context->ClearRenderTargetView(m_pRender_Target_View, ClearColor);
+    return true;
+}
+bool Device::Render()
+{
+    
     m_pSwap_Chain->Present(0, 0);
     return true;
 }
-bool Sample::Release() 
+bool Device::Release()
 {
-    if(m_pImmediate_Device_Context)m_pImmediate_Device_Context->ClearState();
-    if(m_pRender_Target_View)m_pRender_Target_View->Release();
-    if(m_pSwap_Chain)m_pSwap_Chain->Release();
-    if(m_pImmediate_Device_Context)m_pImmediate_Device_Context->Release();
-    if(m_pDevice)m_pDevice->Release();
-    if(m_pFactory)m_pFactory->Release();
+    if (m_pImmediate_Device_Context)m_pImmediate_Device_Context->ClearState();
+    if (m_pRender_Target_View)m_pRender_Target_View->Release();
+    if (m_pSwap_Chain)m_pSwap_Chain->Release();
+    if (m_pImmediate_Device_Context)m_pImmediate_Device_Context->Release();
+    if (m_pDevice)m_pDevice->Release();
+    if (m_pFactory)m_pFactory->Release();
     m_pRender_Target_View = NULL;
     m_pSwap_Chain = NULL;
     m_pImmediate_Device_Context = NULL;
@@ -243,14 +250,12 @@ bool Sample::Release()
     return true;
 }
 
-Sample::Sample()
+
+Device::Device()
 {
 }
 
-Sample::~Sample()
+
+Device::~Device()
 {
 }
-
-WINRUN_DEFAULT
-
-

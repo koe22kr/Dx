@@ -200,6 +200,7 @@ copy "..\\..\\_etc\\FMOD\\lib\\x64\\*.*" "..\\..\\_lib\\FMOD\\x64\\"</Command>
     <ClCompile Include="CASoundMgr.cpp" />
     <ClCompile Include="CATimer.cpp" />
     <ClCompile Include="CAWindow.cpp" />
+    <ClCompile Include="Device.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CACore.h" />
@@ -210,6 +211,7 @@ copy "..\\..\\_etc\\FMOD\\lib\\x64\\*.*" "..\\..\\_lib\\FMOD\\x64\\"</Command>
     <ClInclude Include="CAStd.h" />
     <ClInclude Include="CATimer.h" />
     <ClInclude Include="CAWindow.h" />
+    <ClInclude Include="Device.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

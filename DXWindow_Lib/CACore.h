@@ -5,11 +5,13 @@
 #include "CASoundMgr.h"
 #include "CAStd.h"
 #include "CAMessageList.h"
+#include "Device.h"
 
 class CACore :public CAWindow                 
 {
 public:
     CATimer m_Timer;   
+    Device m_Device;
   //  CAInput m_Input;
 public:
     virtual bool Init();

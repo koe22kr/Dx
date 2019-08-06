@@ -8,6 +8,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DXWindow64_", "DXWindow_Lib\CAWindow_Lib.vcxproj", "{33E1E90B-870D-41FC-931B-2262F2B84A18}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcxproj", "{EBF062BC-1A37-4FB8-AEA6-371266E48B52}"
+	ProjectSection(ProjectDependencies) = postProject
+		{33E1E90B-870D-41FC-931B-2262F2B84A18} = {33E1E90B-870D-41FC-931B-2262F2B84A18}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

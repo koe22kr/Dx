@@ -25,7 +25,7 @@ bool CACore::CACoreInit()
 {
 
 
-
+    m_Device.Init();
     m_Timer.Init();
     I_Input.Init();
     I_SoundMgr.Init();
@@ -33,7 +33,7 @@ bool CACore::CACoreInit()
 }
 bool CACore::CACoreFrame()
 {
-    
+    m_Device.Frame();
     m_Timer.Frame();
     I_Input.Frame();
     I_SoundMgr.Frame();
@@ -42,19 +42,20 @@ bool CACore::CACoreFrame()
 }
 bool CACore::CACoreRender()
 {
-    
+    m_Device.Pre_Render();
+
     Render();
+
+    m_Device.Render();
     m_Timer.Render();
 
     
-    I_Input.Render();
     return Render();
     return true;
 }
 bool CACore::CACoreRelease()
 {
-    Release();
-    
+    m_Device.Release();
     m_Timer.Release();
     I_Input.Release();
     I_SoundMgr.Release();
