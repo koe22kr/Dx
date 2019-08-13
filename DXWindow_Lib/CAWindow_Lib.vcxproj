@@ -95,14 +95,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)_CRT_SECURE_NO_WARNINGS;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../_inc;../../_inc/FMOD</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\DIR\_etc\DX\Include;../../_inc;../../_inc/FMOD</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>../../_data/lib/FMOD/x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../_data/lib/FMOD/x64;D:\DIR\_etc\DX\Lib\x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>winmm.lib</AdditionalDependencies>
       <OutputFile>DXWindow64_D.lib</OutputFile>
     </Lib>

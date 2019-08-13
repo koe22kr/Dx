@@ -3,6 +3,8 @@
 #pragma comment (lib, "d3d11.lib")
 #pragma comment(lib,"dxgi.lib")
 
+
+
 #pragma once
 
 class Sample :public CACore

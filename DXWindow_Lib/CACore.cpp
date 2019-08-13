@@ -43,14 +43,12 @@ bool CACore::CACoreFrame()
 bool CACore::CACoreRender()
 {
     m_Device.Pre_Render();
-
-    Render();
-
     m_Device.Render();
+    Render();
+    m_Device.Post_Render();
     m_Timer.Render();
 
     
-    return Render();
     return true;
 }
 bool CACore::CACoreRelease()
