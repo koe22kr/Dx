@@ -1,0 +1,11 @@
+struct VS_OUTPUT
+{
+    float4 Postion  : SV_Position;
+    float4 Diffuse  : COLOR0;
+
+};
+
+float4 PS(in VS_OUTPUT input ) : SV_TARGET
+{
+return input.Diffuse;
+}

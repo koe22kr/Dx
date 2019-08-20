@@ -24,4 +24,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="PS.psh">
+      <Filter>리소스 파일</Filter>
+    </FxCompile>
+    <FxCompile Include="VS.vsh">
+      <Filter>리소스 파일</Filter>
+    </FxCompile>
+  </ItemGroup>
 </Project>
