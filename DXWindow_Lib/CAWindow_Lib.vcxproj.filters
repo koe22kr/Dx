@@ -39,6 +39,12 @@
     <ClCompile Include="Device.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="CADeviceMgr.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CADx_Text.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CACore.h">
@@ -68,5 +74,19 @@
     <ClInclude Include="Device.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="CADeviceMgr.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CADx_Text.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DXWindow64_.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

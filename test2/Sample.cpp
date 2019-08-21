@@ -172,25 +172,22 @@ bool Sample::Load_PS(ID3D11PixelShader*& pPixel_Shader, const char* PS_name)
 
 void Sample::Load_Texture_2D_From_File(const TCHAR* texture_full_path, int width, int height,UINT key)
 {
-
-    m_pBack_Buffer->GetDesc(&m_Back_Buffer_Desc);
-    // 백버퍼에 복사하기 위한 원본 텍스쳐의 변환을 지정한다. 
-    // CopyResource()함수를 사용할 경우이기 때문에 반드시 백 버퍼의 가로 및 세로 크기보다 크거나 같아야 한다.
+   
     D3DX11_IMAGE_LOAD_INFO Load_Info;
     ZeroMemory(&Load_Info, sizeof(D3DX11_IMAGE_LOAD_INFO));
-    Load_Info.Width = m_Back_Buffer_Desc.Width;
-    Load_Info.Height = m_Back_Buffer_Desc.Height;
+    Load_Info.Width = width;
+    Load_Info.Height = height;
     Load_Info.Depth = D3DX11_DEFAULT;
     Load_Info.FirstMipLevel = 0;
     Load_Info.MipLevels = 1;	// 반드시 1 이여야 한다.
     Load_Info.Usage = D3D11_USAGE_DEFAULT;//D3D11_USAGE_STAGING;    
     Load_Info.CpuAccessFlags = 0;//D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
-    Load_Info.BindFlags = 0;
+    Load_Info.BindFlags = D3D11_BIND_SHADER_RESOURCE;
     Load_Info.MiscFlags = 0;
     Load_Info.Format = m_Back_Buffer_Desc.Format;
     Load_Info.Filter = D3DX11_FILTER_LINEAR;
     Load_Info.MipFilter = D3DX11_FILTER_NONE;
-
+    
 //    D3DX11CreateTextureFromFileW(
 //        ID3D11Device*               pDevice,
 //        LPCWSTR                     pSrcFile,
@@ -206,12 +203,33 @@ void Sample::Load_Texture_2D_From_File(const TCHAR* texture_full_path, int width
             MessageBox(g_hWnd, L"Load_Texture_2D_From_File", L"Device", MB_OK);
             return;
     }
-    
+
     pResource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)pTexture_2D);
-    m_Texture_Map.insert(make_pair(key,pTexture_2D));
-    D3D11_TEXTURE2D_DESC test;
-    pTexture_2D->GetDesc(&test);
+    m_Texture_Map.insert(make_pair(texture_full_path,pTexture_2D));
     return;
+}
+
+
+void Sample::Create_Shader_Resource_View_From_Resource(const TCHAR* texture_full_path)
+{
+    D3D11_SHADER_RESOURCE_VIEW_DESC SRV_Desc;
+    SRV_Desc.Format = m_Back_Buffer_Desc.Format;
+    SRV_Desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    ID3D11ShaderResourceView* pSRV;
+
+    m_pDevice->CreateShaderResourceView(m_Texture_Map.find(texture_full_path)->second, &SRV_Desc, &pSRV);
+    m_SRV_List.push_back(pSRV);
+
+}
+void Sample::Set_SRV_To_PS(ID3D11ShaderResourceView* pSRV)
+{
+    if (pSRV == NULL)
+    {
+        MessageBox(g_hWnd, L"Set_SRV_To_PS", L"Device", MB_OK);
+        return ;
+    }
+    m_pImmediate_Device_Context->PSSetShaderResources(0, 1, &pSRV);
+
 }
 
 bool Sample::Create_Vertex_And_Index(FLOAT3* vertex_array, int vertex_size, DWORD* index_array, int index_size, bool index_drawing)
@@ -282,6 +300,7 @@ bool Sample::Init()
     m_pDevice = m_Device.m_pDevice;
     m_pImmediate_Device_Context = m_Device.m_pImmediate_Device_Context;
     m_pFactory = m_Device.m_pFactory;
+    m_pBack_Buffer->GetDesc(&m_Back_Buffer_Desc);
 
 
     Create_Const_Buffer(m_pConst_Buffer);
@@ -350,8 +369,7 @@ bool Sample::Frame()
 }
 bool Sample::Render()
 {
-    UINT strid = sizeof(FLOAT3);
-    UINT offset = 0;
+   
 
     m_pImmediate_Device_Context->IASetInputLayout(m_pInput_Layout);
     //Num_of_buffers, start_slot 버텍스,상수 버퍼별로 준비해야. offset도 생각해봐야겟
@@ -360,6 +378,8 @@ bool Sample::Render()
 
     if (m_pVertex_Buffer != NULL)
     {
+        UINT strid = sizeof(FLOAT3);
+        UINT offset = 0;
         m_pImmediate_Device_Context->IASetVertexBuffers(0, 1, &m_pVertex_Buffer, &strid, &offset);
 
     }
@@ -379,7 +399,7 @@ bool Sample::Render()
     m_pImmediate_Device_Context->DSSetShader(NULL, NULL, 0);
     m_pImmediate_Device_Context->GSSetShader(NULL, NULL, 0);
 
-    if (m_pVertex_Shader != NULL)
+    if (m_pPixel_Shader != NULL)
     {
         m_pImmediate_Device_Context->PSSetShader(m_pPixel_Shader, NULL, 0);
     }
@@ -425,9 +445,10 @@ void Sample::Custom_Draw(int posx, int posy, int texture_key,int box_index)
     // 원본 텍스처(m_pTextureKoala)의 전체 및 일부 영역을 백 버퍼의 0,0 위치에 복사함.
     // (주의)텍스처 영역이 백버퍼의 영역을 벗어나면 출력창에 경고 메세지가 발생함.
     
-    m_pImmediate_Device_Context->CopySubresourceRegion(m_pBack_Buffer, 0, posx, posy, 0, m_Texture_Map[texture_key], 0, &m_Box_Vector[box_index]);
+    m_pImmediate_Device_Context->CopySubresourceRegion(m_pBack_Buffer, 0, posx, posy, 0, m_Texture_Map[texture_key], 0, &m_SRV_List[box_index]);
 
 }
+
 
 bool Sample::Release()
 {

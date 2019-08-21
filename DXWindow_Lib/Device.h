@@ -1,9 +1,10 @@
 #pragma once
 #include "CAStd.h"
+#include <D2D1.h>
 #include <d3d11.h>
 #include <d3dx11.h> 
 #include "dxdiag.h"
-
+#pragma comment( lib, "d2d1.lib" )
 #pragma comment( lib, "d3dx11.lib" )
 #pragma comment (lib, "d3d11.lib")
 #pragma comment(lib,"dxgi.lib")
@@ -30,6 +31,10 @@ struct CONST_BUFFER_F8
 
 };*/
 
+#define EM(hr,msg,_where) if (FAILED(hr)) MessageBox(g_hWnd, L#msg, L#_where, MB_OK)
+    
+    
+
 class Device
 {
 public:
@@ -46,6 +51,8 @@ public:
     ID3D11RenderTargetView*  m_pRender_Target_View;
     ID3D11Texture2D* m_pBack_Buffer;
     D3D11_TEXTURE2D_DESC m_Back_Buffer_Desc;
+
+    map<wstring, ID3D11Texture2D*> m_Texture_Map;// 디바이스나... 상위에 놓아야 할것 같다.
 public:
     bool Create_Device();
     bool Create_DXGIFactory();

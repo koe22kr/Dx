@@ -194,8 +194,10 @@ copy "..\\..\\_etc\\FMOD\\lib\\x64\\*.*" "..\\..\\_lib\\FMOD\\x64\\"</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CACore.cpp" />
+    <ClCompile Include="CADx_Text.cpp" />
     <ClCompile Include="CAInput.cpp" />
     <ClCompile Include="CAMessageList.cpp" />
+    <ClCompile Include="CADeviceMgr.cpp" />
     <ClCompile Include="CASound.cpp" />
     <ClCompile Include="CASoundMgr.cpp" />
     <ClCompile Include="CATimer.cpp" />
@@ -204,14 +206,20 @@ copy "..\\..\\_etc\\FMOD\\lib\\x64\\*.*" "..\\..\\_lib\\FMOD\\x64\\"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CACore.h" />
+    <ClInclude Include="CADx_Text.h" />
     <ClInclude Include="CAInput.h" />
     <ClInclude Include="CAMessageList.h" />
+    <ClInclude Include="CADeviceMgr.h" />
     <ClInclude Include="CASound.h" />
     <ClInclude Include="CASoundMgr.h" />
     <ClInclude Include="CAStd.h" />
     <ClInclude Include="CATimer.h" />
     <ClInclude Include="CAWindow.h" />
     <ClInclude Include="Device.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DXWindow64_.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

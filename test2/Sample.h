@@ -50,7 +50,6 @@ public:
     bool Create_Vertex_Buffer_F3(FLOAT3* float_2d, int obj_num, ID3D11Buffer*& pVertex_buffer);
     bool Create_Index_Buffer(DWORD* Idata, int m_Index_Num, ID3D11Buffer*& pIndex_buffer);
     bool Create_Const_Buffer(ID3D11Buffer*& pConst_buffer);
-    
 
     bool Create_Vertex_And_Index(FLOAT3* vertex_array, int vertex_size, DWORD* index_array, int index_size, bool index_drawing);
    
@@ -67,9 +66,13 @@ public:
 public:
     ID3D11Texture2D* m_pBack_Buffer;
     D3D11_TEXTURE2D_DESC m_Back_Buffer_Desc;
-    vector<D3D11_BOX> m_Box_Vector;
-    map<UINT,ID3D11Texture2D*> m_Texture_Map;
+    vector<ID3D11ShaderResourceView*> m_SRV_List;
+    map<wstring,ID3D11Texture2D*> m_Texture_Map;// 디바이스나... 상위에 놓아야 할것 같다.
+   
     void Load_Texture_2D_From_File(const TCHAR* texture_full_path,int width,int height, UINT key);
+    void Create_Shader_Resource_View_From_Resource(const TCHAR* texture_full_path);
+    void Set_SRV_To_PS(ID3D11ShaderResourceView* pSRV);
+
 
 public:
     Sample();
