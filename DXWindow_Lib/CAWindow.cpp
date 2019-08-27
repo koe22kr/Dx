@@ -10,10 +10,15 @@ LRESULT CALLBACK WndProc(
     if (g_pWindow != NULL)
     {
         g_pWindow->MsgProc(hWnd, msg, wParam, lParam);
-        I_MSG.Msg_list.push_back({ hWnd,msg,wParam,lParam });
+      //  I_MSG.Msg_list.push_back({ hWnd,msg,wParam,lParam });
     }
     switch (msg)
     {
+        case WM_SIZE:
+        {
+            g_rtClient.right = LOWORD(lParam);
+            g_rtClient.bottom = HIWORD(lParam);
+        }break;
         case WM_DESTROY:
         {
             PostQuitMessage(0);// WM_QUIT 메세지큐 등록      

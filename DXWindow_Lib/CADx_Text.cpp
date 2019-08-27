@@ -1,7 +1,22 @@
 #include "CADx_Text.h"
 
-void CADx_Text::Init_Once()
+void CADx_Text::Set_Text(DXText& text,WCHAR* data,D2D1_RECT_F* rt_f, D3DCOLORVALUE* color)
 {
+    text.text = data;
+    if (rt_f != nullptr)
+    {
+        text.rt_f = *rt_f;
+    }
+    if (color != nullptr)
+    {
+        text.color = *color;
+    }
+}
+
+
+void CADx_Text::Init_Once(IDXGISwapChain* m_pSwap_Chain)
+{
+    this->m_pSwap_Chain = m_pSwap_Chain;
     hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_p2DFactory);
     EM(hr, D2D1CreateFactory, CADx_Text);
 
@@ -12,7 +27,7 @@ void CADx_Text::Init_Once()
     hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**)&m_pDWrite_Factory);
     EM(hr, DWriteCreateFactory, CADx_Text);
 
-    hr = m_pDWriteFactory->CreateTextFormat(
+    hr = m_pDWrite_Factory->CreateTextFormat(
         L"±Ã¼­",
         NULL,
         DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
@@ -40,13 +55,13 @@ void CADx_Text::Create_Fresh_Resource()
     RTP.usage = D2D1_RENDER_TARGET_USAGE_NONE;
     RTP.minLevel = D2D1_FEATURE_LEVEL_DEFAULT;
 
-    hr = m_pSwap_Chain->GetBuffer(0, __uuidof(IDXGISurface), (void**)m_pSurface);
+    hr = m_pSwap_Chain->GetBuffer(0, __uuidof(IDXGISurface1), (void**)&m_pSurface);
     EM(hr, GetBuffer, CADx_Text);
 
     hr = m_p2DFactory->CreateDxgiSurfaceRenderTarget(m_pSurface, RTP, &m_p2DRender_Target);
     EM(hr, CreateDxgiSurfaceRenderTarget, CADx_Text);
 
-    hr = m_p2DRender_Target->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Violet), &m_pViolet_Brush);
+    hr = m_p2DRender_Target->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Violet), &m_pBrush);
     EM(hr, CreateSolidColorBrush, CADx_Text);
 }
 
@@ -59,42 +74,60 @@ void CADx_Text::Release_Once()
     m_pDWrite_Factory = NULL;
     if (m_p2DFactory) m_p2DFactory->Release();
     m_p2DFactory = NULL;
+    if (m_pSurface)m_pSurface->Release();
+    m_pSurface = NULL;
+
 }
 void CADx_Text::Release_Fresh_Resource()
 {
     if (m_p2DRender_Target) m_p2DRender_Target->Release();
     m_p2DRender_Target = NULL;
 
-    if (m_pViolet_Brush) m_pViolet_Brush->Release();
-    m_pViolet_Brush = NULL;
-
+    if (m_pBrush) m_pBrush->Release();
+    m_pBrush = NULL;
+    
 }
 
-void CADx_Text::Render(DXText dxtext)
+void CADx_Text::Draw_Text(DXText& dxtext)
 {
     m_p2DRender_Target->BeginDraw();
 
     m_p2DRender_Target->SetTransform(dxtext.mat_world);
-    m_pViolet_Brush->SetColor(dxtext.color);
-
-    IDWriteTextFormat*   pText_Format = dxtext.pText_Format;
-    if (pText_Format == nullptr)
+    if (dxtext.color.a != 0 || dxtext.color.b != 0 || dxtext.color.g != 0 || dxtext.color.r != 0)
     {
-        pText_Format = m_pDWrite_Text_Format;
+        m_pBrush->SetColor(dxtext.color);
+    }
+    if (dxtext.rt_f.top == 0 && dxtext.rt_f.left == 0 && dxtext.rt_f.bottom == 0 && dxtext.rt_f.right == 0)
+    {
+        dxtext.rt_f.bottom = g_rtClient.bottom;
+        dxtext.rt_f.right = g_rtClient.right;
+
+    }
+    if (dxtext.pText_Format == nullptr)
+    {
+        dxtext.pText_Format = m_pDWrite_Text_Format;
     }
     m_p2DRender_Target->DrawText(dxtext.text.c_str(),
         dxtext.text.size(),
-        pText_Format, dxtext.rt_f,
-        m_pViolet_Brush);
+        dxtext.pText_Format, dxtext.rt_f,
+        m_pBrush);
 
     m_p2DRender_Target->EndDraw();
 }
+
 
 void CADx_Text::Release()
 {
     Release_Once();
     Release_Fresh_Resource();
 }
+
+CADx_Text::CADx_Text(IDXGISwapChain* m_pSwap_Chain)
+{
+    this->m_pSwap_Chain = m_pSwap_Chain;
+}
+
+
 
 CADx_Text::CADx_Text()
 {

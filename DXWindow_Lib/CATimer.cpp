@@ -27,8 +27,8 @@ bool CATimer::Frame()                       //init 후 frame 연속적으로 사용될듯.
         m_dwFrameCount = 0;
         m_fFrameTime -= 1.0f;
 
-      //  _stprintf_s(m_csBuffer, _T("Timer:[%10.4f], FPS[%d]"),
-      //      m_fAccumulation, m_iFPS);
+        _stprintf_s(m_csBuffer, _T("Timer:[%10.4f], FPS[%d]"),
+            m_fAccumulation, m_iFPS);
       //  OutputDebugString(m_csBuffer);
     }
     m_dwFrameCount++;

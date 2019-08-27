@@ -1,0 +1,21 @@
+Texture2D g_txDiffuse : register(t0);
+SamplerState s0 : register(s0);
+
+
+struct VS_OUTPUT
+{
+    float4 Postion  : SV_Position;
+    float4 Diffuse  : COLOR0;
+
+};
+
+float4 PS(in VS_OUTPUT input ) : SV_TARGET
+{
+return input.Diffuse;
+}
+
+
+float4 Texture(in VSOUTPUT input) :SV_TARGET
+{
+
+}
