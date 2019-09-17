@@ -81,9 +81,8 @@ public:
 
 
 
-class WINT
+struct WINT
 {
-public:
     int x = 0;
     int y = 0;
     WINT() {};
@@ -102,6 +101,24 @@ public:
         }
         this->x = src_wint.x;
         this->y = src_wint.y;
+
+        return *this;
+    }
+};
+struct WFLOAT
+{
+    float x = 0.0f;
+    float y = 0.0f;
+    WFLOAT() {};
+    WFLOAT(float a, float b) :x(a), y(b) {};
+    WFLOAT& operator =(WFLOAT& src_float)
+    {
+        if (this == &src_float)
+        {
+            return *this;
+        }
+        this->x = src_float.x;
+        this->y = src_float.y;
 
         return *this;
     }

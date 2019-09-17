@@ -149,11 +149,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CACamera.h" />
     <ClInclude Include="CAMatrix.h" />
     <ClInclude Include="CAVector.h" />
     <ClInclude Include="Sample.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CACamera.cpp" />
     <ClCompile Include="CAMatrix.cpp" />
     <ClCompile Include="CAVector.cpp" />
     <ClCompile Include="Sample.cpp" />

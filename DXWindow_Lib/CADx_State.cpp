@@ -1,13 +1,18 @@
 #include "CADx_State.h"
+#include "CADx_Std.h"
 
-
-namespace Dx
+namespace DX
 {
     ID3D11BlendState* CADx_State::m_pAlpha_Blend = 0;
     ID3D11BlendState* CADx_State::m_pAlpha_Blend_Disable = 0;
     ID3D11RasterizerState* CADx_State::m_pRSWire_Frame = 0;
     ID3D11RasterizerState* CADx_State::m_pRSSolid_Frame = 0;
     ID3D11SamplerState* CADx_State::m_pSSWrap_Linear = 0;
+    ID3D11SamplerState* CADx_State::m_pSSWrap_Aniso = 0;
+
+    ID3D11DepthStencilState* CADx_State::m_pDSSDepth_Enable = 0;
+    ID3D11DepthStencilState* CADx_State::m_pDSSDepth_Disable = 0;
+
     ///////////////////////
 
     void CADx_State::SetState(ID3D11Device* pDevice,ID3D11DeviceContext* pContext)
@@ -17,7 +22,7 @@ namespace Dx
 
         HRESULT hr;
 
-#pragma region ID3D11SamplerState
+#pragma region SAMPLER
         D3D11_SAMPLER_DESC sd;
         ZeroMemory(&sd, sizeof(D3D11_SAMPLER_DESC));
         sd.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -26,18 +31,23 @@ namespace Dx
         sd.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
         sd.MaxLOD = FLT_MAX;
         sd.MinLOD = FLT_MIN;
-        if (FAILED(hr = pDevice->CreateSamplerState(
-            &sd,
-            &m_pSSWrap_Linear)))
+        if (FAILED(hr = pDevice->CreateSamplerState(&sd,&m_pSSWrap_Linear)))
         {
+            EM(hr, m_pSSWrap_Linear, CADx_State);
             return;
         }
-#pragma endregion ID3D11SamplerState
+        sd.Filter = D3D11_FILTER_ANISOTROPIC;
+        if (FAILED(hr = pDevice->CreateSamplerState(&sd,&m_pSSWrap_Aniso)))
+        {
+            EM(hr, m_pSSWrap_Aniso, CADx_State);
+            return;
+        }
+#pragma endregion SAMPLER
 
 #pragma region BLEND
         D3D11_BLEND_DESC ds;
         ZeroMemory(&ds, sizeof(D3D11_BLEND_DESC));
-        ds.AlphaToCoverageEnable = TRUE;
+        ds.AlphaToCoverageEnable = FALSE;////acts as an Alpha Test, clipping pixels with alpha<0.5
         ds.IndependentBlendEnable = TRUE;
         ds.RenderTarget[0].BlendEnable = TRUE;
         ds.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
@@ -54,17 +64,19 @@ namespace Dx
         if (FAILED(hr = pDevice->CreateBlendState(&ds,
             &m_pAlpha_Blend)))
         {
+            EM(hr, m_pAlpha_Blend, CADx_State);
             return;
         }
         ds.RenderTarget[0].BlendEnable = FALSE;
         if (FAILED(hr = pDevice->CreateBlendState(&ds,
             &m_pAlpha_Blend_Disable)))
         {
+            EM(hr, m_pAlpha_Blend_Disable, CADx_State);
             return;
         }
 #pragma endregion			BLEND
 
-#pragma region rasterizer
+#pragma region RESTERIZER
         //레스터라이즈 상태 객체 생성
         D3D11_RASTERIZER_DESC rsDesc;
         ZeroMemory(&rsDesc, sizeof(rsDesc));
@@ -74,22 +86,41 @@ namespace Dx
         if (FAILED(hr =
             pDevice->CreateRasterizerState(&rsDesc, &m_pRSWire_Frame)))
         {
+            EM(hr, m_pRSWire_Frame, CADx_State);
             return;
         }
         rsDesc.FillMode = D3D11_FILL_SOLID;
         if (FAILED(hr =
             pDevice->CreateRasterizerState(&rsDesc, &m_pRSSolid_Frame)))
         {
+            EM(hr, m_pRSSolid_Frame, CADx_State);
             return;
         }
 #pragma endregion		RESTERIZER
 
-        if(m_pSSWrap_Linear!=NULL)
-        Set_SState(pContext, m_pSSWrap_Linear);
-        if (m_pRSSolid_Frame != NULL)
-        Set_RSState(pContext, m_pRSSolid_Frame);
-        if (m_pAlpha_Blend != NULL)
-        Set_BState(pContext, m_pAlpha_Blend);
+#pragma region DEPTH_STENCIL
+
+        D3D11_DEPTH_STENCIL_DESC dsDesc;
+        ZeroMemory(&dsDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+        dsDesc.DepthEnable = TRUE;
+        dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+        dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+        if (FAILED(hr = pDevice->CreateDepthStencilState(&dsDesc, &m_pDSSDepth_Enable)))
+        {
+            EM(hr, m_pDSSDepth_Enable, CADx_State);
+            return;
+        }
+
+        dsDesc.DepthEnable = FALSE;
+        if (FAILED(pDevice->CreateDepthStencilState(&dsDesc, &m_pDSSDepth_Disable)))
+        {
+            EM(hr, m_pDSSDepth_Disable, CADx_State);
+            return;
+        }
+#pragma endregion   DEPTH_STENCIL
+
+
+
     }
 
     ////////////////

@@ -7,6 +7,7 @@ void CACore::Debug_Init()
 {
     Dx_Write.Init_Once(m_Device.m_pSwap_Chain);
     Dx_Write.Create_Fresh_Resource();
+    m_Debug_Shape.Create_Debug_Coordinate();
 
 }
 void CACore::Debug_Frame()
@@ -17,40 +18,41 @@ void CACore::Debug_Frame()
     {
         if (RS_FLAG)
         {
-            Dx::Set_RSState(m_Device.m_pImmediate_Device_Context, Dx::CADx_State::m_pRSWire_Frame);
+            DX::Set_RSState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pRSWire_Frame);
 
         }
         else
         {
-            Dx::Set_RSState(m_Device.m_pImmediate_Device_Context, Dx::CADx_State::m_pRSSolid_Frame);
+            DX::Set_RSState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pRSSolid_Frame);
         }
     }
     if (I_Input.KeyCheck('2') == KEY_PUSH)
     {
         if (AB_FLAG)
         {
-            Dx::Set_BState(m_Device.m_pImmediate_Device_Context, Dx::CADx_State::m_pAlpha_Blend_Disable);
+            DX::Set_BState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pAlpha_Blend_Disable);
         }
         else
         {
-            Dx::Set_BState(m_Device.m_pImmediate_Device_Context, Dx::CADx_State::m_pAlpha_Blend);
+            DX::Set_BState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pAlpha_Blend);
         }
     }
-    //if (I_Input.KeyCheck('3') == KEY_PUSH)
-    //{
-    //    if (SS_FLAG)
-    //    {
-    //        //Dx::Set_SState(m_Device.m_pImmediate_Device_Context, //Dx::CADx_State::m_pSSWrap_Linear);
-    //    }
-    //    else
-    //    {
-    //    }
-    //    //m_pSSWrap_Linear
-    //}
+    if (I_Input.KeyCheck('3') == KEY_PUSH)
+    {
+        if (SS_FLAG)
+        {
+            DX::Set_SState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pSSWrap_Linear);
+        }
+        else
+        {
+        }
+        //m_pSSWrap_Linear
+    }
 
 }
 void CACore::Debug_Render()
 {
+
     Dx_Write.Draw_Text(m_Debug_Text);
 }
 void CACore::Debug_Release()
@@ -103,15 +105,15 @@ bool CACore::CACoreInit()
     m_Timer.Init();
     I_Input.Init();
     I_SoundMgr.Init();
-    Dx::CADx_State::SetState(m_Device.m_pDevice,m_Device.m_pImmediate_Device_Context);
+    DX::CADx_State::SetState(m_Device.m_pDevice,m_Device.m_pImmediate_Device_Context);
     
-
     // m_pDXHelper = new CADevice_Helper(/*m_Device.m_pFactory,*/&CADevice::m_Texture_Map, m_Device.m_pDevice, m_Device.m_pImmediate_Device_Context);
     //m_pDXHelper = new CADevice_Helper(/*m_Device.m_pFactory,*/&m_Device.m_Texture_Map,m_Device.m_pDevice, m_Device.m_pImmediate_Device_Context );
 
 
 #if defined _DEBUG || DEBUG
     Debug_Init();
+
 #endif
 
     return Init();
@@ -139,8 +141,10 @@ bool CACore::CACoreRender()
     m_Timer.Render();
     
 
-#if defined _DEBUG || DEBUG
-    void Debug_Render();
+#ifdef _DEBUG
+
+    Debug_Render();
+
 #endif
 
     return true;
@@ -152,7 +156,7 @@ bool CACore::CACoreRelease()
     I_Input.Release();
     I_SoundMgr.Release();
     
-    Dx::CADx_State::Release();
+    DX::CADx_State::Release();
     
    
 

@@ -1,8 +1,8 @@
 #pragma once
-#include "D3D11.h"
+#include "CADevice.h"
 #include <memory>
 
-namespace Dx
+namespace DX
 {
     class CADx_State
     {
@@ -15,10 +15,14 @@ namespace Dx
         static ID3D11RasterizerState*  m_pRSWire_Frame;
         static ID3D11RasterizerState*  m_pRSSolid_Frame;
 
-        //ID3D11SamplerState*  
+        //ID3D11SamplerState
         static ID3D11SamplerState*   m_pSSWrap_Linear;
+        static ID3D11SamplerState*   m_pSSWrap_Aniso;
 
-        
+        //ID3D11DepthStencilState
+        static ID3D11DepthStencilState* m_pDSSDepth_Enable;
+        static ID3D11DepthStencilState* m_pDSSDepth_Disable;
+
         static void SetState(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
         static void Release();
     public:
@@ -44,5 +48,11 @@ namespace Dx
         UINT iMask = 0xffffffff)
     {
         pContext->OMSetBlendState(pState, fBlendFactor, iMask);
+    };
+    static void Set_DSState(ID3D11DeviceContext* pContext,
+        ID3D11DepthStencilState* pState,
+        UINT iRef = 1)
+    {
+        pContext->OMSetDepthStencilState(pState, iRef);
     };
 }

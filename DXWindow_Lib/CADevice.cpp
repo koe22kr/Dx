@@ -3,10 +3,10 @@
 IDXGIFactory*            CADevice::m_pFactory = nullptr;
 ID3D11Device*            CADevice::m_pDevice = nullptr;
 ID3D11DeviceContext*     CADevice::m_pImmediate_Device_Context = nullptr;
-
+map<UINT, CATexture*> CADevice::m_Texture_Map;
 bool CADevice::Create_Device()
 {
-    UINT Create_Device_Flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_PREVENT_INTERNAL_THREADING_OPTIMIZATIONS;
+    UINT Create_Device_Flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT /*| D3D11_CREATE_DEVICE_PREVENT_INTERNAL_THREADING_OPTIMIZATIONS*/;
 
 #ifdef _DEBUG
     //D3D11_CREATE_DEVICE_FLAG;                               //¿¡¼­
@@ -237,11 +237,8 @@ bool CADevice::Init()
 
     Create_Device();
     Create_DXGIFactory();
-
     Create_Swap_Chain();
-
     Set_Render_Target_View();
-
     Set_View_Port();
     //Set_View_Port(100, 100, 100, 100, 0, 1.0);
 
@@ -277,6 +274,9 @@ bool CADevice::Pre_Render()
 }
 bool CADevice::Post_Render()
 {   
+
+
+
     m_pSwap_Chain->Present(0 ,0);//
 
     return true;
@@ -309,6 +309,8 @@ bool CADevice::Release()
     m_pImmediate_Device_Context = NULL;
     m_pDevice = NULL;
     m_pFactory = NULL;
+
+    m_Texture_Map.clear();
     return true;
 }
 

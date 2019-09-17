@@ -1,37 +1,15 @@
 #pragma once
 #include "CAStd.h"
-#include <D2D1.h>
+#include "CADx_Std.h"
 #include <d3d11.h>
 #include <d3dx11.h> 
-#include "dxdiag.h"
-#pragma comment( lib, "d2d1.lib" )
+#include <D3DCompiler.h>
+
+//#include "dxdiag.h"
 #pragma comment( lib, "d3dx11.lib" )
 #pragma comment (lib, "d3d11.lib")
 #pragma comment(lib,"dxgi.lib")
-
-#include <d3dx10math.h>
-#include <DirectXPackedVector.h>
-
-#pragma comment(lib,"d3dx10.lib")
-//
-//struct FLOAT3
-//{
-//    float x;
-//    float y;
-//    float z;
-//};
-/*
-struct CONST_BUFFER_F8
-{
-    D3DXVECTOR4  vColor;
-    float x;
-    float y;
-    float z;
-    float w;
-
-};*/
-
-#define EM(hr,msg,_where) if (FAILED(hr)) MessageBox(g_hWnd, L#msg, L#_where, MB_OK)
+//#pragma comment(lib,"d3dx10.lib")
     
 class CATexture;
 
@@ -52,7 +30,8 @@ public:
     ID3D11Texture2D* m_pBack_Buffer;
     D3D11_TEXTURE2D_DESC m_Back_Buffer_Desc;
     DXGI_SWAP_CHAIN_DESC m_Swap_Chain_Desc;
-   static map<wstring, CATexture*> m_Texture_Map;// 디바이스나... 상위에 놓아야 할것 같다.
+
+   static map<UINT, CATexture*> m_Texture_Map;// 디바이스나... 상위에 놓아야 할것 같다.
 public:
     bool Create_Device();
     bool Create_DXGIFactory();
