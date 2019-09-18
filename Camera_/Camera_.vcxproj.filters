@@ -41,5 +41,8 @@
     <FxCompile Include="..\..\_Shader\VS.vsh" />
     <FxCompile Include="shader.hlsl" />
     <FxCompile Include="heightmap.hlsl" />
+    <FxCompile Include="sky.hlsl">
+      <Filter>소스 파일</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

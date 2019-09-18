@@ -7,8 +7,10 @@ namespace DX
     ID3D11BlendState* CADx_State::m_pAlpha_Blend_Disable = 0;
     ID3D11RasterizerState* CADx_State::m_pRSWire_Frame = 0;
     ID3D11RasterizerState* CADx_State::m_pRSSolid_Frame = 0;
+
     ID3D11SamplerState* CADx_State::m_pSSWrap_Linear = 0;
     ID3D11SamplerState* CADx_State::m_pSSWrap_Aniso = 0;
+    ID3D11SamplerState* CADx_State::m_pSSWrap_Point = 0;
 
     ID3D11DepthStencilState* CADx_State::m_pDSSDepth_Enable = 0;
     ID3D11DepthStencilState* CADx_State::m_pDSSDepth_Disable = 0;
@@ -38,12 +40,23 @@ namespace DX
             EM(hr, m_pSSWrap_Linear, CADx_State);
             return;
         }
+
         sd.Filter = D3D11_FILTER_ANISOTROPIC;
         if (FAILED(hr = pDevice->CreateSamplerState(&sd,&m_pSSWrap_Aniso)))
         {
             EM(hr, m_pSSWrap_Aniso, CADx_State);
             return;
         }
+
+        sd.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+        if (FAILED(hr = pDevice->CreateSamplerState(&sd, &m_pSSWrap_Point)))
+        {
+            EM(hr, m_pSSWrap_Aniso, CADx_State);
+            return;
+        }
+       
+
+
 #pragma endregion SAMPLER
 
 #pragma region BLEND

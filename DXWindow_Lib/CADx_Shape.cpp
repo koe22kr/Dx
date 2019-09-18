@@ -142,5 +142,49 @@ namespace DX
     CADx_Shape_Box::~CADx_Shape_Box()
     {
     }
+
+
+    HRESULT Sky::LoadTextures(
+        ID3D11Device* pd3dDevice,
+        const TCHAR* pLoadTextureFile)
+    {
+        HRESULT hr = S_OK;
+        const TCHAR* g_szSkyTextures[] =
+        {
+            L"..\..\_data\sky\C_F.png",
+            L"..\..\_data\sky\C_B.png",
+            L"..\..\_data\sky\C_R.bmp",
+            L"..\..\_data\sky\C_L.bmp",
+            L"..\..\_data\sky\C_U.bmp",
+            L"..\..\_data\sky\C_D.bmp"
+        };
+        for (int iSub = 0; iSub < 6; iSub++)
+        {
+            int iIndex = I_TextureMgr.Load(pd3dDevice, g_szSkyTextures[iSub]);
+            if (iIndex >= 0)
+            {
+                //m_pTexSRV[iSub].Swap(I_TextureMgr.GetPtr(iIndex)->m_pSRV.Get());
+                m_pTexSRV[iSub] = I_TextureMgr.GetPtr(iIndex)->m_pSRV;
+            }
+        }
+        return hr;
+    }
+    bool  Sky::PostRender(ID3D11DeviceContext* pContext)
+    {
+        //DX::Set_SState(pContext, DX::CADx_State::m_pSSWrap_Point);
+        
+        pContext->PSSetShaderResources(2, 6, m_pTexSRV[0].GetAddressOf());
+        pContext->DrawIndexed(36, 0, 0);
+        //DX::Set_SState(pContext, DX::CADx_State::m_pSSWrap_Linear);
+        return true;
+    }
+
+    Sky::Sky()
+    {
+    }
+
+    Sky::~Sky()
+    {
+    }
 }
 

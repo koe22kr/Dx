@@ -18,6 +18,7 @@ namespace DX
         //ID3D11SamplerState
         static ID3D11SamplerState*   m_pSSWrap_Linear;
         static ID3D11SamplerState*   m_pSSWrap_Aniso;
+        static ID3D11SamplerState*   m_pSSWrap_Point;
 
         //ID3D11DepthStencilState
         static ID3D11DepthStencilState* m_pDSSDepth_Enable;
