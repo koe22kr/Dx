@@ -31,6 +31,8 @@ namespace DX
         sd.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
         sd.MaxLOD = FLT_MAX;
         sd.MinLOD = FLT_MIN;
+        sd.MaxAnisotropy = 16;
+
         if (FAILED(hr = pDevice->CreateSamplerState(&sd,&m_pSSWrap_Linear)))
         {
             EM(hr, m_pSSWrap_Linear, CADx_State);
@@ -83,6 +85,8 @@ namespace DX
         rsDesc.DepthClipEnable = TRUE;
         rsDesc.FillMode = D3D11_FILL_WIREFRAME;
         rsDesc.CullMode = D3D11_CULL_NONE;
+        rsDesc.MultisampleEnable = TRUE;
+        rsDesc.AntialiasedLineEnable = TRUE;
         if (FAILED(hr =
             pDevice->CreateRasterizerState(&rsDesc, &m_pRSWire_Frame)))
         {

@@ -3,6 +3,8 @@
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include <D2D1.h>
+#include <wrl.h>
+
 #pragma comment( lib, "d2d1.lib")
 
 namespace DX

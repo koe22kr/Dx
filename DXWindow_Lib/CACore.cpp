@@ -7,8 +7,8 @@ void CACore::Debug_Init()
 {
     Dx_Write.Init_Once(m_Device.m_pSwap_Chain);
     Dx_Write.Create_Fresh_Resource();
-    m_Debug_Shape.Create_Debug_Coordinate();
-
+    //m_Debug_Shape.Create_Debug_Coordinate();
+    //m_Debug_Shape.Create(L"VS.vsh", L"PS.psh", "PS", "VS", nullptr, 0, 0, 0, true);
 }
 void CACore::Debug_Frame()
 {
@@ -19,10 +19,11 @@ void CACore::Debug_Frame()
         if (RS_FLAG)
         {
             DX::Set_RSState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pRSWire_Frame);
-
+            RS_FLAG = !RS_FLAG;
         }
         else
         {
+            RS_FLAG = !RS_FLAG;
             DX::Set_RSState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pRSSolid_Frame);
         }
     }
@@ -31,9 +32,11 @@ void CACore::Debug_Frame()
         if (AB_FLAG)
         {
             DX::Set_BState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pAlpha_Blend_Disable);
+            AB_FLAG = !AB_FLAG;
         }
         else
         {
+            AB_FLAG =! AB_FLAG;
             DX::Set_BState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pAlpha_Blend);
         }
     }
@@ -41,10 +44,13 @@ void CACore::Debug_Frame()
     {
         if (SS_FLAG)
         {
+            SS_FLAG =!SS_FLAG;
             DX::Set_SState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pSSWrap_Linear);
         }
         else
         {
+            DX::Set_SState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pSSWrap_Aniso);
+            SS_FLAG =! SS_FLAG;
         }
         //m_pSSWrap_Linear
     }
@@ -85,9 +91,23 @@ bool CACore::Frame()
 {
     return true;
 }
+bool CACore::Pre_Render()
+{
+
+    return true;
+}
 
 bool CACore::Render()
 {
+    Pre_Render();
+
+    Post_Render();
+
+    return true;
+}
+bool CACore::Post_Render()
+{
+
     return true;
 }
 
@@ -107,9 +127,7 @@ bool CACore::CACoreInit()
     I_SoundMgr.Init();
     DX::CADx_State::SetState(m_Device.m_pDevice,m_Device.m_pImmediate_Device_Context);
     
-    // m_pDXHelper = new CADevice_Helper(/*m_Device.m_pFactory,*/&CADevice::m_Texture_Map, m_Device.m_pDevice, m_Device.m_pImmediate_Device_Context);
-    //m_pDXHelper = new CADevice_Helper(/*m_Device.m_pFactory,*/&m_Device.m_Texture_Map,m_Device.m_pDevice, m_Device.m_pImmediate_Device_Context );
-
+   
 
 #if defined _DEBUG || DEBUG
     Debug_Init();
@@ -136,16 +154,17 @@ bool CACore::CACoreRender()
 {
     m_Device.Pre_Render();
     m_Device.Render();
+    
     Render();
+
+#ifdef _DEBUG
+    Debug_Render();
+ //   m_Debug_Shape.Render(CADevice::m_pImmediate_Device_Context,m_Debug_Shape.m_Index_List.size());
+#endif
     m_Device.Post_Render();
     m_Timer.Render();
     
 
-#ifdef _DEBUG
-
-    Debug_Render();
-
-#endif
 
     return true;
 }

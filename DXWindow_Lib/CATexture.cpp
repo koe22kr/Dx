@@ -1,5 +1,12 @@
 #include "CATexture.h"
 
+bool    CATexture::Apply(
+    ID3D11DeviceContext* pContext,
+    UINT iSlot)
+{
+    pContext->PSSetShaderResources(iSlot, 1, &m_pSRV);
+    return true;
+}
 
 
 CATexture::CATexture()
@@ -17,6 +24,7 @@ CATexture::~CATexture()
     if (m_pSRV)
     {
         m_pSRV->Release();
+        m_pSRV = nullptr;
     }
 }
 
@@ -45,5 +53,22 @@ bool CATexture::Draw(ID3D11DeviceContext* pContext)
 #endif
 
 
+    return true;
+}
+
+bool CATexture::Load(ID3D11Device* pDevice,
+    std::wstring filename)
+{
+    HRESULT hr;
+    if (FAILED(hr = D3DX11CreateShaderResourceViewFromFile(
+        pDevice,
+        filename.c_str(),
+        NULL,
+        NULL,
+        &m_pSRV,
+        NULL)))
+    {
+        return false;
+    }
     return true;
 }

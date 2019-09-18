@@ -5,9 +5,31 @@
 namespace DX
 {
 
+    struct CA_BOX
+    {
+        DirectX::XMFLOAT3 vCenter;
+        DirectX::XMFLOAT3 vMin;
+        DirectX::XMFLOAT3 vMax;
+        DirectX::XMFLOAT3 vAxis[3];
+        float       fExtent[3];
+    };
+    struct CA_SPHERE
+    {
+        DirectX::XMFLOAT3 vCenter;
+        float       fRadius;
+    };
+
     class CADx_Model
     {
     public:
+    
+        DirectX::XMMATRIX m_Matrix_World;
+        DirectX::XMMATRIX m_Matrix_View;
+        DirectX::XMMATRIX m_Matrix_Projection;
+
+        VS_CB m_cb;
+        CA_BOX m_box;
+        CA_SPHERE m_sphere;
         ID3D11Device*            m_pDevice;
         ID3D11DeviceContext*     m_pImmediate_Device_Context;
         CADevice_Helper m_HDX;
@@ -38,11 +60,11 @@ namespace DX
         virtual bool Create(const WCHAR* VS_compiler, const WCHAR* PS_compiler, const char* PSname, const char* VSname, const WCHAR* file_name, UINT Key, int width, int height, bool index_drawing_flag) final;
 
         bool Set_Vertex_Index_Data(std::vector<PNCT_VERTEX> Vertex_List, std::vector<DWORD> Index_List);
-        bool Set_Const_Data(VS_CB constdata);//pushback_in_constlist;
+        bool Set_Matrix(DirectX::XMMATRIX* world, DirectX::XMMATRIX* view, DirectX::XMMATRIX* proj);//pushback_in_constlist;
         
 
-        /*virtual bool Init();
-        virtual bool Frame();*/
+        virtual bool Init();
+        virtual bool Frame();
         virtual bool Render();
         virtual bool Render( ID3D11DeviceContext* pContext, UINT draw_count , UINT vertex_location = 0, UINT index_location = 0);
         virtual bool Release();

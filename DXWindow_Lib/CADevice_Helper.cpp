@@ -1,4 +1,5 @@
 #include "CADevice_Helper.h"
+#include "CADx_State.h"
 namespace DX
 {
 
@@ -53,14 +54,14 @@ namespace DX
         BD.Usage = D3D11_USAGE_DEFAULT;
         BD.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         BD.CPUAccessFlags = 0;
-        BD.MiscFlags = 0;
-        BD.StructureByteStride = 0;   ///
+       /* BD.MiscFlags = 0;
+        BD.StructureByteStride = 0;   /*///
 
         D3D11_SUBRESOURCE_DATA SD;
         ZeroMemory(&SD, sizeof(D3D11_SUBRESOURCE_DATA));
 
         ID3D11Buffer* temp_buffer;
-        SD.pSysMem = &m_Vertex_List[0];
+        SD.pSysMem = &m_Vertex_List->at(0);
         if (FAILED(hr = pDevice->CreateBuffer(&BD, &SD, &temp_buffer)))
         {
             MessageBox(g_hWnd, L"Create_Vertex_Buffer_Fail", L"CADevice_Helper", MB_OK);
@@ -109,7 +110,7 @@ namespace DX
 
         D3D11_SUBRESOURCE_DATA SD;
         ZeroMemory(&SD, sizeof(D3D11_SUBRESOURCE_DATA));
-        SD.pSysMem = &m_Index_List[0];
+        SD.pSysMem = &m_Index_List->at(0);
 
         if (FAILED(hr = pDevice->CreateBuffer(&BD, &SD, &temp_buffer)))
         {
@@ -529,30 +530,34 @@ namespace DX
     }
     void CADevice_Helper::Set_SRV_To_PS(ID3D11ShaderResourceView* pSRV, UINT start_slot, ID3D11DeviceContext* pContext)
     {
-        if (pSRV == NULL)
+        if (pSRV != NULL)
         {
-            MessageBox(g_hWnd, L"Set_SRV_To_PS", L"CADevice_Helper", MB_OK);
+            pContext->PSSetShaderResources(start_slot, 1, &pSRV);
+            
             return;
         }
-        pContext->PSSetShaderResources(start_slot, 1, &pSRV);
+        MessageBox(g_hWnd, L"Set_SRV_To_PS", L"CADevice_Helper", MB_OK);
 
     }
     void CADevice_Helper::Set_SRV_To_PS_Self(UINT start_slot, ID3D11DeviceContext* pContext)
     {
-        if (m_CATexture.m_pSRV == NULL)
+        if (m_CATexture.m_pSRV != NULL)
         {
-            MessageBox(g_hWnd, L"Set_SRV_To_PS", L"CADevice_Helper", MB_OK);
+            pContext->PSSetShaderResources(start_slot, 1, &m_CATexture.m_pSRV);
             return;
         }
-        pContext->PSSetShaderResources(start_slot, 1, &m_CATexture.m_pSRV);
+        //MessageBox(g_hWnd, L"Set_SRV_To_PS", L"CADevice_Helper", MB_OK);
+
     }
 
 
     void CADevice_Helper::Set_Const_Buffer(ID3D11Buffer* pConst_buffer, void* const_data, UINT size, ID3D11DeviceContext* pContext)
     {
        // D3D11_MAPPED_SUBRESOURCE MappedResourse;
-          
-        pContext->UpdateSubresource(pConst_buffer, 0, NULL, const_data, 0, 0);
+        if (pConst_buffer != NULL)
+        {
+            pContext->UpdateSubresource(pConst_buffer, 0, NULL, const_data, 0, 0);
+        }
         //Map
         /*pContext->Map(pConst_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResourse);
 
@@ -565,7 +570,10 @@ namespace DX
     void CADevice_Helper::Set_Const_Buffer_Self(void* const_data, UINT size, ID3D11DeviceContext* pContext)
     {
         //D3D11_MAPPED_SUBRESOURCE MappedResourse;
-        pContext->UpdateSubresource(m_cConst_Buffer.Get(), 0, NULL, const_data, 0, 0);
+        if (const_data != nullptr)
+        {
+            pContext->UpdateSubresource(m_cConst_Buffer.Get(), 0, NULL, const_data, 0, 0);
+        }
         ////Map  
         //pContext->Map(m_cConst_Buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResourse);
 
@@ -628,7 +636,7 @@ namespace DX
             pContext->IASetInputLayout(m_cInput_Layout.Get());
         }
         //Num_of_buffers, start_slot 버텍스,상수 버퍼별로 준비해야. offset도 생각해봐야겟
-        //pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
         if (m_cVertex_Buffer)
         {
@@ -657,9 +665,10 @@ namespace DX
     }
 
 
-    bool CADevice_Helper::Render(ID3D11DeviceContext* pContext)
+    bool CADevice_Helper::Render(ID3D11DeviceContext* pContext,UINT draw_count)
     {
         PreRender(pContext);
+        PostRender_And_Set_Draw_OPT(draw_count);
         PostRender(pContext);
         return true;
     }
@@ -668,11 +677,16 @@ namespace DX
     {
         PreRender(pContext);
         PostRender_And_Set_Draw_OPT(draw_count, vertex_location, index_location, pContext);
+        PostRender();
         return true;
     }
 
     bool CADevice_Helper::PreRender(ID3D11DeviceContext* pContext, UINT VB_size, UINT SRV_start_slot)
     {
+        Set_RSState(CADevice::m_pImmediate_Device_Context, DX::CADx_State::m_pRSSolid_Frame);
+        Set_SState(CADevice::m_pImmediate_Device_Context, CADx_State::m_pSSWrap_Linear);
+        Set_DSState(CADevice::m_pImmediate_Device_Context, CADx_State::m_pDSSDepth_Enable);
+        Set_BState(CADevice::m_pImmediate_Device_Context, CADx_State::m_pAlpha_Blend);
         Set_SRV_To_PS_Self(SRV_start_slot, pContext);
         Set_Pipe_Line_Self(pContext, VB_size);
         return true;

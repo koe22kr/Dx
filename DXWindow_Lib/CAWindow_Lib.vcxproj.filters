@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ex2">
+      <UniqueIdentifier>{fb5c9512-0678-408c-bfc4-c284de8e7cd6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CACore.cpp">
@@ -51,9 +54,6 @@
     <ClCompile Include="CATexture.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CAShape.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="CADx_Model.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -64,6 +64,18 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CADx_RT.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CADx_Model2.cpp">
+      <Filter>ex2</Filter>
+    </ClCompile>
+    <ClCompile Include="CADx_Helper2.cpp">
+      <Filter>ex2</Filter>
+    </ClCompile>
+    <ClCompile Include="CATexture_Mgr.cpp">
+      <Filter>ex2</Filter>
+    </ClCompile>
+    <ClCompile Include="CADx_Shape.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -107,9 +119,6 @@
     <ClInclude Include="CATexture.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CAShape.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="CADx_Model.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -124,6 +133,18 @@
     </ClInclude>
     <ClInclude Include="CADx_RT.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CADx_Shape.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CADx_Model2.h">
+      <Filter>ex2</Filter>
+    </ClInclude>
+    <ClInclude Include="CADx_Helper2.h">
+      <Filter>ex2</Filter>
+    </ClInclude>
+    <ClInclude Include="CATexture_Mgr.h">
+      <Filter>ex2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

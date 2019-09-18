@@ -8,7 +8,7 @@
 #include "CADevice_Helper.h"
 #include "CADx_Text.h"
 #include "CADx_State.h"
-#include "CAShape.h"
+#include "CADx_Shape.h"
 class CACore :public CAWindow                 
 {
 #if defined _DEBUG || DEBUG
@@ -23,7 +23,7 @@ class CACore :public CAWindow
     void Debug_Render();
     void Debug_Release();
     void Refresh_m_Debug_Text();
-    DX::CAShape_Line m_Debug_Shape;
+    DX::CADx_Shape_Line m_Debug_Shape;
 
 #endif // DEBUG
 
@@ -34,7 +34,9 @@ public:
 public:
     virtual bool Init();
     virtual bool Frame();
+    bool Pre_Render();
     virtual bool Render();
+    bool Post_Render();
     virtual bool Release();
 public:
 public:

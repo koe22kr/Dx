@@ -1,6 +1,5 @@
 #pragma once
 #include "CATexture.h"
-#include <wrl.h>
 namespace DX
 {
     
@@ -23,9 +22,9 @@ namespace DX
 
     struct VS_CB
     {
-        DirectX::FXMMATRIX matWorld;
-        DirectX::FXMMATRIX matView;
-        DirectX::FXMMATRIX matProj;
+        DirectX::XMMATRIX matWorld;
+        DirectX::XMMATRIX matView;
+        DirectX::XMMATRIX matProj;
         DirectX::XMFLOAT4 color;
         DirectX::XMFLOAT4 etc;
     };
@@ -103,10 +102,10 @@ namespace DX
         virtual ~CADevice_Helper();
         // bool Init();
         // bool Frame();
-        bool Render(ID3D11DeviceContext* pContext = CADevice::m_pImmediate_Device_Context);
+        bool Render(ID3D11DeviceContext* pContext = CADevice::m_pImmediate_Device_Context, UINT draw_count = 0);
         bool Render(UINT draw_count, UINT vertex_location = 0, UINT index_location = 0, ID3D11DeviceContext* pContext = CADevice::m_pImmediate_Device_Context);
 
-        bool PreRender(ID3D11DeviceContext* pContext = CADevice::m_pImmediate_Device_Context, UINT V_Bsize = sizeof(PNCT_VERTEX), UINT SRV_start_slot = 0);
+        bool PreRender(ID3D11DeviceContext* pContext = CADevice::m_pImmediate_Device_Context, UINT V_Bsize = sizeof(PNCT_VERTEX), UINT SRV_start_slot = 1);
         bool PostRender(ID3D11DeviceContext* pContext = CADevice::m_pImmediate_Device_Context);
         bool PostRender_And_Set_Draw_OPT(UINT draw_count, UINT vertex_location = 0, UINT index_location = 0, ID3D11DeviceContext* pContext = CADevice::m_pImmediate_Device_Context);
         // bool Release();

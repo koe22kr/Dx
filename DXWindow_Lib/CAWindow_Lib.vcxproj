@@ -195,6 +195,8 @@ copy "..\\..\\_etc\\FMOD\\lib\\x64\\*.*" "..\\..\\_lib\\FMOD\\x64\\"</Command>
   <ItemGroup>
     <ClCompile Include="CACore.cpp" />
     <ClCompile Include="CADx_Arc_Ball.cpp" />
+    <ClCompile Include="CADx_Helper2.cpp" />
+    <ClCompile Include="CADx_Model2.cpp" />
     <ClCompile Include="CADx_RT.cpp" />
     <ClCompile Include="CADx_State.cpp" />
     <ClCompile Include="CADx_Text.cpp" />
@@ -202,10 +204,11 @@ copy "..\\..\\_etc\\FMOD\\lib\\x64\\*.*" "..\\..\\_lib\\FMOD\\x64\\"</Command>
     <ClCompile Include="CAMessageList.cpp" />
     <ClCompile Include="CADevice_Helper.cpp" />
     <ClCompile Include="CADx_Model.cpp" />
-    <ClCompile Include="CAShape.cpp" />
+    <ClCompile Include="CADx_Shape.cpp" />
     <ClCompile Include="CASound.cpp" />
     <ClCompile Include="CASoundMgr.cpp" />
     <ClCompile Include="CATexture.cpp" />
+    <ClCompile Include="CATexture_Mgr.cpp" />
     <ClCompile Include="CATimer.cpp" />
     <ClCompile Include="CAWindow.cpp" />
     <ClCompile Include="CADevice.cpp" />
@@ -214,6 +217,8 @@ copy "..\\..\\_etc\\FMOD\\lib\\x64\\*.*" "..\\..\\_lib\\FMOD\\x64\\"</Command>
   <ItemGroup>
     <ClInclude Include="CACore.h" />
     <ClInclude Include="CADx_Arc_Ball.h" />
+    <ClInclude Include="CADx_Helper2.h" />
+    <ClInclude Include="CADx_Model2.h" />
     <ClInclude Include="CADx_RT.h" />
     <ClInclude Include="CADx_State.h" />
     <ClInclude Include="CADx_Std.h" />
@@ -222,11 +227,12 @@ copy "..\\..\\_etc\\FMOD\\lib\\x64\\*.*" "..\\..\\_lib\\FMOD\\x64\\"</Command>
     <ClInclude Include="CAMessageList.h" />
     <ClInclude Include="CADevice_Helper.h" />
     <ClInclude Include="CADx_Model.h" />
-    <ClInclude Include="CAShape.h" />
+    <ClInclude Include="CADx_Shape.h" />
     <ClInclude Include="CASound.h" />
     <ClInclude Include="CASoundMgr.h" />
     <ClInclude Include="CAStd.h" />
     <ClInclude Include="CATexture.h" />
+    <ClInclude Include="CATexture_Mgr.h" />
     <ClInclude Include="CATimer.h" />
     <ClInclude Include="CAWindow.h" />
     <ClInclude Include="CADevice.h" />

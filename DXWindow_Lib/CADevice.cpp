@@ -197,8 +197,33 @@ bool CADevice::Set_Render_Target_View()
         return false;
     }
 
-    
+    // ±íÀÌ½ºÅÙ½Ç ¹öÆÛ »ý¼º
+    ID3D11Texture2D* texture;
+    D3D11_TEXTURE2D_DESC td;
+    ZeroMemory(&td, sizeof(D3D11_TEXTURE2D_DESC));
+    td.Width = m_Swap_Chain_Desc.BufferDesc.Width;
+    td.Height = m_Swap_Chain_Desc.BufferDesc.Height;
+    td.ArraySize = 1;
+    td.MipLevels = 1;
+    td.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    td.SampleDesc.Count = 1;
+    td.SampleDesc.Quality = 0;
+    td.Usage = D3D11_USAGE_DEFAULT;
+    td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
+    m_pDevice->CreateTexture2D(&td, NULL, &texture);
+
+    D3D11_DEPTH_STENCIL_VIEW_DESC dsd;
+    ZeroMemory(&dsd, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+    dsd.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    dsd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+
+    hr = m_pDevice->CreateDepthStencilView(texture, &dsd, &m_pDepth_Stencil_View);
+    m_pImmediate_Device_Context->OMSetRenderTargets(1, &m_pRender_Target_View, m_pDepth_Stencil_View);
+    if (texture)
+    {
+        texture->Release();
+    }
     return true;
 }
 bool CADevice::Set_View_Port(float pos_x, float pos_y, float width, float height, float min_depth, float max_depth)
@@ -256,16 +281,18 @@ bool CADevice::Frame()
 }
 bool CADevice::Pre_Render()
 {
-    float ClearColor[4] = { 0.6f,0.2f,0.6f,1 };//RGBA
+    float ClearColor[4] = { 0.1f,0.2f,0.6f,1 };//RGBA
     m_pImmediate_Device_Context->ClearRenderTargetView(m_pRender_Target_View, ClearColor);
     Set_View_Port();
+    m_pImmediate_Device_Context->ClearDepthStencilView(m_pDepth_Stencil_View, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
     m_pImmediate_Device_Context->OMSetRenderTargets(
         /* [_In_range_(0, D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT) ] */
         1,
         /* [_In_reads_opt_(NumViews)]ID3D11RenderTargetView *const  */
         &m_pRender_Target_View,
         /* [_In_opt_  ID3D11DepthStencilView] */
-        NULL
+        m_pDepth_Stencil_View
     );
     
 

@@ -29,7 +29,7 @@ namespace DX
         m_vCurrent_Pt = Screen_To_Vector(x, y);
         m_qNow = DirectX::XMVectorMultiply(m_qBefore, Quat_From_Ball_Points(m_vBefore_Pt, m_vCurrent_Pt));
         //m_qNow = m_qBefore * Quat_From_Ball_Points(m_vBefore_Pt, m_vCurrent_Pt);
-
+        
         m_vBefore_Pt = m_vCurrent_Pt;
     }
     void CADx_Arc_Ball::Move_End(int x, int y)

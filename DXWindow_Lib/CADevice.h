@@ -30,6 +30,7 @@ public:
     ID3D11Texture2D* m_pBack_Buffer;
     D3D11_TEXTURE2D_DESC m_Back_Buffer_Desc;
     DXGI_SWAP_CHAIN_DESC m_Swap_Chain_Desc;
+    ID3D11DepthStencilView* m_pDepth_Stencil_View;
 
    static map<UINT, CATexture*> m_Texture_Map;// 디바이스나... 상위에 놓아야 할것 같다.
 public:
