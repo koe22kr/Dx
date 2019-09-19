@@ -47,6 +47,7 @@ public:
     bool CACoreRelease();
   
     bool Run();
+    virtual void Msg_Proc(MSG msg);
 
     void MessageProc(MSG msg);
     virtual LRESULT MouseProc(MSG msg) { return true; };

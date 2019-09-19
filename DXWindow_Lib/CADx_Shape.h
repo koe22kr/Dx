@@ -44,8 +44,8 @@ namespace DX
     public:
         bool  PostRender(ID3D11DeviceContext* pContext) override;
         HRESULT LoadTextures(
-            ID3D11Device* pd3dDevice,
-            const TCHAR* pLoadTextureFile);
+            ID3D11Device* pd3dDevice);
+        //void Sky_Init();
     public:
         Sky();
         ~Sky();

@@ -61,10 +61,12 @@ namespace DX
 
         void Rotation_No_Lerp(float pitch, float yaw, float roll);
         //카메라 이동
-        float m_fSpeed = 10.0f;
+        float m_fSpeed = 50.0f;
         float Real_Speed;
         void Move_Look();
-        void Move_Side();
+        void Move_Back();
+        void Move_Left();
+        void Move_Right();
         //void Move_Up();
         void Move_World_Z();
         void Move_World_Y();
@@ -77,6 +79,7 @@ namespace DX
         void Set_Min_Max_Radian(float min, float max);
         //
         Camera* m_pMain_Camera;
+        void Rotation_By_Arc_Ball();
         void Non_Target_Camera_Rotation(float yaw, float pitch, float roll);
         //void Target_Camera_Rotation(DirectX::XMVECTOR target);
         //void Model_Camera_Rotation();

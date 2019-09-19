@@ -145,8 +145,7 @@ namespace DX
 
 
     HRESULT Sky::LoadTextures(
-        ID3D11Device* pd3dDevice,
-        const TCHAR* pLoadTextureFile)
+        ID3D11Device* pd3dDevice)
     {
         HRESULT hr = S_OK;
         const TCHAR* g_szSkyTextures[] =
@@ -179,6 +178,12 @@ namespace DX
         return true;
     }
 
+
+    //void Sky::Sky_Init(ID3D11Device* pdevice)
+    //{
+    //    Create(pdevice,L"Sky",L"")
+
+    //}
     Sky::Sky()
     {
     }

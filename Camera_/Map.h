@@ -17,6 +17,9 @@ namespace DX
     {
     public:
         ///
+        int m_Vertex_List;
+        vector<DirectX::XMFLOAT3> m_vTangent_List;
+        //vector<float> m_fColor_List;
         int m_iNumRows;
         int m_iNumCols;
         int m_iNumCellRows;
@@ -31,6 +34,7 @@ namespace DX
         void    InitFaceNormals();
         void	CalcFaceNormals();
         void	CalsVertexNormals();
+        void CalsTangentNormals();
         DirectX::XMVECTOR	ComputeFaceNormal(DWORD i0, DWORD i1, DWORD i2);
 
         virtual float   GetHeightMap(UINT index)
@@ -39,8 +43,16 @@ namespace DX
         };
         virtual  DirectX::XMFLOAT3  GetNormalMap(UINT index)
         {
+            if (m_vTangent_List.size() != 0)
+            {
+                return m_vTangent_List[index];
+            }
             return DirectX::XMFLOAT3(0, 0, 0);
-        };
+        }
+        virtual  bool CreateNormalMap(ID3D11Device* pd3dDevice,
+            ID3D11DeviceContext*	pContext,
+            const TCHAR* pMapFile);
+
         virtual DirectX::XMFLOAT4   GetColorMap(UINT index)
         {
             return DirectX::XMFLOAT4(1, 1, 1, 1);
@@ -48,6 +60,9 @@ namespace DX
         virtual HRESULT CreateVertexData();
         virtual HRESULT CreateIndexData();
         virtual bool    Load(ID3D11Device* pd3dDevice, MapDesc& md);
+        virtual HRESULT SetInputLayout() override;
+        virtual HRESULT CreateVertexBuffer() override;
+        virtual DirectX::XMFLOAT3 Get_Tangent(DWORD i0, DWORD i1, DWORD i2);
     public:
         bool	Render(ID3D11DeviceContext*	pContext);
     public:
@@ -85,6 +100,6 @@ namespace DX
         HeightMap() {};
         virtual ~HeightMap() {};
     };
-
+    
 
 }

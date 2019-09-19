@@ -29,6 +29,29 @@ namespace DX
         return CADx_Model2::Render(pContext);
     }
 
+    HRESULT Map::SetInputLayout() {
+        HRESULT hr = S_OK;
+        //input layout
+        //정점버퍼의 데이터를 정점 쉐이더의 인자값으로 설정
+        D3D11_INPUT_ELEMENT_DESC layout[] =
+        {
+            {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 40, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"NORMALMAP",0,DXGI_FORMAT_R32G32B32_FLOAT, 0, 60, D3D11_INPUT_PER_VERTEX_DATA, 0}
+
+        };
+        int iNumElement = sizeof(layout) / sizeof(layout[0]);
+        m_helper.m_pInputLayout.Attach(
+            DX::CreateInputLayout(m_pDevice,
+                m_helper.m_pVSBlob->GetBufferSize(),
+                m_helper.m_pVSBlob->GetBufferPointer(),
+                layout, iNumElement));
+
+        return hr;
+    }
 
     HRESULT Map::CreateVertexData()
     {
@@ -42,26 +65,42 @@ namespace DX
         float ftxOffsetU = 1.0f / (m_iNumCols - 1);
         float ftxOffsetV = 1.0f / (m_iNumRows - 1);
 
-        m_Vertex_List.resize(m_iNumVertices);
+        m_Vertex_List2.resize(m_iNumVertices);
         for (int iRow = 0; iRow < m_iNumRows; iRow++)
         {
             for (int iCol = 0; iCol < m_iNumCols; iCol++)
             {
                 int iVertexIndex = iRow * m_iNumCols + iCol;
-                m_Vertex_List[iVertexIndex].p.x = (iCol - fHalfCols)*m_fCellDistance;
-                m_Vertex_List[iVertexIndex].p.z = -((iRow - fHalfRows)*m_fCellDistance);
-                m_Vertex_List[iVertexIndex].t.x = iCol * ftxOffsetU;
-                m_Vertex_List[iVertexIndex].t.y = iRow * ftxOffsetV;
+                m_Vertex_List2[iVertexIndex].p.x = (iCol - fHalfCols)*m_fCellDistance;
+                m_Vertex_List2[iVertexIndex].p.z = -((iRow - fHalfRows)*m_fCellDistance);
+                m_Vertex_List2[iVertexIndex].t.x = iCol * ftxOffsetU;
+                m_Vertex_List2[iVertexIndex].t.y = iRow * ftxOffsetV;
 
-                m_Vertex_List[iVertexIndex].p.y = GetHeightMap(iVertexIndex);
-                m_Vertex_List[iVertexIndex].n = GetNormalMap(iVertexIndex);
-                m_Vertex_List[iVertexIndex].c = GetColorMap(iVertexIndex);
-
-
+                m_Vertex_List2[iVertexIndex].p.y =  GetHeightMap(iVertexIndex);
+                //m_Vertex_List2[iVertexIndex].n = // CreateIndexData 에서 입력
+                m_Vertex_List2[iVertexIndex].c =GetColorMap(iVertexIndex);
+              //  m_Vertex_List2[iVertexIndex].tangent = Get_Tangent(iVertexIndex);  //CreateIndexData 에서 입력
+                //
             }
         }
         return S_OK;
     }
+    HRESULT Map::CreateVertexBuffer() {
+        HRESULT hr = S_OK;
+        m_helper.m_iVertexSize = sizeof(PNCTT_VERTEX);
+        m_helper.m_iNumVertex = m_Vertex_List2.size();;
+        m_helper.m_pVertexBuffer.Attach(
+            DX::CreateVertexBuffer(m_pDevice,
+                &m_Vertex_List2.at(0), m_helper.m_iNumVertex, m_helper.m_iVertexSize)
+        );
+        if (m_helper.m_pVertexBuffer.Get() == nullptr)
+            return false;
+        return hr;
+    }
+
+
+
+
     HRESULT Map::CreateIndexData()
     {
         m_Index_List.resize(m_iNumFace * 3);
@@ -78,55 +117,67 @@ namespace DX
                 m_Index_List[iIndex + 0] = iRow * m_iNumCols + iCol;
                 m_Index_List[iIndex + 1] = iRow * m_iNumCols + iNextCol;
                 m_Index_List[iIndex + 2] = iNextRow * m_iNumCols + iCol;
-
+                //여기까지 index;
+                //아래는 노말 구하는부분.
                 DWORD i0 = m_Index_List[iIndex + 0];
                 DWORD i1 = m_Index_List[iIndex + 1];
                 DWORD i2 = m_Index_List[iIndex + 2];
 
                 DirectX::XMVECTOR vNormal = ComputeFaceNormal(i0, i1, i2);
+                //
+                m_Vertex_List2[i0].tangent =Get_Tangent(i0, i1, i2);
+                m_Vertex_List2[i1].tangent = Get_Tangent(i0, i1, i2);
+                m_Vertex_List2[i2].tangent = Get_Tangent(i0, i1, i2);
 
+                //
                 DirectX::XMVECTOR temp;
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List[i0].n);
+                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i0].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List[i0].n, temp);
+                DirectX::XMStoreFloat3(&m_Vertex_List2[i0].n, temp);
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List[i1].n);
+                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i1].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List[i1].n, temp);
+                DirectX::XMStoreFloat3(&m_Vertex_List2[i1].n, temp);
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List[i2].n);
+                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i2].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List[i2].n, temp);
+                DirectX::XMStoreFloat3(&m_Vertex_List2[i2].n, temp);
 
                 m_Index_List[iIndex + 3] = m_Index_List[iIndex + 2];
                 m_Index_List[iIndex + 4] = m_Index_List[iIndex + 1];
                 m_Index_List[iIndex + 5] = iNextRow * m_iNumCols + iNextCol;
-
+                ///
+                m_Vertex_List2[i0].tangent = Get_Tangent(i0, i1, i2);
+                m_Vertex_List2[i1].tangent = Get_Tangent(i0, i1, i2);
+                m_Vertex_List2[i2].tangent = Get_Tangent(i0, i1, i2);
+                    //아래서도 또 한번 해야함
                 i0 = m_Index_List[iIndex + 3];
                 i1 = m_Index_List[iIndex + 4];
                 i2 = m_Index_List[iIndex + 5];
                 vNormal = ComputeFaceNormal(i0, i1, i2);
      
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List[i0].n);
+                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i0].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List[i0].n, temp);
+                DirectX::XMStoreFloat3(&m_Vertex_List2[i0].n, temp);
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List[i1].n);
+                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i1].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List[i1].n, temp);
+                DirectX::XMStoreFloat3(&m_Vertex_List2[i1].n, temp);
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List[i2].n);
+                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i2].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List[i2].n, temp);
-              
+                DirectX::XMStoreFloat3(&m_Vertex_List2[i2].n, temp);
+                
+
+                //
                 iIndex += 6;
             }
         }
@@ -146,21 +197,58 @@ namespace DX
     {
         DirectX::XMVECTOR vNormal;
         DirectX::XMVECTOR v0, v1, v2;
-        v0 = DirectX::XMVectorSet(m_Vertex_List[i0].p.x, m_Vertex_List[i0].p.y, m_Vertex_List[i0].p.z, 0);
-        v1 = DirectX::XMVectorSet(m_Vertex_List[i1].p.x, m_Vertex_List[i1].p.y, m_Vertex_List[i1].p.z, 0);
-        v2 = DirectX::XMVectorSet(m_Vertex_List[i2].p.x, m_Vertex_List[i2].p.y, m_Vertex_List[i2].p.z, 0);
+        v0 = DirectX::XMVectorSet(m_Vertex_List2[i0].p.x, m_Vertex_List2[i0].p.y, m_Vertex_List2[i0].p.z, 0);
+        v1 = DirectX::XMVectorSet(m_Vertex_List2[i1].p.x, m_Vertex_List2[i1].p.y, m_Vertex_List2[i1].p.z, 0);
+        v2 = DirectX::XMVectorSet(m_Vertex_List2[i2].p.x, m_Vertex_List2[i2].p.y, m_Vertex_List2[i2].p.z, 0);
 
         DirectX::XMVECTOR vEdge0;
         vEdge0 = DirectX::XMVectorSubtract(v1, v0);
      
         DirectX::XMVECTOR vEdge1;
         vEdge1 = DirectX::XMVectorSubtract(v2, v0);
-
-  
+        
 
         vNormal = DirectX::XMVector3Cross(vEdge0, vEdge1);
         vNormal = DirectX::XMVector3Normalize(vNormal);
         return vNormal;
+    }
+    DirectX::XMFLOAT3 Map::Get_Tangent(DWORD i0, DWORD i1, DWORD i2)
+    {
+
+
+        DirectX::XMVECTOR vNormal;
+        DirectX::XMVECTOR v0, v1, v2;
+        v0 = DirectX::XMVectorSet(m_Vertex_List2[i0].p.x, m_Vertex_List2[i0].p.y, m_Vertex_List2[i0].p.z, 0);
+        v1 = DirectX::XMVectorSet(m_Vertex_List2[i1].p.x, m_Vertex_List2[i1].p.y, m_Vertex_List2[i1].p.z, 0);
+        v2 = DirectX::XMVectorSet(m_Vertex_List2[i2].p.x, m_Vertex_List2[i2].p.y, m_Vertex_List2[i2].p.z, 0);
+
+        DirectX::XMVECTOR vEdge0;
+        vEdge0 = DirectX::XMVectorSubtract(v1, v0);
+
+        DirectX::XMVECTOR vEdge1;
+        vEdge1 = DirectX::XMVectorSubtract(v2, v0);
+
+        //일단 여기에 T백터 구하는 걸 얹기
+
+        float fEdge0u = m_Vertex_List2[i1].t.x - m_Vertex_List2[i0].t.x;
+        float fEdge0v = m_Vertex_List2[i1].t.y - m_Vertex_List2[i0].t.y;
+        float fEdge1u = m_Vertex_List2[i2].t.x - m_Vertex_List2[i0].t.x;
+        float fEdge1v = m_Vertex_List2[i2].t.y - m_Vertex_List2[i0].t.y;
+        float fDenominater = fEdge0u * fEdge1v - fEdge0v * fEdge1u;
+        float fScale1 = 1.0f / fDenominater;
+
+        DirectX::XMFLOAT3 f3Edge0;
+        DirectX::XMStoreFloat3(&f3Edge0, vEdge0);
+        DirectX::XMFLOAT3 f3Edge1;
+        DirectX::XMStoreFloat3(&f3Edge1, vEdge1);
+        DirectX::XMFLOAT3 Tan(  fScale1*(fEdge1v*f3Edge0.x - fEdge0v * f3Edge1.x),
+                                fScale1*(fEdge1v*f3Edge0.y - fEdge0v * f3Edge1.y),
+                                fScale1*(fEdge1v*f3Edge0.z - fEdge0v * f3Edge1.z));
+
+        DirectX::XMVECTOR temp = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&Tan));
+        DirectX::XMStoreFloat3(&Tan, temp);
+        return Tan;
+        //
     }
     void Map::CalcFaceNormals()
     {
@@ -176,6 +264,20 @@ namespace DX
             iFace++;
         }
     }
+    void Map::CalsTangentNormals()
+    {
+        m_vTangent_List.resize(m_iNumFace);
+        int iFace = 0;
+        for (int iIndex = 0; iIndex < m_iNumFace * 3; iIndex += 3)
+        {
+            DWORD i0 = m_Index_List[iIndex + 0];
+            DWORD i1 = m_Index_List[iIndex + 1];
+            DWORD i2 = m_Index_List[iIndex + 2];
+
+            m_vTangent_List[iFace] = Get_Tangent(i0, i1, i2);
+            iFace++;
+        }
+    }
     void Map::CalsVertexNormals()
     {
         /*for (int iVer = 0; iVer < m_iNumVertices; iVer++)
@@ -188,6 +290,7 @@ namespace DX
         InitFaceNormals();
         CalcFaceNormals();
         CalsVertexNormals();
+        //CalsTangentNormals();
     }
 
     Map::Map()
@@ -243,6 +346,60 @@ namespace DX
                 {
                     UINT uRed = pTexels[rowStart + col * 4];
                     m_fHeightList[row*td.Width + col] = uRed;
+                }
+            }
+            pContext->Unmap(pTex2D,
+                D3D11CalcSubresource(0, 0, 1));
+        }
+        m_iNumRows = td.Height;
+        m_iNumCols = td.Width;
+
+        pTexture->Release();
+        return true;
+    }
+
+
+    bool  Map::CreateNormalMap(ID3D11Device* pd3dDevice,
+        ID3D11DeviceContext*	pContext,
+        const TCHAR* pMapFile)
+    {
+        
+
+        D3DX11_IMAGE_LOAD_INFO imageload;
+        ZeroMemory(&imageload, sizeof(imageload));
+        imageload.MipLevels = 1;
+        imageload.Usage = D3D11_USAGE_STAGING;
+        imageload.CpuAccessFlags =
+            D3D11_CPU_ACCESS_READ |
+            D3D11_CPU_ACCESS_WRITE;
+        imageload.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+        ID3D11Resource* pTexture;
+        D3DX11CreateTextureFromFile(
+            pd3dDevice,
+            pMapFile, &imageload, NULL, &pTexture, NULL);
+
+        ID3D11Texture2D* pTex2D = (ID3D11Texture2D*)pTexture;
+
+
+        D3D11_TEXTURE2D_DESC td;
+        pTex2D->GetDesc(&td);
+
+        m_vTangent_List.resize(td.Width*td.Height);
+
+        D3D11_MAPPED_SUBRESOURCE mapsub;
+        if (SUCCEEDED(pContext->Map(
+            pTex2D, D3D11CalcSubresource(0, 0, 1),
+            D3D11_MAP_READ, 0, &mapsub)))
+        {
+            UCHAR* pTexels = (UCHAR*)mapsub.pData;
+            for (UINT row = 0; row < td.Height; row++)
+            {
+                UINT rowStart = row * mapsub.RowPitch;
+                for (UINT col = 0; col < td.Width; col++)
+                {
+                    UINT uRed = pTexels[rowStart + col * 4];
+                    memcpy(&m_vTangent_List[row*td.Width + col],&uRed,sizeof(UINT));
                 }
             }
             pContext->Unmap(pTex2D,

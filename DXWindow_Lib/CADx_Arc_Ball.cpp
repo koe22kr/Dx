@@ -5,7 +5,6 @@ namespace DX
 
 
 
-
     void CADx_Arc_Ball::Init()
     {
         Set_Window(g_rtClient.right, g_rtClient.bottom);
@@ -19,20 +18,36 @@ namespace DX
         m_vCenter.y = m_iHeight / 2;
     }
 
-    void CADx_Arc_Ball::Move_On(int x, int y)
+    void CADx_Arc_Ball::Move_On(float x, float y)
     {
         m_bDrag = true;
+        m_vbefore_xy.x = x;
+        m_vbefore_xy.y = y;
         m_vBefore_Pt = Screen_To_Vector(x, y);
+       
+       
+
     }
-    void CADx_Arc_Ball::Moving(int x, int y)
+    void CADx_Arc_Ball::Moving(float x, float y)
     {
-        m_vCurrent_Pt = Screen_To_Vector(x, y);
-        m_qNow = DirectX::XMVectorMultiply(m_qBefore, Quat_From_Ball_Points(m_vBefore_Pt, m_vCurrent_Pt));
-        //m_qNow = m_qBefore * Quat_From_Ball_Points(m_vBefore_Pt, m_vCurrent_Pt);
+        if (m_bDrag)
+        {
         
-        m_vBefore_Pt = m_vCurrent_Pt;
+            m_vAngle.x += DirectX::XMConvertToRadians(x - m_vbefore_xy.y)*m_fSpeed;
+            m_vAngle.y += DirectX::XMConvertToRadians(y - m_vbefore_xy.x)*m_fSpeed;
+
+
+            m_vCurrent_Pt = Screen_To_Vector(x, y);
+            m_qNow = DirectX::XMQuaternionMultiply(m_qBefore, Quat_From_Ball_Points(m_vBefore_Pt, m_vCurrent_Pt));
+            //m_qNow = m_qBefore * Quat_From_Ball_Points(m_vBefore_Pt, m_vCurrent_Pt);
+
+
+            m_vBefore_Pt = m_vCurrent_Pt;
+        }
+
+
     }
-    void CADx_Arc_Ball::Move_End(int x, int y)
+    void CADx_Arc_Ball::Move_End(float x, float y)
     {
         m_bDrag = false;
     }
@@ -40,6 +55,7 @@ namespace DX
     {
         return m_mRotation = DirectX::XMMatrixRotationQuaternion(m_qNow);
     }
+    
     DirectX::XMVECTOR CADx_Arc_Ball::Quat_From_Ball_Points(const DirectX::XMVECTOR& vfrom, const DirectX::XMVECTOR& vto)
     {
         DirectX::XMVECTOR dot = DirectX::XMVector3Dot(vfrom, vto);
@@ -76,7 +92,7 @@ namespace DX
         {
             z = sqrtf(1.0f - mag);
         }
-        DirectX::XMVECTOR ret = DirectX::XMVectorSet(x, y, z, 1);
+        DirectX::XMVECTOR ret = DirectX::XMVectorSet(x, y, z, 0);
         return ret;
     }
 
@@ -84,8 +100,9 @@ namespace DX
     CADx_Arc_Ball::CADx_Arc_Ball()
     {
         m_bDrag = false;
-        m_qBefore = DirectX::XMVectorSplatOne();
-        m_qNow = DirectX::XMVectorSplatOne();
+        m_qBefore = DirectX::XMQuaternionIdentity();
+        m_qNow = DirectX::XMQuaternionIdentity();
+        Set_Window(g_rtClient.right, g_rtClient.bottom);
     }
 
 

@@ -12,7 +12,7 @@ using namespace DX;
     {
     public:
         //2
-
+        Sky m_Sky;
         DirectX::XMFLOAT3		m_vPos;
         //xModelCamera		m_backview;
         //CADx_Shape		m_Obj;
@@ -25,7 +25,8 @@ using namespace DX;
         CATexture* tex;
         bool CreateResource();
         bool DeleteResource();
-
+       // LRESULT MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+        void Msg_Proc(MSG msg) override;
         //2
         CADx_Shape_Box box;
         Camera Cam;

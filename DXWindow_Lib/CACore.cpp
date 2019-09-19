@@ -181,6 +181,10 @@ bool CACore::CACoreRelease()
 
     return Release();
 }
+void CACore::Msg_Proc(MSG msg)
+{
+}
+
 bool CACore::Run()
 {
     CACoreInit();                                     
@@ -195,6 +199,7 @@ bool CACore::Run()
             TranslateMessage(&msg); // 메세지 번역
             DispatchMessage(&msg);	// 메세지 프로시져 전달	
             MessageProc(msg);
+            Msg_Proc(msg);
         }
         else
         {

@@ -1,9 +1,73 @@
 #include "Sample.h"
 
 
+void Sample::Msg_Proc(MSG msg)
+{
+
+    if (msg.message == WM_LBUTTONDOWN)
+    {
+        int iMouseX = LOWORD(msg.lParam);
+        int iMouseY = HIWORD(msg.lParam);
+        Cam.m_Arc_Ball.Move_On(iMouseX, iMouseY);
+    }
+    if (msg.message == WM_RBUTTONDOWN)
+    {
+        int iMouseX = LOWORD(msg.lParam);
+        int iMouseY = HIWORD(msg.lParam);
+        Cam.m_Arc_Ball.Moving(iMouseX, iMouseY);
+    }
+    if (msg.message == WM_MOUSEMOVE)
+    {
+        int iMouseX = LOWORD(msg.lParam);
+        int iMouseY = HIWORD(msg.lParam);
+        Cam.m_Arc_Ball.Moving(iMouseX, iMouseY);
+    }
+    if (msg.message == WM_LBUTTONUP ||
+        msg.message == WM_MBUTTONUP ||
+        msg.message == WM_RBUTTONUP)
+    {
+        int iMouseX = LOWORD(msg.lParam);
+        int iMouseY = HIWORD(msg.lParam);
+        Cam.m_Arc_Ball.Move_End(iMouseX, iMouseY);
+    }
+ 
+}
+
+//LRESULT Sample::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+//{
+//    // switch (dwmouse.message)            //메세지의 WParam 으로 상태가 온다고 함 MK_LBUTTON
+//    // {
+//    //     //LB
+//    // case WM_LBUTTONDOWN:
+//    // {
+//    //     if (dwmouse.wParam & MK_LBUTTON) // 눌러져잇음
+//    //     {
+//    //         m_dwMouseState[0] = KEY_HOLD;
+//    //     }
+//    //     else
+//    //         m_dwMouseState[0] = KEY_PUSH;
+//    // }break;
+//    //
+//    // case WM_LBUTTONUP:
+//    // {
+//    //     m_dwMouseState[0] = KEY_UP;
+//    // }break;
+//    //
+//    // case WM_LBUTTONDBLCLK:
+//    // {
+//    //     m_dwMouseState[0] = MOUSE_DBL_CLICK;
+//    // }break;
+//    //
+//    // //MB
+//    // case WM_MBUTTONDOWN:
+//    // {
+//   
+//}
+//
+
     bool Sample::Init()
     {
-
+        Cam.m_Arc_Ball.Init();
 
         HRESULT hr;
         m_Box.Create_Vertex_Index_Const_Data();
@@ -21,14 +85,15 @@
             return false;
         }*/
          m_Map.Init();
+          m_Map.CreateNormalMap(CADevice::m_pDevice, CADevice::m_pImmediate_Device_Context, L"../../_data/map/test_normal_map.bmp");
          m_Map.CreateHeightMap(CADevice::m_pDevice, CADevice::m_pImmediate_Device_Context,
-             L"../../_data/map/HEIGHT_CASTLE.bmp");
+             L"../../_data/map/glow.png");
          MapDesc md;
          md.iNumCols = m_Map.m_iNumCols; 
          md.iNumRows = m_Map.m_iNumRows;
          md.fCellDistance = 1;
          md.szShaderFile = L"heightmap.hlsl";
-         md.szTextureFile = L"../../_data/map/023.jpg";
+         md.szTextureFile = L"../../_data/map/029_512.jpg";
 
          if (!m_Map.Load(CADevice::m_pDevice, md))
          {
@@ -60,7 +125,8 @@
             3000.0f,
             DirectX::XM_PI / 4,
             (float)g_rtClient.right / (float)g_rtClient.bottom);
-
+        //m_Sky.Create_Vertex_Index_Const_Data();
+        //m_Sky.LoadTextures(CADevice::m_pDevice);
         //메인카메라 건드리는거 찾아보기.
 
     //
@@ -79,36 +145,52 @@
     // map.Load(CADevice::m_pDevice,md);
     // 
     // map.CreateVertexData();
-    // map.CreateIndexData();
+     //map.CreateIndexData();
     // map.Create(L"MAP.hlsl", L"MAP.hlsl", "PS", "VS", L"../../_data/sky/ft.bmp", 1, 800, 600, true); 
     //    
         return true;
     }
     bool Sample::Frame()
     {
+        if(I_Input.m_dwMouseState[0]==KEY_HOLD)
+        {
+                   
+        }
+        if (I_Input.m_dwMouseState[1] == KEY_HOLD)
+        {
+            int a = 0;
+        }
+        if (I_Input.m_dwMouseState[2] == KEY_HOLD)
+        {
+            int a = 0;
+        }
+        
+
+
+
 
 
         if (I_Input.KeyCheck('W') == KEY_HOLD)
         {
-            Cam.Move_World_Y();
+            Cam.Move_Look();
           
         }
         if (I_Input.KeyCheck('S') == KEY_HOLD)
         {
-            Cam.Move_World_Rev_Y();
+            Cam.Move_Back();
 
            
         }
 
         if (I_Input.KeyCheck('D') == KEY_HOLD)
         {
-            Cam.Move_World_X();
+            Cam.Move_Right();
 
            
         }
         if (I_Input.KeyCheck('A') == KEY_HOLD)
         {
-            Cam.Move_World_Rev_X();
+            Cam.Move_Left();
 
             
         }
@@ -154,27 +236,42 @@
     bool Sample::Render()
     {
         DX::Set_SState(CADevice::m_pImmediate_Device_Context, DX::CADx_State::m_pSSWrap_Aniso);
-
+        //
         m_Box.SetMatrix(
             &m_matBoxWorld,
             &Cam.m_Matrix_View,
             &Cam.m_Matrix_Projection);
         m_Box.Render(CADevice::m_pImmediate_Device_Context);
-
+        //
 
       /*  m_Obj.SetMatrix(
             &m_matPlaneWorld,
             &Cam.m_Matrix_View,
             &Cam.m_Matrix_Projection);
         m_Obj.Render(CADevice::m_pImmediate_Device_Context);*/
-
+        //
          m_Map.SetMatrix(
              nullptr,
              &Cam.m_Matrix_View,
             &Cam.m_Matrix_Projection);
          m_Map.Render(CADevice::m_pImmediate_Device_Context);
+         //
+         DirectX::XMMATRIX sky_world;
+         sky_world = DirectX::XMMatrixScaling(10, 10, 10);
+         
+         //m_Sky.SetMatrix(sky_world,);
+         //m_Sky.Render(CADevice::m_pImmediate_Device_Context);
 
-
+         //// sky
+         //D3DXMATRIX matSkyWorld;
+         //D3DXMatrixScaling(&matSkyWorld, 10, 10, 10);
+         //D3DXMATRIX matSkyView = m_pMainCamera->m_matView;
+         //matSkyView._41 = 0.0f;
+         //matSkyView._42 = 0.0f;
+         //matSkyView._43 = 0.0f;
+         //m_SkyBox.SetMatrix(&matSkyWorld, &matSkyView,
+         //    &m_pMainCamera->m_matProj);
+         //m_SkyBox.Render(m_pImmediateContext);
          /*
           Set_RSState(CADevice::m_pImmediate_Device_Context, DX::CADx_State::m_pRSSolid_Frame);
           Set_SState(CADevice::m_pImmediate_Device_Context, CADx_State::m_pSSWrap_Linear);

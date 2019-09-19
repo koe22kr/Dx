@@ -35,6 +35,25 @@ namespace DX
         }
     };
 
+    struct PNCTT_VERTEX
+    {
+        DirectX::XMFLOAT3 p;
+        DirectX::XMFLOAT3 n;
+        DirectX::XMFLOAT4 c;
+        DirectX::XMFLOAT2 t;
+        DirectX::XMFLOAT3 tangent;
+        DirectX::XMFLOAT3 Normal_Map;
+        PNCTT_VERTEX() {}
+        PNCTT_VERTEX(DirectX::XMFLOAT3		vp,
+            DirectX::XMFLOAT3		vn,
+            DirectX::XMFLOAT4		vc,
+            DirectX::XMFLOAT2     vt,
+            DirectX::XMFLOAT3 vtangent,
+            DirectX::XMFLOAT3 vNormal_Map)
+        {
+            p = vp, n = vn, c = vc, t = vt, tangent = vtangent, Normal_Map = vNormal_Map;
+        }
+    };
     struct VS_CB2
     {
         DirectX::XMMATRIX matWorld;
@@ -71,6 +90,7 @@ namespace DX
         T_BOX      m_tBox;
         T_SPHERE   m_tSphere;
         vector<PNCT_VERTEX2> m_Vertex_List;
+        vector<PNCTT_VERTEX> m_Vertex_List2;
         vector<DWORD>		m_Index_List;
         DX::CADx_Helper2		m_helper;
         ID3D11Device*			m_pDevice;
