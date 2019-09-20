@@ -21,27 +21,38 @@ namespace DX
     void CADx_Arc_Ball::Move_On(float x, float y)
     {
         m_bDrag = true;
-        m_vbefore_xy.x = x;
-        m_vbefore_xy.y = y;
+        m_vnow_xy.x = x;
+        m_vnow_xy.y = y;
         m_vBefore_Pt = Screen_To_Vector(x, y);
        
        
 
+    }
+    DirectX::XMFLOAT2 CADx_Arc_Ball::xy()
+    {
+        DirectX::XMFLOAT2 temp;
+        DirectX::XMStoreFloat2(&temp, DirectX::XMVectorSubtract(m_vCurrent_Pt, m_vBefore_Pt));
+        //DirectX::XMFLOAT2(m_vnow_xy.x - m_vbefore_xy.x, m_vnow_xy.y - m_vbefore_xy.y)
+        return temp;
     }
     void CADx_Arc_Ball::Moving(float x, float y)
     {
         if (m_bDrag)
         {
         
-            m_vAngle.x += DirectX::XMConvertToRadians(x - m_vbefore_xy.y)*m_fSpeed;
-            m_vAngle.y += DirectX::XMConvertToRadians(y - m_vbefore_xy.x)*m_fSpeed;
+            m_vAngle.x = DirectX::XMConvertToRadians(x - m_vbefore_xy.y)*m_fSpeed;
+            m_vAngle.y = DirectX::XMConvertToRadians(y - m_vbefore_xy.x)*m_fSpeed;
+            m_vbefore_xy = m_vnow_xy;
 
 
-            m_vCurrent_Pt = Screen_To_Vector(x, y);
+            m_vCurrent_Pt = Screen_To_Vector((float)x, (float)y);
             m_qNow = DirectX::XMQuaternionMultiply(m_qBefore, Quat_From_Ball_Points(m_vBefore_Pt, m_vCurrent_Pt));
             //m_qNow = m_qBefore * Quat_From_Ball_Points(m_vBefore_Pt, m_vCurrent_Pt);
+            m_vnow_xy.x = x;
+            m_vnow_xy.y = y;
+            m_qBefore = m_qNow;
 
-
+            
             m_vBefore_Pt = m_vCurrent_Pt;
         }
 

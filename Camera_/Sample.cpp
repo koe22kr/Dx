@@ -9,27 +9,35 @@ void Sample::Msg_Proc(MSG msg)
         int iMouseX = LOWORD(msg.lParam);
         int iMouseY = HIWORD(msg.lParam);
         Cam.m_Arc_Ball.Move_On(iMouseX, iMouseY);
+        Cam.Rotation_YPR();
+        return;
     }
-    if (msg.message == WM_RBUTTONDOWN)
+    /*if (msg.message == WM_RBUTTONDOWN)
     {
         int iMouseX = LOWORD(msg.lParam);
         int iMouseY = HIWORD(msg.lParam);
         Cam.m_Arc_Ball.Moving(iMouseX, iMouseY);
-    }
+        Cam.m_vNow_Angles.x += Cam.m_Arc_Ball.m_vAngle.x;
+        Cam.m_vNow_Angles.y += Cam.m_Arc_Ball.m_vAngle.y;
+    }*/
     if (msg.message == WM_MOUSEMOVE)
     {
         int iMouseX = LOWORD(msg.lParam);
         int iMouseY = HIWORD(msg.lParam);
         Cam.m_Arc_Ball.Moving(iMouseX, iMouseY);
+        Cam.Rotation_YPR();
+
     }
-    if (msg.message == WM_LBUTTONUP ||
+    /*if (msg.message == WM_LBUTTONUP ||
         msg.message == WM_MBUTTONUP ||
         msg.message == WM_RBUTTONUP)
     {
         int iMouseX = LOWORD(msg.lParam);
         int iMouseY = HIWORD(msg.lParam);
         Cam.m_Arc_Ball.Move_End(iMouseX, iMouseY);
-    }
+        Cam.m_vNow_Angles.x += Cam.m_Arc_Ball.m_vAngle.x;
+        Cam.m_vNow_Angles.y += Cam.m_Arc_Ball.m_vAngle.y;
+    }*/
  
 }
 
@@ -85,15 +93,14 @@ void Sample::Msg_Proc(MSG msg)
             return false;
         }*/
          m_Map.Init();
-          m_Map.CreateNormalMap(CADevice::m_pDevice, CADevice::m_pImmediate_Device_Context, L"../../_data/map/test_normal_map.bmp");
          m_Map.CreateHeightMap(CADevice::m_pDevice, CADevice::m_pImmediate_Device_Context,
-             L"../../_data/map/glow.png");
+             L"../../_data/map/HEIGHT_GRASSHILL.bmp");
          MapDesc md;
          md.iNumCols = m_Map.m_iNumCols; 
          md.iNumRows = m_Map.m_iNumRows;
          md.fCellDistance = 1;
-         md.szShaderFile = L"heightmap.hlsl";
-         md.szTextureFile = L"../../_data/map/029_512.jpg";
+         md.szShaderFile = L"Sphere.hlsl";
+         md.szTextureFile = L"../../_data/map/grassenvmap1024.dds";
 
          if (!m_Map.Load(CADevice::m_pDevice, md))
          {
@@ -211,26 +218,7 @@ void Sample::Msg_Proc(MSG msg)
         Cam.Frame();
       //  m_Obj.Frame();
         m_Box.Frame();
-        /*box.m_HDX.Set_Const_Buffer_Self(&box.m_Const_List, 0);
 
-        if(I_Input.KeyCheck('Y')==KEY_HOLD)
-        {
-            Cam.Move_World_Y();
-        }
-        if (I_Input.KeyCheck('H') == KEY_HOLD)
-        {
-            Cam.Move_World_Rev_Y();
-        }
-        if (I_Input.KeyCheck('G') == KEY_HOLD)
-        {
-            Cam.Move_World_Rev_X();
-        }
-        if (I_Input.KeyCheck('J') == KEY_HOLD)
-        {
-            Cam.Move_World_X();
-        }
-        Cam.Rotation_No_Lerp(0.1, 0.1, 0.1);
-        Cam.Frame();*/
         return true;
     }
     bool Sample::Render()
@@ -256,8 +244,8 @@ void Sample::Msg_Proc(MSG msg)
             &Cam.m_Matrix_Projection);
          m_Map.Render(CADevice::m_pImmediate_Device_Context);
          //
-         DirectX::XMMATRIX sky_world;
-         sky_world = DirectX::XMMatrixScaling(10, 10, 10);
+       // DirectX::XMMATRIX sky_world;
+       // sky_world = DirectX::XMMatrixScaling(10, 10, 10);
          
          //m_Sky.SetMatrix(sky_world,);
          //m_Sky.Render(CADevice::m_pImmediate_Device_Context);
@@ -279,7 +267,6 @@ void Sample::Msg_Proc(MSG msg)
           Set_BState(CADevice::m_pImmediate_Device_Context, CADx_State::m_pAlpha_Blend);
             box.Render();
 
-            map.Render(CADevice::m_pImmediate_Device_Context);
       */
         return true;
     }

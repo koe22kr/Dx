@@ -27,6 +27,9 @@
     <ClInclude Include="Light.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Cube.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sample.cpp">
@@ -41,6 +44,9 @@
     <ClCompile Include="Light.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Cube.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\_Shader\PS.psh" />
@@ -48,5 +54,9 @@
     <FxCompile Include="shader.hlsl" />
     <FxCompile Include="heightmap.hlsl" />
     <FxCompile Include="sky.hlsl" />
+    <FxCompile Include="normalmap.hlsl" />
+    <FxCompile Include="Sphere.hlsl">
+      <Filter>소스 파일</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

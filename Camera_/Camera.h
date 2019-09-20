@@ -16,6 +16,11 @@ namespace DX
     {
     //private:
     public:
+        DirectX::XMMATRIX m_mModelRot;
+        DirectX::XMMATRIX m_mModelLastRot;
+        DirectX::XMVECTOR m_vLerpUpVector;
+        DirectX::XMMATRIX m_lastRot;
+
         VS_CB m_cb;
         CADevice_Helper m_hDX;
         CADx_Arc_Ball m_Arc_Ball;
@@ -53,20 +58,16 @@ namespace DX
         /* float m_fCamera_Yaw_Angle;
          float m_fCamera_Pitch_Angle;
          float m_fCamera_Roll_Angle;*/
-
+        virtual void Rotation();
     public:
         void Set_Matrix();
 
         void Lerp_Frame(float Slerp_Speed = 1.0f);
 
-        void Rotation_No_Lerp(float pitch, float yaw, float roll);
         //카메라 이동
         float m_fSpeed = 50.0f;
         float Real_Speed;
-        void Move_Look();
-        void Move_Back();
-        void Move_Left();
-        void Move_Right();
+       
         //void Move_Up();
         void Move_World_Z();
         void Move_World_Y();
@@ -80,12 +81,13 @@ namespace DX
         //
         Camera* m_pMain_Camera;
         void Rotation_By_Arc_Ball();
-        void Non_Target_Camera_Rotation(float yaw, float pitch, float roll);
         //void Target_Camera_Rotation(DirectX::XMVECTOR target);
         //void Model_Camera_Rotation();
         //void Set_Radian();
         void Update();
         bool Set_Camera();    // 해야할.
+
+
 
         bool Init();
         bool Frame();
@@ -96,5 +98,30 @@ namespace DX
         Camera();
         virtual ~Camera();
     };
+    class Debug_Camera :public Camera
+    {
+    public:
+        void Move_Look();
+        void Move_Back();
+        void Move_Left();
+        void Move_Right();
+        void Non_Target_Camera_Rotation(float yaw, float pitch, float roll);
+        void Rotation_No_Lerp(float pitch, float yaw, float roll);
+        DirectX::XMMATRIX Set_View(DirectX::XMVECTOR pos, DirectX::XMVECTOR target_pos, DirectX::XMVECTOR up);
+        virtual void Rotation_YPR();
+
+
+        bool Init();
+        bool Frame();
+        virtual void Rotation();
+
+        Debug_Camera();
+        ~Debug_Camera();
+
+    private:
+
+    };
+
+ 
 
 }

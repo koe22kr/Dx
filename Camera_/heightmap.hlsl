@@ -44,7 +44,7 @@ VS_OUTPUT VS(VS_INPUT input)
     pOut.t = input.t;
     pOut.n = input.n;
 
-
+    
 
     float3 vLight = float3(0.0f, -1.0f, 0.0f) * -1.0f;
     float3 vTexLight = mul(vLight, tbn);

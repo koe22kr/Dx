@@ -23,8 +23,6 @@ namespace DX
         m_vLook_Target_Pos = target_pos;
         m_vUp = up;
         m_Matrix_View = DirectX::XMMatrixLookAtLH(pos, target_pos, up);
-        
-        
 
         return m_Matrix_View;
     }
@@ -45,7 +43,6 @@ namespace DX
         m_vLook = DirectX::XMVectorSet(viewdata._13, viewdata._23, viewdata._33, 0);
         m_vUp = DirectX::XMVectorSet(viewdata._12, viewdata._22, viewdata._32, 0);
         m_vRight = DirectX::XMVectorSet(viewdata._11, viewdata._21, viewdata._31, 0);
-        //m_Matrix_View = Set_View(m_vPos, m_vLook_Target_Pos, m_vUp);
         //m_Matrix_World = DirectX::XMMatrixIdentity();
 
         m_vRight=DirectX::XMVector3Normalize(m_vRight);
@@ -57,17 +54,9 @@ namespace DX
         m_cb.matWorld = DirectX::XMMatrixTranspose(m_Matrix_World);
         m_hDX.Set_Const_Buffer(m_hDX.m_cConst_Buffer.Get(), &m_cb, 0);
         
-        
+        m_Matrix_View = Set_View(m_vPos, m_vLook_Target_Pos, m_vUp);
     }
-    void Camera::Rotation_No_Lerp(float pitch, float yaw, float roll)
-    {
-        m_vTarget_Angles.y += yaw;
-        m_vTarget_Angles.x += pitch;
-        m_vTarget_Angles.z += roll;
-        m_Matrix_View = DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
-        m_Matrix_View = DirectX::XMMatrixInverse(NULL, m_Matrix_View);
-    }
-
+  
     void Camera::Rotation_By_Arc_Ball()
     {
         DirectX::XMVECTOR scale;
@@ -94,16 +83,7 @@ namespace DX
         
     }
 
-    void Camera::Non_Target_Camera_Rotation(float yaw, float pitch, float roll)
-    {
-        m_vTarget_Angles.y += DirectX::XMConvertToRadians(yaw);
-        m_vTarget_Angles.x += DirectX::XMConvertToRadians(pitch);
-        m_vTarget_Angles.z += DirectX::XMConvertToRadians(roll);
-
-
-        Lerp_Frame();
-
-    }
+  
     //DirectX::XMMATRIX Camera::SetViewMatrix(DirectX::XMVECTOR vPos, DirectX::XMVECTOR vTarget, DirectX::XMVECTOR vUp)
     //{
     //    D3DXMatrixLookAtLH(&m_matView, &m_vCameraPos, &m_vTargetPos, &vUp);
@@ -139,22 +119,7 @@ namespace DX
     {
         if (m_uCamera_Type == Non_Target)
         {
-            //鸥南疯 积己
-            DirectX::XMVECTOR Target_Q = DirectX::XMQuaternionRotationRollPitchYaw(m_vTarget_Angles.x, m_vTarget_Angles.y, m_vTarget_Angles.z);
-
-            DirectX::XMMATRIX rotation_matrix = DirectX::XMMatrixRotationQuaternion(Target_Q);
-
-            DirectX::XMVECTOR world_look = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-            m_vTarget_Look = DirectX::XMVector3TransformCoord(world_look, rotation_matrix);
-
-            //m_Matrix_View 积己 (泅犁狼)
-            DirectX::XMVECTOR Now_Q = DirectX::XMQuaternionRotationRollPitchYaw(m_vNow_Angles.x, m_vNow_Angles.y, m_vNow_Angles.z);
-            DirectX::XMVECTOR slerp_quternion = DirectX::XMQuaternionSlerp(Now_Q, Target_Q, Slerp_Speed);
-            DirectX::XMVECTOR Scale = DirectX::XMVectorSplatOne();
-            DirectX::XMVECTOR Zero_Center = DirectX::XMVectorZero();
-            m_Matrix_View = DirectX::XMMatrixAffineTransformation(Scale, Zero_Center, slerp_quternion, m_vPos);
-
-
+           
             //m_Matrix_View = DirectX::XMMatrixInverse(NULL, m_Matrix_View);
         }
         if (m_uCamera_Type == Target)
@@ -233,36 +198,6 @@ namespace DX
         m_fRadian += zoom;
     }
 
-    void Camera::Move_Look()
-    {
-        m_Matrix_View += DirectX::XMMatrixTranslationFromVector(
-            DirectX::XMVectorScale(m_vLook, Real_Speed));
-        m_vPos = DirectX::XMVectorAdd(m_vPos, DirectX::XMVectorScale(m_vLook, Real_Speed));
-    }
-    void Camera::Move_Back()
-    {
-        m_Matrix_View += DirectX::XMMatrixTranslationFromVector(
-            DirectX::XMVectorScale(m_vLook, -Real_Speed));
-        m_vPos = DirectX::XMVectorAdd(m_vPos, DirectX::XMVectorScale(m_vLook, -Real_Speed));
-
-    }
-    void Camera::Move_Left()
-    {
-        m_Matrix_View += DirectX::XMMatrixTranslationFromVector(
-            DirectX::XMVectorScale(m_vRight, -Real_Speed));
-        m_vPos = DirectX::XMVectorAdd(m_vPos, DirectX::XMVectorScale(m_vRight, -Real_Speed));
-        
-
-
-    }
-    void Camera::Move_Right()
-    {
-        m_Matrix_View += DirectX::XMMatrixTranslationFromVector(
-            DirectX::XMVectorScale(m_vRight, Real_Speed));
-        m_vPos = DirectX::XMVectorAdd(m_vPos, DirectX::XMVectorScale(m_vRight, Real_Speed));
-        
-
-    }
 
     //void Camera::Move_Up()
     //{
@@ -321,6 +256,7 @@ namespace DX
 
     bool Camera::Frame()
     {
+        
         Real_Speed = m_fSpeed * g_fSecondPerFrame;
         Slerp_Speed = g_fSecondPerFrame;
         m_vNow_Angles.x = m_Arc_Ball.m_vAngle.x;
@@ -328,7 +264,7 @@ namespace DX
         m_vNow_Angles.z = m_Arc_Ball.m_vAngle.z;
 
         DirectX::XMMATRIX rotation;
-        DirectX::XMVECTOR qrotation = DirectX::XMQuaternionRotationRollPitchYaw(m_vNow_Angles.x, m_vNow_Angles.y, m_vNow_Angles.z);
+        DirectX::XMVECTOR qrotation = DirectX::XMQuaternionRotationRollPitchYaw(DirectX::XMConvertToRadians(m_vNow_Angles.x), DirectX::XMConvertToRadians(m_vNow_Angles.y), DirectX::XMConvertToRadians(m_vNow_Angles.z));
        
         rotation = DirectX::XMMatrixRotationQuaternion(qrotation);       // Rotation_By_Arc_Ball();
         DirectX::XMFLOAT4X4 temp;
@@ -368,9 +304,177 @@ namespace DX
 
 
     }
-
+    void Camera::Rotation()
+    {
+        return;
+    }
 
     Camera::~Camera()
+    {
+    }
+
+
+    
+
+
+    void Debug_Camera::Move_Look()
+    {
+        /* m_Matrix_View += DirectX::XMMatrixTranslationFromVector(
+             DirectX::XMVectorScale(m_vLook, Real_Speed));*/
+        m_vPos = DirectX::XMVectorAdd(m_vPos, DirectX::XMVectorScale(m_vLook, Real_Speed));
+    }
+    void Debug_Camera::Move_Back()
+    {
+        /* m_Matrix_View += DirectX::XMMatrixTranslationFromVector(wzx
+             DirectX::XMVectorScale(m_vLook, -Real_Speed));*/
+        m_vPos = DirectX::XMVectorSubtract(m_vPos, DirectX::XMVectorScale(m_vLook, Real_Speed));
+
+    }
+    void Debug_Camera::Move_Left()
+    {
+        //m_Matrix_View += DirectX::XMMatrixTranslationFromVector(
+        //    DirectX::XMVectorScale(m_vRight, -Real_Speed));
+        m_vPos = DirectX::XMVectorAdd(m_vPos, DirectX::XMVectorScale(m_vRight, -Real_Speed));
+
+
+
+    }
+    void Debug_Camera::Move_Right()
+    {
+        /*  m_Matrix_View += DirectX::XMMatrixTranslationFromVector(
+              DirectX::XMVectorScale(m_vRight, Real_Speed));*/
+        m_vPos = DirectX::XMVectorAdd(m_vPos, DirectX::XMVectorScale(m_vRight, Real_Speed));
+
+
+    }
+
+    void Debug_Camera::Rotation()
+    {
+        DirectX::XMMATRIX rot = m_Arc_Ball.Get_Rotation_Matrix();
+        rot = DirectX::XMMatrixInverse(NULL, rot);
+        if (m_Arc_Ball.m_bDrag)
+        {
+
+        }
+        m_Arc_Ball.Get_Quaternion();
+
+
+        DirectX::XMVECTOR world_look, world_up;
+        DirectX::XMVECTOR local_look = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+        DirectX::XMVECTOR local_up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+        world_look = DirectX::XMVector3TransformCoord(local_look, rot);
+        world_up = DirectX::XMVector3TransformCoord(local_up, rot);
+
+        DirectX::XMMATRIX mInvView;
+        mInvView = DirectX::XMMatrixInverse(NULL, m_Matrix_View);
+        
+        DirectX::XMMATRIX mModelLastRotInv;
+        mModelLastRotInv = DirectX::XMMatrixInverse(NULL, m_mModelLastRot);
+
+        DirectX::XMMATRIX mModelRot;
+        mModelRot = m_Arc_Ball.Get_Rotation_Matrix();
+        m_mModelRot = m_Matrix_View * mModelLastRotInv*mModelRot*mInvView;
+
+        m_mModelLastRot = mModelRot;
+        m_lastRot = rot;
+        DirectX::XMFLOAT4X4 temp;
+        DirectX::XMFLOAT4 vtargetpos;
+        DirectX::XMStoreFloat4x4(&temp, m_mModelRot);
+        DirectX::XMStoreFloat4(&vtargetpos, m_vLook_Target_Pos);
+        temp._41 = vtargetpos.x;
+        temp._42 = vtargetpos.y;
+        temp._43 = vtargetpos.z;
+        m_mModelRot = DirectX::XMLoadFloat4x4(&temp);
+
+        m_vPos = DirectX::XMVectorSubtract(m_vLook_Target_Pos, DirectX::XMVectorScale(local_look, 10));
+        m_vLerpUpVector = DirectX::XMVectorLerp(world_up, local_up,1);
+
+        m_vUp = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+        rot = DirectX::XMMatrixLookAtLH(m_vPos, m_vLook_Target_Pos, m_vUp);
+        //DirectX::XMFLOAT4X4 temp;
+        //DirectX::XMStoreFloat4x4(&temp, rot);
+        //DirectX::XMFLOAT3 pos;
+        //DirectX::XMStoreFloat3(&pos, m_vPos);
+        //temp._41 = pos.x;
+        //temp._42 = pos.y;
+        //temp._43 = pos.z;
+        //m_Matrix_View = DirectX::XMLoadFloat4x4(&temp);
+
+       ////////////////////////////////////////////////////////////////
+
+
+
+    }
+    
+    void Debug_Camera::Non_Target_Camera_Rotation(float yaw, float pitch, float roll)
+    {
+      /*  m_vTarget_Angles.y += DirectX::XMConvertToRadians(yaw);
+        m_vTarget_Angles.x += DirectX::XMConvertToRadians(pitch);
+        m_vTarget_Angles.z += DirectX::XMConvertToRadians(roll);
+
+        Lerp_Frame();*/
+    }
+
+    void Debug_Camera::Rotation_No_Lerp(float pitch, float yaw, float roll)
+    {
+        /*m_vTarget_Angles.y += yaw;
+        m_vTarget_Angles.x += pitch;
+        m_vTarget_Angles.z += roll;
+        m_Matrix_View = DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
+        m_Matrix_View = DirectX::XMMatrixInverse(NULL, m_Matrix_View);*/
+    }
+    bool Debug_Camera::Init()
+    {
+        return true;
+    }
+    bool Debug_Camera::Frame()
+    {
+
+        Real_Speed = m_fSpeed * g_fSecondPerFrame;
+        Slerp_Speed = g_fSecondPerFrame;
+        //Rotation_YPR();
+        Update();
+        return true;
+    }
+    DirectX::XMMATRIX Debug_Camera::Set_View(DirectX::XMVECTOR pos, DirectX::XMVECTOR target_pos, DirectX::XMVECTOR up)
+    {
+
+        // Propogate changes to the member arcball
+        DirectX::XMVECTOR quat;
+        DirectX::XMMatrixLookAtLH(pos, target_pos, up);
+        quat = DirectX::XMQuaternionRotationMatrix(m_Matrix_View);
+        m_Arc_Ball.m_qNow = quat;
+
+        // Set the radius according to the distance
+        DirectX::XMVECTOR vEyeToPoint;
+        vEyeToPoint = DirectX::XMVectorSubtract(target_pos, pos);
+        return m_Matrix_View;
+    }
+
+    void Debug_Camera::Rotation_YPR()
+    {
+        DirectX::XMFLOAT2 temp1 = m_Arc_Ball.xy();
+        m_vNow_Angles.x += temp1.x*0.1f;
+        m_vNow_Angles.y += temp1.y*0.1f;
+        DirectX::XMMATRIX temp =DirectX::XMMatrixRotationRollPitchYaw(m_vNow_Angles.x, m_vNow_Angles.y, m_vNow_Angles.z);
+        DirectX::XMFLOAT4X4 f44;
+        DirectX::XMFLOAT3 pos;
+        DirectX::XMStoreFloat4x4(&f44, temp);
+        DirectX::XMStoreFloat3(&pos, m_vPos);
+        f44._41 = pos.x;
+        f44._42 = pos.y;
+        f44._43 = pos.z;
+        m_Matrix_View = DirectX::XMLoadFloat4x4(&f44);
+
+
+    }
+
+
+    Debug_Camera::Debug_Camera()
+    {
+    }
+
+    Debug_Camera::~Debug_Camera()
     {
     }
 }

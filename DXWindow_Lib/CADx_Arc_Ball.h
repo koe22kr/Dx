@@ -11,6 +11,7 @@ namespace DX
         bool m_bDrag;
         DirectX::XMVECTOR m_vBefore_Pt;
         DirectX::XMFLOAT2 m_vbefore_xy;
+        DirectX::XMFLOAT2 m_vnow_xy;
         DirectX::XMVECTOR m_vCurrent_Pt;
         DirectX::XMFLOAT3 m_vAngle;
         float m_fSpeed = 0.01;
@@ -24,7 +25,7 @@ namespace DX
     public:
         void Init();
         void Set_Window(int width, int height, float radius = 0.9);
-
+        DirectX::XMFLOAT2 xy();
         void Move_On(float x, float y);
         void Moving(float x, float y);
         void Move_End(float x, float y);

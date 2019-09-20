@@ -29,7 +29,7 @@ using namespace DX;
         void Msg_Proc(MSG msg) override;
         //2
         CADx_Shape_Box box;
-        Camera Cam;
+        Debug_Camera Cam;
         Map map;
         bool Init();
         bool Frame();

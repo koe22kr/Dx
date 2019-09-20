@@ -193,6 +193,8 @@ copy "..\\..\\_etc\\FMOD\\lib\\x64\\*.*" "..\\..\\_lib\\FMOD\\x64\\"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Arc_Ball.cpp" />
+    <ClCompile Include="Back_Camera.cpp" />
     <ClCompile Include="CACore.cpp" />
     <ClCompile Include="CADx_Arc_Ball.cpp" />
     <ClCompile Include="CADx_Helper2.cpp" />
@@ -201,6 +203,7 @@ copy "..\\..\\_etc\\FMOD\\lib\\x64\\*.*" "..\\..\\_lib\\FMOD\\x64\\"</Command>
     <ClCompile Include="CADx_State.cpp" />
     <ClCompile Include="CADx_Text.cpp" />
     <ClCompile Include="CAInput.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CAMessageList.cpp" />
     <ClCompile Include="CADevice_Helper.cpp" />
     <ClCompile Include="CADx_Model.cpp" />
@@ -213,8 +216,11 @@ copy "..\\..\\_etc\\FMOD\\lib\\x64\\*.*" "..\\..\\_lib\\FMOD\\x64\\"</Command>
     <ClCompile Include="CAWindow.cpp" />
     <ClCompile Include="CADevice.cpp" />
     <ClCompile Include="CADx_Object.cpp" />
+    <ClCompile Include="Frustum.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Arc_Ball.h" />
+    <ClInclude Include="Back_Camera.h" />
     <ClInclude Include="CACore.h" />
     <ClInclude Include="CADx_Arc_Ball.h" />
     <ClInclude Include="CADx_Helper2.h" />
@@ -224,6 +230,7 @@ copy "..\\..\\_etc\\FMOD\\lib\\x64\\*.*" "..\\..\\_lib\\FMOD\\x64\\"</Command>
     <ClInclude Include="CADx_Std.h" />
     <ClInclude Include="CADx_Text.h" />
     <ClInclude Include="CAInput.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="CAMessageList.h" />
     <ClInclude Include="CADevice_Helper.h" />
     <ClInclude Include="CADx_Model.h" />
@@ -237,6 +244,7 @@ copy "..\\..\\_etc\\FMOD\\lib\\x64\\*.*" "..\\..\\_lib\\FMOD\\x64\\"</Command>
     <ClInclude Include="CAWindow.h" />
     <ClInclude Include="CADevice.h" />
     <ClInclude Include="CADx_Object.h" />
+    <ClInclude Include="Frustum.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
