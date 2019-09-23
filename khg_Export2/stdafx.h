@@ -10,7 +10,6 @@
 #define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용을 Windows 헤더에서 제외합니다.
 // Windows 헤더 파일
 #include <windows.h>
-
 #include <istdplug.h>
 #include <iparamb2.h>
 #include <iparamm2.h>
@@ -19,8 +18,7 @@
 #include <max.h>
 #include <stdmat.h>
 #include <decomp.h>
-//#include <bipexp.h>
-//#include <phyexp.h>
-#include <iskin.h>
-
+//#include <bipexp.h> 케릭터 할때 연결한다.
+//#include <phyexp.h> 이하동문
+#include <iskin.h> 
 // 여기서 프로그램에 필요한 추가 헤더를 참조합니다.

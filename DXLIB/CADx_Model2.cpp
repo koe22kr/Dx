@@ -151,16 +151,18 @@ namespace DX
     }
     bool  CADx_Model2::Render(ID3D11DeviceContext* pContext)
     {
-       /* float fTime = g_fGameTimer;
+        float fTime = g_fGameTimer;
         m_cb.color[0] = cosf(fTime);
         m_cb.color[1] = sinf(fTime);
         m_cb.color[2] = 1 - cosf(fTime);
         m_cb.color[3] = 1.0f;
         m_cb.etc[0] = fTime;
-        pContext->UpdateSubresource(
-            m_helper.m_pConstantBuffer.Get(),
-            0, NULL, &m_cb, 0, 0);*/
-
+        if (m_helper.m_pConstantBuffer != NULL)
+        {
+            pContext->UpdateSubresource(
+                m_helper.m_pConstantBuffer.Get(),
+                0, NULL, &m_cb, 0, 0);
+        }
         PreRender(pContext);
         PostRender(pContext);
         return true;

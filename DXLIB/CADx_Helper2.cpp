@@ -319,26 +319,39 @@ namespace DX
     {
         //DX::ApplyBS(pContext, DX::TDxState::m_pAlphaBlend);
         //DX::ApplySS(pContext, DX::TDxState::m_pSSWrapLinear);
+        if (m_pConstantBuffer) {
 
-        pContext->VSSetConstantBuffers(0, 1,
-            m_pConstantBuffer.GetAddressOf());
+            pContext->VSSetConstantBuffers(0, 1,
+                m_pConstantBuffer.GetAddressOf());
+        }
+        if (m_pSRV) {
+
         pContext->PSSetShaderResources(0, 1,
             m_pSRV.GetAddressOf());
+    }
        // pContext->PSSetShaderResources(1, 1, m_pSRV.GetAddressOf());
         pContext->IASetInputLayout(m_pInputLayout.Get());
-        pContext->VSSetShader(m_pVertexShader.Get(), NULL, 0);
-        pContext->PSSetShader(m_pPixelShader.Get(), NULL, 0);
+        if (m_pVertexShader ) {
 
+            pContext->VSSetShader(m_pVertexShader.Get(), NULL, 0);
+        }
+        if (m_pPixelShader ) {
+            pContext->PSSetShader(m_pPixelShader.Get(), NULL, 0);
+        }
         UINT stride = iSize;
         UINT offset = 0;
-        pContext->IASetVertexBuffers(0, 1,
-            m_pVertexBuffer.GetAddressOf(),
-            &stride, &offset);
-
-        pContext->IASetIndexBuffer(
-            m_pIndexBuffer.Get(),
-            DXGI_FORMAT_R32_UINT, 0);
-
+        if (m_pVertexBuffer)
+        {
+            pContext->IASetVertexBuffers(0, 1,
+                m_pVertexBuffer.GetAddressOf(),
+                &stride, &offset);
+        }
+        if (m_pIndexBuffer)
+        {
+            pContext->IASetIndexBuffer(
+                m_pIndexBuffer.Get(),
+                DXGI_FORMAT_R32_UINT, 0);
+        }
         pContext->IASetPrimitiveTopology(
             D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 

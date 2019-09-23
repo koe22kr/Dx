@@ -26,6 +26,7 @@ struct LIGHT_CONSTANT_BUFFER
 
 class Sample :public CACore
 {
+    float angleyaw;
     CADx_Shape m_shape_Obj;
     CADx_Shape_Line m_Debug_Line;
     D3DXVECTOR3		m_vLightVector;

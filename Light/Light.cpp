@@ -17,16 +17,25 @@ bool Sample::Init()
 }
 bool Sample::Render()
 {
+    angleyaw += g_fSecondPerFrame * 0.7f;
+
+
     D3DXMATRIX matWorld, matScale;
+    matWorld._41 = 2.0f;
+    matWorld._41 = 2.0f;
+
     D3DXMatrixScaling(&matScale, 100, 100, 100);
-    D3DXMatrixRotationY(&matWorld, g_fSecondPerFrame*0.1f);
+    D3DXMatrixRotationY(&matWorld, angleyaw);
     D3DXMatrixMultiply(&matWorld, &matScale, &matWorld);
-    matWorld._42 = 200.0f;
+    
+    D3DXVECTOR4 temp;
+    D3DXVec3Transform(&temp, &m_vLightVector, &matWorld);
     ///
-    m_cbLight.g_vLightDir.x = m_vLightVector.x;
-    m_cbLight.g_vLightDir.y = m_vLightVector.y;
-    m_cbLight.g_vLightDir.z = m_vLightVector.z;
+    m_cbLight.g_vLightDir.x = temp.x;
+    m_cbLight.g_vLightDir.y = temp.y;
+    m_cbLight.g_vLightDir.z = temp.z;
     m_cbLight.g_vLightDir.w = 1;
+
     D3DXMATRIX matInvWorld;
     D3DXMatrixInverse(&matInvWorld, NULL, &matWorld);
     D3DXMatrixTranspose(&matInvWorld, &matInvWorld);
@@ -93,7 +102,7 @@ bool Sample::Frame()
 
     D3DXMATRIX mLightWorld, mTranslate, mRotation;
     D3DXMatrixTranslation(&mTranslate, 100.0f, 100.0f, 0.0f);
-    D3DXMatrixRotationY(&mRotation, t*0.1f);
+    D3DXMatrixRotationY(&mRotation, t);
     D3DXMatrixMultiply(&mLightWorld, &mTranslate, &mRotation);
 
     m_vLightVector.x = mLightWorld._41;
