@@ -12,10 +12,10 @@ namespace DX
 
         // Propogate changes to the member arcball
         D3DXQUATERNION quat;
-        D3DXMATRIXA16 mRotation;
+        //D3DXMATRIXA16 mRotation;
 
-        D3DXMatrixLookAtLH(&mRotation, &vPos, &vTarget, &vUp);
-        D3DXQuaternionRotationMatrix(&quat, &mRotation);
+        D3DXMatrixLookAtLH(&m_matView, &vPos, &vTarget, &vUp);
+        D3DXQuaternionRotationMatrix(&quat, &m_matView);
         m_ViewArcBall.SetQuatNow(quat);
 
         // Set the radius according to the distance
@@ -48,12 +48,13 @@ namespace DX
         //// Get the inverse of the arcball's rotation matrix
         D3DXMATRIX mCameraRot;
         D3DXMatrixInverse(&mCameraRot, NULL, m_ViewArcBall.GetRotationMatrix());
-
+        
         //// Transform vectors based on camera's rotation matrix
         D3DXVECTOR3 vWorldUp, vWorldAhead;
         D3DXVECTOR3 vLocalUp = D3DXVECTOR3(0, 1, 0);
         D3DXVECTOR3 vLocalAhead = D3DXVECTOR3(0, 0, 1);
         D3DXVec3TransformCoord(&vWorldUp, &vLocalUp, &mCameraRot);
+        D3DXVec3Normalize(&vWorldUp, &vWorldUp);
         D3DXVec3TransformCoord(&vWorldAhead, &vLocalAhead, &mCameraRot);
 
 
@@ -62,7 +63,7 @@ namespace DX
         {
             m_vCameraDestination = m_vCameraPos = m_vTargetPos - vWorldAhead * m_fRadius;
         }
-        if (I_Input.KeyCheck('W')==KEY_HOLD|| I_Input.KeyCheck('S') == KEY_HOLD)
+        if (I_Input.KeyCheck('W')==KEY_HOLD|| I_Input.KeyCheck('S') == KEY_HOLD || I_Input.KeyCheck('A') == KEY_HOLD || I_Input.KeyCheck('D') == KEY_HOLD || I_Input.KeyCheck('R') == KEY_HOLD || I_Input.KeyCheck('F') == KEY_HOLD)
         {
             m_vCameraDestination = m_vCameraPos = m_vTargetPos - vWorldAhead * m_fRadius;
 
@@ -83,10 +84,12 @@ namespace DX
         //    &m_vCameraPos,
         //    &m_vCameraDestination, 1);
 
-        if (!m_ViewArcBall.m_bDrag)
+        /*if (!m_ViewArcBall.m_bDrag)
         {
             SetViewMatrix(m_vCameraPos, m_vTargetPos, vWorldUp);
-        }
+        }*/
+
+
         //  좌우 앞뒤만 움직인다.
         //else
         //{/	
@@ -104,16 +107,20 @@ namespace DX
         //뷰 공간에서 arcball회전의 변경값을 누적한다.
         D3DXMATRIX mModelRot;
         mModelRot = *m_WorldArcBall.GetRotationMatrix();
-        m_mModelRot *= m_matView * mModelLastRotInv * mModelRot * mInvView;
+        //m_mModelRot *= m_matView * mModelLastRotInv * mModelRot * mInvView;
+        m_mModelRot = m_mModelRot * m_matView * mModelLastRotInv * mModelRot * mInvView;
 
         m_mCameraRotLast = mCameraRot;
         m_mModelLastRot = mModelRot;
 
         // 회전 행렬을 lookAt 위치와 동일한 위치로 변환한다.
-        m_mModelRot._41 = m_vTargetPos.x;
+        /*m_mModelRot._41 = m_vTargetPos.x;
         m_mModelRot._42 = m_vTargetPos.y;
-        m_mModelRot._43 = m_vTargetPos.z;
-        
+        m_mModelRot._43 = m_vTargetPos.z;*/
+        m_mModelRot._41 = m_vCameraPos.x;
+        m_mModelRot._42 = m_vCameraPos.y;
+        m_mModelRot._43 = m_vCameraPos.z;
+        m_mModelRot._44 = 1.0f;
         // 모델의 중심에서 월드행렬 변환한다.
         D3DXMATRIX mTrans;
         D3DXMatrixTranslation(&mTrans, -m_vModelCenter.x, -m_vModelCenter.y, -m_vModelCenter.z);
@@ -138,6 +145,7 @@ namespace DX
     {
         m_vTargetPos += m_vRightVector * fValue*2 * g_fSecondPerFrame;
         MovementTarget(fValue, m_vObjectVector[0]);
+
     }
     void TBackViewCamera::MoveUp(float fValue)
     {

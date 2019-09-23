@@ -193,7 +193,10 @@ namespace DX
         float fValue = I_Input.m_DIMouseState.lZ;
         m_fDistance = m_fSpeed * fValue * g_fSecondPerFrame;
 
-        if (I_Input.KeyCheck(DIK_LSHIFT))	m_fSpeed += g_fSecondPerFrame * 10.0f;
+        if (I_Input.KeyCheck('Z'))
+        {
+            m_fSpeed += g_fSecondPerFrame * 10.0f;
+        }
         else						m_fSpeed -= g_fSecondPerFrame * 10.0f;
         // 최소값으로 고정
         if (m_fSpeed < 1.0f) m_fSpeed = 1.0f;

@@ -364,6 +364,7 @@ namespace DX
             pContext->DrawIndexed(iCount, 0, 0);
         else
             pContext->Draw(m_iNumVertex, 0);
+        
     }
     bool CADx_Helper2::Render(ID3D11DeviceContext* pContext, UINT iCount, UINT iSize)
     {

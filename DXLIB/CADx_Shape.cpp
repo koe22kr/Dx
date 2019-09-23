@@ -46,10 +46,10 @@ namespace DX
     bool CADx_Shape_Line::Draw_Line(ID3D11DeviceContext* pContext, D3DXVECTOR3 vStart, D3DXVECTOR3 vEnd, D3DXVECTOR4 vColor)
     {
         PNCT_VERTEX2 vertices[2];
-        m_LineVertexList[0].p = *(XMFLOAT3 *)&vStart;
-        m_LineVertexList[0].c = *(XMFLOAT4 *)&vColor;
-        m_LineVertexList[1].p = *(XMFLOAT3 *)& vEnd;
-        m_LineVertexList[1].c = *(XMFLOAT4 *)& vColor;
+        vertices[0].p = *(XMFLOAT3 *)&vStart;
+        vertices[0].c = *(XMFLOAT4 *)&vColor;
+        vertices[1].p = *(XMFLOAT3 *)& vEnd;
+        vertices[1].c = *(XMFLOAT4 *)& vColor;
         // 동적 리소스 갱신 방법 1 : D3D11_USAGE_DEFAULT 사용
         pContext->UpdateSubresource(m_helper.m_pVertexBuffer.Get(), 0, NULL, &vertices, 0, 0);
         return Render(pContext);

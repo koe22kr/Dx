@@ -268,9 +268,15 @@ namespace DX
         D3DXMATRIX* pView,
         D3DXMATRIX* pProj)
     {
+
         if (pWorld != nullptr)
         {
-       
+            DirectX::XMFLOAT4X4 temp;
+            DirectX::XMStoreFloat4x4(&temp, m_matWorld);
+            m_tBox.vCenter.x = temp._41;
+            m_tBox.vCenter.y = temp._42;
+            m_tBox.vCenter.z = temp._43;
+            m_tSphere.vCenter = *((DirectX::XMFLOAT3*)&m_tBox.vCenter);
             m_matWorld = *((DirectX::XMMATRIX*)pWorld);
             
         }
@@ -288,14 +294,6 @@ namespace DX
         m_cb.matProj = DirectX::XMMatrixTranspose(m_matProj);
 
 
-        DirectX::XMFLOAT4X4 temp;
-        DirectX::XMStoreFloat4x4(&temp, m_matWorld);
-
-
-        m_tBox.vCenter.x = temp._41;
-        m_tBox.vCenter.y = temp._42;
-        m_tBox.vCenter.z = temp._43;
-        m_tSphere.vCenter = *((DirectX::XMFLOAT3*)&m_tBox.vCenter);
     }
 
     CADx_Model2::CADx_Model2()

@@ -157,11 +157,12 @@ bool CACore::CACoreInit()
         (float)g_rtClient.right / (float)g_rtClient.bottom,
         1.0f,
         3000.0f);
+    m_Default_Cam.m_vCameraPos = { 0.0f,100.0f,-100.0f };
     m_pMain_Cam = &m_Default_Cam;
     m_pMain_Cam->m_vTargetPos = *(D3DVECTOR*)&DirectX::XMVectorSet(m_pMain_Cam->m_vCameraPos.x, m_pMain_Cam->m_vCameraPos.y, m_pMain_Cam->m_vCameraPos.z, 0);
-    m_pMain_Cam->SetViewMatrix(
-        m_pMain_Cam->m_vCameraPos, m_pMain_Cam->m_vTargetPos, m_pMain_Cam->m_vUpVector);
-    m_Heightmap.Init(L"../../_shader/light.hlsl", L"../../_data/map/mounds.jpg",L"../../_data/map/HEIGHT_MOUNTAIN.bmp");
+  /*  m_pMain_Cam->SetViewMatrix(
+        m_pMain_Cam->m_vCameraPos, m_pMain_Cam->m_vTargetPos, m_pMain_Cam->m_vUpVector);*/
+    m_Heightmap.Init(L"../../_shader/light.hlsl", L"../../_data/map/castle.jpg",L"../../_data/map/HEIGHT_CASTLE.bmp");
     /*if (!Sky_box.Create(CADevice::m_pDevice, L"sky.hlsl", nullptr))
     {
         return false;
