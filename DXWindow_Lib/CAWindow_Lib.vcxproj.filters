@@ -16,9 +16,6 @@
     <Filter Include="ex2">
       <UniqueIdentifier>{fb5c9512-0678-408c-bfc4-c284de8e7cd6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ex2\t2">
-      <UniqueIdentifier>{f36c13f3-eeb4-4868-804b-ab2cd78e04ea}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CACore.cpp">
@@ -80,18 +77,6 @@
     </ClCompile>
     <ClCompile Include="CADx_Shape.cpp">
       <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Frustum.cpp">
-      <Filter>ex2\t2</Filter>
-    </ClCompile>
-    <ClCompile Include="Arc_Ball.cpp">
-      <Filter>ex2\t2</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>ex2\t2</Filter>
-    </ClCompile>
-    <ClCompile Include="Back_Camera.cpp">
-      <Filter>ex2\t2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -160,18 +145,6 @@
     </ClInclude>
     <ClInclude Include="CATexture_Mgr.h">
       <Filter>ex2</Filter>
-    </ClInclude>
-    <ClInclude Include="Frustum.h">
-      <Filter>ex2\t2</Filter>
-    </ClInclude>
-    <ClInclude Include="Arc_Ball.h">
-      <Filter>ex2\t2</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>ex2\t2</Filter>
-    </ClInclude>
-    <ClInclude Include="Back_Camera.h">
-      <Filter>ex2\t2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

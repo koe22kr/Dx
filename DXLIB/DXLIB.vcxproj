@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CACore.cpp" />
+    <ClCompile Include="CADevice.cpp" />
+    <ClCompile Include="CADevice_Helper.cpp" />
+    <ClCompile Include="CADx_Helper2.cpp" />
+    <ClCompile Include="CADx_Map.cpp" />
+    <ClCompile Include="CADx_Model.cpp" />
+    <ClCompile Include="CADx_Model2.cpp" />
+    <ClCompile Include="CADx_RT.cpp" />
+    <ClCompile Include="CADx_Shape.cpp" />
+    <ClCompile Include="CADx_State.cpp" />
+    <ClCompile Include="CADx_Text.cpp" />
+    <ClCompile Include="CAInput.cpp" />
+    <ClCompile Include="CAMessageList.cpp" />
+    <ClCompile Include="CASound.cpp" />
+    <ClCompile Include="CASoundMgr.cpp" />
+    <ClCompile Include="CATexture.cpp" />
+    <ClCompile Include="CATexture_Mgr.cpp" />
+    <ClCompile Include="CATimer.cpp" />
+    <ClCompile Include="CAWindow.cpp" />
+    <ClCompile Include="TArcBall.cpp" />
+    <ClCompile Include="TBackViewCamera.cpp" />
+    <ClCompile Include="TCamera.cpp" />
+    <ClCompile Include="TFrustum.cpp" />
+    <ClCompile Include="TModelViewCamera.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CACore.h" />
+    <ClInclude Include="CADevice.h" />
+    <ClInclude Include="CADevice_Helper.h" />
+    <ClInclude Include="CADx_Helper2.h" />
+    <ClInclude Include="CADx_Map.h" />
+    <ClInclude Include="CADx_Model.h" />
+    <ClInclude Include="CADx_Model2.h" />
+    <ClInclude Include="CADx_RT.h" />
+    <ClInclude Include="CADx_Shape.h" />
+    <ClInclude Include="CADx_State.h" />
+    <ClInclude Include="CADx_Std.h" />
+    <ClInclude Include="CADx_Text.h" />
+    <ClInclude Include="CAInput.h" />
+    <ClInclude Include="CAMessageList.h" />
+    <ClInclude Include="CASound.h" />
+    <ClInclude Include="CASoundMgr.h" />
+    <ClInclude Include="CAStd.h" />
+    <ClInclude Include="CATexture.h" />
+    <ClInclude Include="CATexture_Mgr.h" />
+    <ClInclude Include="CATimer.h" />
+    <ClInclude Include="CAWindow.h" />
+    <ClInclude Include="TArcBall.h" />
+    <ClInclude Include="TBackViewCamera.h" />
+    <ClInclude Include="TCamera.h" />
+    <ClInclude Include="TFrustum.h" />
+    <ClInclude Include="TModelViewCamera.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{E11BF6D0-7A05-42CD-A4A6-8E6D53E1C337}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>DXLIB</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Dx_D.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Dx_D.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Dx_D.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Dx_D.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\DIR\_etc\DX\Include;../../_inc;../../_inc/FMOD</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalLibraryDirectories>../../_lib/DXWindow64_/;../../_lib/FMOD/x64/;../../_etc/dx/lib/x64/</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>md "..\\..\\_lib\\$(ProjectName)/"
+md "..\\..\\_inc\\$(ProjectName)/"
+
+copy "*.lib" "..\\..\\_lib\\$(ProjectName)"
+copy "*.h" "..\\..\\_inc\\$(ProjectName)"</Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>md "..\\..\\_lib\\FMOD/x64"
+md "..\\..\\_inc\\FMOD/"
+copy "..\\..\\_etc\\FMOD\\inc\\*.*" "..\\..\\_inc\\FMOD\\"
+copy "..\\..\\_etc\\FMOD\\lib\\x64\\*.*" "..\\..\\_lib\\FMOD\\x64\\"</Command>
+    </PreBuildEvent>
+    <Lib>
+      <OutputFile>DXLIB.lib</OutputFile>
+      <AdditionalDependencies>winmm.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../_data/lib/FMOD/x64;D:\DIR\_etc\DX\Lib\x64</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

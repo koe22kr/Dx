@@ -3,22 +3,7 @@
 namespace DX
 {
     
-    struct PNCT_VERTEX
-    {
-        DirectX::XMFLOAT3 p;
-        DirectX::XMFLOAT3 n;
-        DirectX::XMFLOAT4 c;
-        DirectX::XMFLOAT2 t;
-
-        PNCT_VERTEX() {}
-        PNCT_VERTEX(DirectX::XMFLOAT3 in_p, DirectX::XMFLOAT3 in_n, DirectX::XMFLOAT4 in_c, DirectX::XMFLOAT2 in_t)
-        {
-            p = in_p;
-            n = in_n;
-            c = in_c;
-            t = in_t;
-        }
-    };
+    
 
     struct VS_CB
     {
@@ -59,7 +44,7 @@ namespace DX
         ID3D11ShaderResourceView* m_pSRV;*/
 
     private:
-        bool Create_Vertex_Buffer(void* data, int num, int size, ID3D11Buffer*& pVertex_buffer, ID3D11Device* pDevice = CADevice::m_pDevice);
+        bool Create_Vertex_Buffer(void* data, int num, int size, ID3D11Buffer* pVertex_buffer, ID3D11Device* pDevice = CADevice::m_pDevice);
         bool Create_Vertex_Buffer_Self(std::vector<PNCT_VERTEX>* m_Vertex_List, ID3D11Device* pDevice = CADevice::m_pDevice);
 
 

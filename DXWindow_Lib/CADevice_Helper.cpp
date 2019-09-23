@@ -135,7 +135,7 @@ namespace DX
         return true;
     }
 
-    bool CADevice_Helper::Create_Const_Buffer(ID3D11Buffer*& pConst_buffer, void* Const_data, int num, int size, ID3D11Device* pDevice)
+    bool CADevice_Helper::Create_Const_Buffer(ID3D11Buffer* pConst_buffer, void* Const_data, int num, int size, ID3D11Device* pDevice)
     {
         D3D11_BUFFER_DESC BD;
         ZeroMemory(&BD, sizeof(D3D11_BUFFER_DESC));
