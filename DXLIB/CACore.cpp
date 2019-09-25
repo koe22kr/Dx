@@ -15,45 +15,68 @@ void CACore::Debug_Frame()
 
     if (I_Input.KeyCheck('1') == KEY_PUSH)
     {
-        if (RS_FLAG)
+        switch (RS_COUNT)
+        {
+        case 1:
+        {
+            DX::Set_RSState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pRSSolid_Frame);
+            RS_COUNT++;
+            break;
+        }
+        case 2:
         {
             DX::Set_RSState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pRSWire_Frame);
-            RS_FLAG = !RS_FLAG;
-        }
-        else
-        {
-            RS_FLAG = !RS_FLAG;
-            DX::Set_RSState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pRSSolid_Frame);
-        }
-    }
-    if (I_Input.KeyCheck('2') == KEY_PUSH)
-    {
-        if (AB_FLAG)
-        {
-            DX::Set_BState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pAlpha_Blend_Disable);
-            AB_FLAG = !AB_FLAG;
-        }
-        else
-        {
-            AB_FLAG =! AB_FLAG;
-            DX::Set_BState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pAlpha_Blend);
-        }
-    }
-    if (I_Input.KeyCheck('3') == KEY_PUSH)
-    {
-        if (SS_FLAG)
-        {
-            SS_FLAG =!SS_FLAG;
-            DX::Set_SState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pSSWrap_Linear);
-        }
-        else
-        {
-            DX::Set_SState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pSSWrap_Aniso);
-            SS_FLAG =! SS_FLAG;
-        }
-        //m_pSSWrap_Linear
-    }
+            RS_COUNT++;
+            break;
 
+        }
+        case 3:
+        {
+            DX::Set_RSState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pRSBackCul_Frame);
+            RS_COUNT++;
+            break;
+
+        }
+        case 4:
+        {
+            DX::Set_RSState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pRSFrontCul_Frame);
+            RS_COUNT = 1;
+            break;
+        }
+
+        }
+        if (I_Input.KeyCheck('2') == KEY_PUSH)
+        {
+            if (AB_FLAG)
+            {
+                DX::Set_BState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pAlpha_Blend_Disable);
+                AB_FLAG = !AB_FLAG;
+            }
+            else
+            {
+                AB_FLAG = !AB_FLAG;
+                DX::Set_BState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pAlpha_Blend);
+            }
+        }
+        if (I_Input.KeyCheck('3') == KEY_PUSH)
+        {
+            if (SS_FLAG)
+            {
+                SS_FLAG = !SS_FLAG;
+                DX::Set_SState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pSSWrap_Linear);
+            }
+            else
+            {
+                DX::Set_SState(m_Device.m_pImmediate_Device_Context, DX::CADx_State::m_pSSWrap_Aniso);
+                SS_FLAG = !SS_FLAG;
+            }
+            //m_pSSWrap_Linear
+        }
+
+
+
+
+    }
 }
 void CACore::Debug_Render()
 {
@@ -160,9 +183,11 @@ bool CACore::CACoreInit()
     m_Default_Cam.m_vCameraPos = { 0.0f,100.0f,-100.0f };
     m_pMain_Cam = &m_Default_Cam;
     m_pMain_Cam->m_vTargetPos = *(D3DVECTOR*)&DirectX::XMVectorSet(m_pMain_Cam->m_vCameraPos.x, m_pMain_Cam->m_vCameraPos.y, m_pMain_Cam->m_vCameraPos.z, 0);
-  /*  m_pMain_Cam->SetViewMatrix(
-        m_pMain_Cam->m_vCameraPos, m_pMain_Cam->m_vTargetPos, m_pMain_Cam->m_vUpVector);*/
+    
     m_Heightmap.Init(L"../../_shader/light.hlsl", L"../../_data/map/castle.jpg",L"../../_data/map/HEIGHT_CASTLE.bmp");
+
+    m_DiffuseLight.Init();
+
     /*if (!Sky_box.Create(CADevice::m_pDevice, L"sky.hlsl", nullptr))
     {
         return false;
@@ -185,6 +210,7 @@ bool CACore::CACoreFrame()
     I_Input.Frame();
     I_SoundMgr.Frame();
     m_pMain_Cam->Frame();
+    m_DiffuseLight.Frame(m_pMain_Cam);
 
 #if defined _DEBUG || DEBUG
     Debug_Frame();

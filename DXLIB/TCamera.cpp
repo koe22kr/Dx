@@ -319,7 +319,7 @@ namespace DX
         D3DXMatrixIdentity(&m_matView);
         D3DXMatrixIdentity(&m_matProj);
 
-        m_fSpeed = 10.0f;
+        m_fSpeed = 1.0f;
         m_fOffsetPos = 30.0f;
     }
     TGameCamera::~TGameCamera()

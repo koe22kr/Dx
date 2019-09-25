@@ -50,7 +50,6 @@ bool Sample::Render()
    D3DXMatrixTranspose(&matInvWorld, &matInvWorld);
    D3DXMatrixTranspose(&m_cbLight.g_matInvWorld, &matInvWorld);
 
-    //const updatesubresourece 있던자리
     m_cbLight.g_vEyeDir.x = m_pMain_Cam->m_vLookVector.x;
     m_cbLight.g_vEyeDir.y = m_pMain_Cam->m_vLookVector.y;
     m_cbLight.g_vEyeDir.z = m_pMain_Cam->m_vLookVector.z;
@@ -61,12 +60,10 @@ bool Sample::Render()
     CADevice::m_pImmediate_Device_Context->PSSetConstantBuffers(1, 1, m_pConstantBufferLight.GetAddressOf());
 
     
-    //m_shape_Obj.SetMatrix(&matWorld, m_pMain_Cam->GetViewMatrix(), m_pMain_Cam->GetProjMatrix());
 
     D3DXMatrixIdentity(&m_cbLight.g_matInvWorld);
     CADevice::m_pImmediate_Device_Context->UpdateSubresource(m_pConstantBufferLight.Get(), 0, NULL, &m_cbLight, 0, 0);
 
-    //m_shape_Obj.Render(CADevice::m_pImmediate_Device_Context);
 
     return true;
 }

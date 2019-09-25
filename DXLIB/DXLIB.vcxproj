@@ -38,6 +38,7 @@
     <ClCompile Include="CATexture_Mgr.cpp" />
     <ClCompile Include="CATimer.cpp" />
     <ClCompile Include="CAWindow.cpp" />
+    <ClCompile Include="CADx_Light.cpp" />
     <ClCompile Include="TArcBall.cpp" />
     <ClCompile Include="TBackViewCamera.cpp" />
     <ClCompile Include="TCamera.cpp" />
@@ -66,6 +67,7 @@
     <ClInclude Include="CATexture_Mgr.h" />
     <ClInclude Include="CATimer.h" />
     <ClInclude Include="CAWindow.h" />
+    <ClInclude Include="CADx_Light.h" />
     <ClInclude Include="TArcBall.h" />
     <ClInclude Include="TBackViewCamera.h" />
     <ClInclude Include="TCamera.h" />

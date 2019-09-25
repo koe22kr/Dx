@@ -7,6 +7,8 @@ namespace DX
     ID3D11BlendState* CADx_State::m_pAlpha_Blend_Disable = 0;
     ID3D11RasterizerState* CADx_State::m_pRSWire_Frame = 0;
     ID3D11RasterizerState* CADx_State::m_pRSSolid_Frame = 0;
+    ID3D11RasterizerState*  CADx_State::m_pRSBackCul_Frame = 0;
+    ID3D11RasterizerState*  CADx_State::m_pRSFrontCul_Frame = 0;
 
     ID3D11SamplerState* CADx_State::m_pSSWrap_Linear = 0;
     ID3D11SamplerState* CADx_State::m_pSSWrap_Aniso = 0;
@@ -113,6 +115,22 @@ namespace DX
             EM(hr, m_pRSSolid_Frame, CADx_State);
             return;
         }
+        rsDesc.CullMode = D3D11_CULL_BACK;
+        if (FAILED(hr =
+            pDevice->CreateRasterizerState(&rsDesc, &m_pRSBackCul_Frame)))
+        {
+            EM(hr, m_pRSSolid_Frame, CADx_State);
+            return;
+        }
+        rsDesc.CullMode = D3D11_CULL_FRONT;
+
+        if (FAILED(hr =
+            pDevice->CreateRasterizerState(&rsDesc, &m_pRSFrontCul_Frame)))
+        {
+            EM(hr, m_pRSSolid_Frame, CADx_State);
+            return;
+        }
+
 #pragma endregion		RESTERIZER
 
 #pragma region DEPTH_STENCIL

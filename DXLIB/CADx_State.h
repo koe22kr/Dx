@@ -14,6 +14,8 @@ namespace DX
         //ID3D11RasterizerState
         static ID3D11RasterizerState*  m_pRSWire_Frame;
         static ID3D11RasterizerState*  m_pRSSolid_Frame;
+        static ID3D11RasterizerState*  m_pRSBackCul_Frame;
+        static ID3D11RasterizerState*  m_pRSFrontCul_Frame;
 
         //ID3D11SamplerState
         static ID3D11SamplerState*   m_pSSWrap_Linear;

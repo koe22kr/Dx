@@ -13,29 +13,38 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Imm">
+      <UniqueIdentifier>{a92f02bf-c14d-46e3-aa82-46fe38b55672}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
+    <ClInclude Include="khgWriter.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Imm</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Imm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="khgWriter.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="khg_Export.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Imm</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Imm</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Imm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source.def">
-      <Filter>소스 파일</Filter>
+      <Filter>Imm</Filter>
     </None>
   </ItemGroup>
 </Project>

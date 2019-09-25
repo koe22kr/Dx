@@ -2,12 +2,13 @@
 //
 #include "stdafx.h"
 #define khgExport_CLASS_ID Class_ID(0x487d061e, 0x42d7658)
-
+#include "khgWriter.h"
 
 
 class khg_Export : public SceneExport 
 {
 public:
+    khgWriter m_khgWriter;
     khg_Export();
     ~khg_Export();
     int				ExtCount();					// Number of extensions supported
@@ -34,7 +35,7 @@ khg_Export::~khg_Export()
 }
 
 
-class tbsExportClassDesc : public ClassDesc2
+class khgExportClassDesc : public ClassDesc2
 {
 public:
     virtual int IsPublic() { return TRUE; }
@@ -43,14 +44,14 @@ public:
     virtual SClass_ID SuperClassID() { return SCENE_EXPORT_CLASS_ID; }
     virtual Class_ID ClassID() { return khgExport_CLASS_ID; }
     virtual const TCHAR* Category() { return _T("khg_Export"); }
-    virtual const TCHAR* InternalName() { return _T("tbsExportClassDesc"); }	// returns fixed parsable name (scripter-visible name)
+    virtual const TCHAR* InternalName() { return _T("khgExportClassDesc"); }	// returns fixed parsable name (scripter-visible name)
     virtual HINSTANCE HInstance() { return hInstance; }					// returns owning module handle
 
 };
 
 
 ClassDesc2* GetExportDesc() {
-    static tbsExportClassDesc tbsExportDesc;
+    static khgExportClassDesc tbsExportDesc;
     return &tbsExportDesc;
 }
 
@@ -67,25 +68,25 @@ int khg_Export::ExtCount()
 const TCHAR *khg_Export::Ext(int /*i*/)
 {
 #pragma message(TODO("Return the 'i-th' file name extension (i.e. \"3DS\")."))
-    return _T("aaaaaaaa");
+    return _T("MD");
 }
 
 const TCHAR *khg_Export::LongDesc()
 {
 #pragma message(TODO("Return long ASCII description (i.e. \"Targa 2.0 Image File\")"))
-    return _T("KGCA Expoter 2.0");
+    return _T("khg Expoter 100");
 }
 
 const TCHAR *khg_Export::ShortDesc()
 {
 #pragma message(TODO("Return short ASCII description (i.e. \"Targa\")"))
-    return _T("KGCAExpoter");
+    return _T("khgExpoter");
 }
 
 const TCHAR *khg_Export::AuthorName()
 {
 #pragma message(TODO("Return ASCII Author name"))
-    return _T("PROKVIP");
+    return _T("Author");
 }
 
 const TCHAR *khg_Export::CopyrightMessage()
@@ -124,10 +125,12 @@ BOOL khg_Export::SupportsOptions(int /*ext*/, DWORD /*options*/)
 }
 
 
-int	khg_Export::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i,
+int	khg_Export::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i,  //인터페이스 뭐든 다 건드릴 수 있다.
     BOOL suppressPrompts, DWORD options)
 {
-    return FALSE;
+    m_khgWriter.Set(name, i);
+    m_khgWriter.Export();
+    return true;
 }
 
 

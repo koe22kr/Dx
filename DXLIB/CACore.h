@@ -12,10 +12,12 @@
 #include "TBackViewCamera.h"
 #include "TModelViewCamera.h"
 #include "CADx_Map.h"
+#include "CADx_Light.h"
+
 class CACore :public CAWindow                 
 {
 #if defined _DEBUG || DEBUG
-    bool RS_FLAG = 1;
+    UINT RS_COUNT = 2;
     bool AB_FLAG = 1;
     bool SS_FLAG = 1;
 
@@ -31,12 +33,16 @@ class CACore :public CAWindow
 #endif // DEBUG
 
 public:
+    CADx_Light m_DiffuseLight;
+
     DX::CADx_HeightMap m_Heightmap;
     CATimer m_Timer;   
     CADevice m_Device;
     DX::TBackViewCamera m_Default_Cam;
     DX::TCamera* m_pMain_Cam;
-    DX::Sky Sky_box;
+   // DX::Sky Sky_box;
+
+
   //  CAInput m_Input;
 public:
     virtual bool Init();
