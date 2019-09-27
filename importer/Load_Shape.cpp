@@ -45,7 +45,7 @@ void Load_Shape::Load(const char* maxconvertfile)
     }
 
     DX::PNCT_VERTEX2 temp;
-    for (int i = 0; i < iNumFace*iNumVertexinFace; i++)
+    for (int i = 0; i < iNumFace; i++)
     {
         in >> temp.p.x >> temp.p.y >> temp.p.z;
         in >> temp.n.x >> temp.n.y >> temp.n.z;

@@ -33,9 +33,9 @@ VS_OUTPUT VS(VS_INPUT vIn)
 
     VS_OUTPUT vOut = (VS_OUTPUT)0;
     vOut.p = float4(vIn.p,1.0f);
-   vOut.p.x = (vIn.p.x*10);
-   vOut.p.y = (vIn.p.y*10);
-   vOut.p.z = (vIn.p.z*10);
+   vOut.p.x = (vIn.p.x);
+   vOut.p.y = (vIn.p.y);
+   vOut.p.z = (vIn.p.z);
    // vOut.p.w = 1.0f;
 
     
@@ -62,6 +62,6 @@ float4 PS(VS_OUTPUT vIn) : SV_Target
     /*float4 vTexColor = g_txDiffuse.Sample(s0, vIn.t);
      float4 vFinalColor = vTexColor * (Diffuse(vIn.n) + Specular(vIn.n))* vIn.c;*/
     vIn.c.w = 1.0f;
-    // return vIn.c;
-     return g_txDiffuse.Sample(s0, vIn.t);
+     return vIn.c;
+   //  return g_txDiffuse.Sample(s0, vIn.t);
 }

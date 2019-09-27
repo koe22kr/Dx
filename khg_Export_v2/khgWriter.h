@@ -9,16 +9,22 @@ struct PNCT
     Point4 c;
     Point2 t;
 };
+struct FaceInfo
+{
+    DWORD a;
+    DWORD b;
+    DWORD c;
+};
 struct TriList
 {
     int iSubIndex;
     PNCT   v[3];
 };
-struct Mtlinfo
+struct MtlInfo
 {
     int   iMapID;
     TSTR  szName;
-    std::vector<Mtlinfo> subMtrl;
+    std::vector<MtlInfo> subMtrl;
 };
 class khgWriter
 {
@@ -28,9 +34,12 @@ class khgWriter
     INode* m_pRootNode; //트리인데 그래프 형식 이라 보면된다함.
     std::vector<INode*> m_ObjList;
     std::vector<TriList> m_TriList;
-    std::vector<Mtlinfo> m_MtlinfoList;
-    std::vector<DWORD> m_IndexList;
+    std::vector<MtlInfo> m_MtlInfoList;                             //매터리얼 info인데 오브젝트 정보 들어가있음. 매터리얼 정보도 받아야함.
+    std::vector<FaceInfo> m_FaceInfoList;
 
+    
+    std::vector<DWORD> m_IndexList;
+    std::vector<PNCT> m_VertexList;
     std::map<PNCT*,int> m_finder;
 public:
     void    AddObject(INode* pNode, TimeValue time);
@@ -43,6 +52,7 @@ public:
 
     bool TMNegParity( Matrix3 tm);
     void	DumpPoint3(Point3& desc, Point3& src);
+
     void DumpPoint3_Index(Face& src);
     Point3 GetVertexNormal(Mesh* mesh, int iFace, RVertex* rVertex);
     void Setting();

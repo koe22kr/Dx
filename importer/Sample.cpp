@@ -4,14 +4,14 @@ using namespace std;
 
 bool Sample::Init()
 {
-    m_loader.Load("box.MD");
+    m_loader.Load("1.MD");
     m_loader.m_pnct_List = &m_pnct_List;
     m_loader.Create(CADevice::m_pDevice, L"test.hlsl", L"../../_data/map/000.jpg");
     wstring temp;
     string atemp;
     //temp. = atemp.c_str();
     
-  //  m_loader.m_helper.m_iNumIndex = 0;
+    m_loader.m_helper.m_iNumIndex = 0;
 
     return true;
 }

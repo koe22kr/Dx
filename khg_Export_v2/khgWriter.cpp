@@ -23,7 +23,7 @@ void    khgWriter::PreProcess(INode* pNode, TimeValue time)
 void khgWriter::GetMaterial(INode* pNode)
 {
     Mtl* pSrcMtl = pNode->GetMtl();
-    서브 매터리얼 유무 조건
+    //서브 매터리얼 유무 조건 todo
     GetTexture(pSrcMtl);
 }
 void  khgWriter::GetTexture(Mtl* pMtl)
@@ -36,13 +36,13 @@ void  khgWriter::GetTexture(Mtl* pMtl)
         {
             if (tex->ClassID() == Class_ID(BMTEX_CLASS_ID, 0X00))
             {
-                Mtlinfo tMtl;
+                MtlInfo tMtl;
                 tMtl.iMapID = iSubMap;
 
                 TSTR fullName;
                 TSTR mapName = ((BitmapTex*)(tex))->GetMapName();
                 SplitPathFile(mapName, &fullName, &tMtl.szName);
-                m_MtlinfoList.push_back(tMtl);
+                m_MtlInfoList.push_back(tMtl);
             }
         }
     }
@@ -58,14 +58,14 @@ bool khgWriter::Export()
     {
         INode* pNode = m_ObjList[iObj];
         GetMesh(pNode,m_time);
-        갯 매터리얼~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       // 갯 매터리얼~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  todo
         GetMaterial(pNode);
-        _ftprintf(pStream, _T("\n%s %d %d"), pNode->GetName(), m_TriList.size(), m_MtlinfoList.size());
-        for (int iSubMap = 0; iSubMap < m_MtlinfoList.size(); iSubMap++)
+        _ftprintf(pStream, _T("\n%s %d %d"), pNode->GetName(), m_TriList.size(), m_MtlInfoList.size());
+        for (int iobj = 0; iobj < m_MtlInfoList.size(); iobj++)
         {
             _ftprintf(pStream, _T("\n%d %s\n%d"),
-                m_MtlinfoList[iSubMap].iMapID,
-                m_MtlinfoList[iSubMap].szName);
+                m_MtlInfoList[iobj].iMapID,
+                m_MtlInfoList[iobj].szName);
         }
         for (int iTri = 0; iTri < m_TriList.size(); iTri++)
         {
@@ -107,6 +107,7 @@ bool khgWriter::Export()
                 if(m_TriList[iTri].v[iVer].p==)*/
 
                 //여기서 중복제거 하고 뽑기!
+
                 _ftprintf(pStream, _T("\n%10.4f %10.4f %10.4f"),
                     m_TriList[iTri].v[iVer].p.x,
                     m_TriList[iTri].v[iVer].p.y,
@@ -209,99 +210,83 @@ void    khgWriter::GetMesh(INode* pNode,TimeValue time)
     {
         v0 = 0; v1 = 1; v2 = 2;
     }
-
+    //페이스
+    int iFacenum = mesh->numFaces;
+    m_FaceInfoList.resize(iFacenum);
+    DWORD num[3];
+    for (int iface = 0; iface < iFacenum; iface++)
+    {
+        m_FaceInfoList[iface].a= mesh->faces[iface].v[0];
+        m_FaceInfoList[iface].b = mesh->faces[iface].v[0];
+        m_FaceInfoList[iface].c = mesh->faces[iface].v[0];
+    }
+    
+    //버택스 
     if (mesh)                                                         //X,Y축이 반대라 0 2 1 순으로 받아서 0 1 2 순서로 넣는다.
     {
-        int iNumFace = mesh->getNumFaces();
-        m_TriList.resize(iNumFace);
+        int iNumFace = mesh->getNumVerts();
+        m_VertexList.resize(iNumFace);
 
-        for (int iFace = 0; iFace < iNumFace; iFace++)
+        for (int iVer = 0; iVer < iNumFace; iVer++)
         {
             //의사코de
-            /*m_IndexList.push_back(mesh->faces[iFace].v[v0]);
-            m_IndexList.push_back(mesh->faces[iFace].v[v2]);
-            m_IndexList.push_back(mesh->faces[iFace].v[v1]);
+            /*m_IndexList.push_back(mesh->faces[iVer].v[v0]);
+            m_IndexList.push_back(mesh->faces[iVer].v[v2]);
+            m_IndexList.push_back(mesh->faces[iVer].v[v1]);
 
-            m_TriList[iFace].v[0].p = ;
-            m_TriList[iFace].v[1].p = ;
-            m_TriList[iFace].v[2].p = ;*/
-            //Point3 p3 = mesh->verts[iFace].;  //tm 곱해주면 그전이 어느 좌표계든 월드로 변환됨//
+            m_TriList[iVer].v[0].p = ;
+            m_TriList[iVer].v[1].p = ;
+            m_TriList[iVer].v[2].p = ;*/
+            //Point3 p3 = mesh->verts[iVer].;  //tm 곱해주면 그전이 어느 좌표계든 월드로 변환됨//
 
             //
             //Position//
-            Point3 p3 = mesh->verts[mesh->faces[iFace].v[v0]] * tm;    //tm 곱해주면 그전이 어느 좌표계든 월드로 변환됨//
-            DumpPoint3(m_TriList[iFace].v[0].p, p3);
-           
-            p3 = mesh->verts[mesh->faces[iFace].v[v2]] * tm;   
-            DumpPoint3(m_TriList[iFace].v[1].p, p3);
-           
-            p3 = mesh->verts[mesh->faces[iFace].v[v1]] * tm;  
-            DumpPoint3(m_TriList[iFace].v[2].p, p3);
+            Point3 p3 = mesh->verts[iVer] * tm;    //tm 곱해주면 그전이 어느 좌표계든 월드로 변환됨//
+            DumpPoint3(m_VertexList[iVer].p, p3);
 
             //Color// 
             int iNumColor = mesh->getNumVertCol();
-            m_TriList[iFace].v[0].c = Point4(1, 1, 1, 1);
-            m_TriList[iFace].v[1].c = Point4(1, 1, 1, 1);
-            m_TriList[iFace].v[2].c = Point4(1, 1, 1, 1);
+            m_VertexList[iVer].c = Point4(1, 1, 1, 1);
 
             if (iNumColor > 0)
             {
-                m_TriList[iFace].v[0].c = mesh->vertCol[mesh->vcFace[iFace].t[v0]];
-                m_TriList[iFace].v[1].c = mesh->vertCol[mesh->vcFace[iFace].t[v2]];
-                m_TriList[iFace].v[2].c = mesh->vertCol[mesh->vcFace[iFace].t[v1]];
+                m_VertexList[iVer].c = mesh->vertCol[iVer];
+               
             }
 
             //Texcoord//
             int INumTex = mesh->getNumTVerts();
             if (INumTex > 0)
             {
-                Point2 p2 = (Point2)mesh->tVerts[mesh->tvFace[iFace].t[v0]];
-                m_TriList[iFace].v[0].t.x = p2.x;
-                m_TriList[iFace].v[0].t.y = 1.0f - p2.y;
-
-                p2 = (Point2)mesh->tVerts[mesh->tvFace[iFace].t[v2]];
-                m_TriList[iFace].v[1].t.x = p2.x;
-                m_TriList[iFace].v[1].t.y = 1.0f - p2.y;
-
-                p2 = (Point2)mesh->tVerts[mesh->tvFace[iFace].t[v1]];
-                m_TriList[iFace].v[2].t.x = p2.x;
-                m_TriList[iFace].v[2].t.y = 1.0f - p2.y;
-
+                Point2 p2 = (Point2)mesh->tVerts[iVer];
+                m_VertexList[iVer].t.x = p2.x;
+                m_VertexList[iVer].t.y = 1.0f - p2.y;
             }
 
             //Normal//
             //GetVertexNormal 완전 이해는 어려우면 걍 쓰기.?
 
             mesh->buildNormals();
-            int vert = mesh->faces[iFace].getVert(v0);
-            //int vert = mesh->faces[iFace].v[v0]; 같음
-            RVertex* rVertex = mesh->getRVertPtr(vert);
-            Point3 vn = GetVertexNormal(mesh, iFace, rVertex);
-            DumpPoint3(m_TriList[iFace].v[v0].n, vn);
+            RVertex* rVertex = mesh->getRVertPtr(iVer);
 
-            vert = mesh->faces[iFace].getVert(v2);
-            rVertex = mesh->getRVertPtr(vert);
-            vn = GetVertexNormal(mesh, iFace, rVertex);
-            DumpPoint3(m_TriList[iFace].v[v1].n, vn);
+            Point3 vn = GetVertexNormal(mesh, iVer, rVertex);
+            DumpPoint3(m_TriList[iVer].v[v0].n, vn);
 
-            vert = mesh->faces[iFace].getVert(v1);
-            rVertex = mesh->getRVertPtr(vert);
-            vn = GetVertexNormal(mesh, iFace, rVertex);
-            DumpPoint3(m_TriList[iFace].v[v2].n, vn);
+            
 
             ////Normal 은 임시로 1,1,1;
-            //m_TriList[iFace].v[0].n = Point3(1, 1, 1);
-            //m_TriList[iFace].v[2].n = Point3(1, 1, 1);
-            //m_TriList[iFace].v[1].n = Point3(1, 1, 1);
+            //m_TriList[iVer].v[0].n = Point3(1, 1, 1);
+            //m_TriList[iVer].v[2].n = Point3(1, 1, 1);
+            //m_TriList[iVer].v[1].n = Point3(1, 1, 1);
             
             //Index//
             //// 인덱스... 는  full vertex 버전이라 무쓸모?
-            //m_IndexList.push_back(mesh->faces[iFace].v[0]);
-            //m_IndexList.push_back(mesh->faces[iFace].v[2]);
-            //m_IndexList.push_back(mesh->faces[iFace].v[1]);
+            //m_IndexList.push_back(mesh->faces[iVer].v[0]);
+            //m_IndexList.push_back(mesh->faces[iVer].v[2]);
+            //m_IndexList.push_back(mesh->faces[iVer].v[1]);
             
 
-            서브 매터리얼 인덱스. 
+            //서브 매터리얼 인덱스.   todo
 
 
         }
@@ -312,7 +297,7 @@ void    khgWriter::GetMesh(INode* pNode,TimeValue time)
     if (deleteit) delete tri;
 }
 
-Point3 khgWriter::GetVertexNormal(Mesh* mesh, int iFace, RVertex* rVertex)
+Point3 khgWriter::GetVertexNormal(Mesh* mesh, int iFace, RVertex* rVertex)///////////
 {
     Face* face = &mesh->faces[iFace];
 
