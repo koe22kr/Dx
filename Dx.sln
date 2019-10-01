@@ -40,6 +40,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "importer", "importer\import
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "khg_Export_v2", "khg_Export_v2\khg_Export_v2.vcxproj", "{6314CE97-8314-4E88-B7CE-2B3192F6E159}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "importer2", "importer2\importer2.vcxproj", "{BA61DC97-9679-44C5-B91A-891A2346E7B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -168,6 +170,14 @@ Global
 		{6314CE97-8314-4E88-B7CE-2B3192F6E159}.Release|x64.Build.0 = Release|x64
 		{6314CE97-8314-4E88-B7CE-2B3192F6E159}.Release|x86.ActiveCfg = Release|Win32
 		{6314CE97-8314-4E88-B7CE-2B3192F6E159}.Release|x86.Build.0 = Release|Win32
+		{BA61DC97-9679-44C5-B91A-891A2346E7B3}.Debug|x64.ActiveCfg = Debug|x64
+		{BA61DC97-9679-44C5-B91A-891A2346E7B3}.Debug|x64.Build.0 = Debug|x64
+		{BA61DC97-9679-44C5-B91A-891A2346E7B3}.Debug|x86.ActiveCfg = Debug|Win32
+		{BA61DC97-9679-44C5-B91A-891A2346E7B3}.Debug|x86.Build.0 = Debug|Win32
+		{BA61DC97-9679-44C5-B91A-891A2346E7B3}.Release|x64.ActiveCfg = Release|x64
+		{BA61DC97-9679-44C5-B91A-891A2346E7B3}.Release|x64.Build.0 = Release|x64
+		{BA61DC97-9679-44C5-B91A-891A2346E7B3}.Release|x86.ActiveCfg = Release|Win32
+		{BA61DC97-9679-44C5-B91A-891A2346E7B3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -188,6 +198,7 @@ Global
 		{A056B7C2-62FD-4045-BD38-C97A72D04EF5} = {0018D196-EEC3-4400-8B37-ACCD50876B7F}
 		{CE6615C9-5DE7-4AE0-94D7-828D9E7FEADB} = {2D10EB43-28AC-4245-90FC-3669F5CC8A56}
 		{6314CE97-8314-4E88-B7CE-2B3192F6E159} = {0018D196-EEC3-4400-8B37-ACCD50876B7F}
+		{BA61DC97-9679-44C5-B91A-891A2346E7B3} = {2D10EB43-28AC-4245-90FC-3669F5CC8A56}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E92C52F0-C661-4C86-A2CB-6AC6DEB790EC}

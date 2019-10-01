@@ -204,12 +204,12 @@ bool Load_Shape::PostRender(
         pContext->PSSetShaderResources(0, 1, m_helper.m_pSRV.GetAddressOf());
         //PSSetShaderResources
 
-        pContext->UpdateSubresource(
+        /*pContext->UpdateSubresource(
             m_helper.m_pIndexBuffer.Get(),
             0, NULL, &m_IndexList_List[i].at(0), 0, 0);
         pContext->UpdateSubresource(
             m_helper.m_pVertexBuffer.Get(),
-            0, NULL, &m_VertexList_List[i].at(0), 0, 0);
+            0, NULL, &m_VertexList_List[i].at(0), 0, 0);*/
         
 
 

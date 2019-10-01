@@ -1,4 +1,4 @@
-LIBRARY khg_Export.dle
+LIBRARY khg_Export_v2.dle
 EXPORTS
    LibDescription       @1       PRIVATE
    LibNumberClasses     @2       PRIVATE

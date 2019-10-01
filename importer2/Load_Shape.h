@@ -17,7 +17,6 @@ struct Material
 class Load_Shape : public DX::CADx_Shape_Box
 {
 public:
-    std::vector<CADx_Model2> obj;
     int m_Render_Count;
     int m_Texture_Count;
     std::vector<DX::PNCT_VERTEX2>* m_pnct_List;

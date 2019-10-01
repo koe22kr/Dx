@@ -1,7 +1,7 @@
 ﻿// khg_Export.cpp : DLL 응용 프로그램을 위해 내보낸 함수를 정의합니다.
 //
 #include "stdafx.h"
-#define khgExport_CLASS_ID Class_ID(0x390f1b7a, 0x56d52e5b)
+#define khgExport_CLASS_ID Class_ID(0x60272e, 0xcc40773)
 #include "khgWriter.h"
 
 

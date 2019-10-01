@@ -1,6 +1,115 @@
 #include "stdafx.h"
 #include "khgWriter.h"
+//////////////////////////
+bool khgWriter::EqualPoint2(Point2 p1, Point2 p2)
+{
+    if (fabs(p1.x - p2.x) > ALMOST_ZERO)
+        return false;
+    if (fabs(p1.y - p2.y) > ALMOST_ZERO)
+        return false;
+    return true;
+}
+bool khgWriter::EqualPoint3(Point3 p1, Point3 p2)
+{
+    if (fabs(p1.x - p2.x) > ALMOST_ZERO)
+        return false;
+    if (fabs(p1.y - p2.y) > ALMOST_ZERO)
+        return false;
+    if (fabs(p1.z - p2.z) > ALMOST_ZERO)
+        return false;
 
+    return true;
+}
+bool khgWriter::EqualPoint4(Point4 p1, Point4 p2)
+{
+    if (fabs(p1.x - p2.x) > ALMOST_ZERO)
+        return false;
+    if (fabs(p1.y - p2.y) > ALMOST_ZERO)
+        return false;
+    if (fabs(p1.z - p2.z) > ALMOST_ZERO)
+        return false;
+    if (fabs(p1.w - p2.w) > ALMOST_ZERO)
+        return false;
+    return true;
+}
+void   khgWriter::DumpMatrix3(Matrix3& matWorld, D3D_MATRIX& world)
+{
+    Point3 row;
+    row = matWorld.GetRow(0);
+    world._11 = row.x;
+    world._13 = row.y;
+    world._12 = row.z;
+    world._14 = 0.0f;
+    row = matWorld.GetRow(2);
+    world._21 = row.x;
+    world._23 = row.y;
+    world._22 = row.z;
+    world._24 = 0.0f;
+    row = matWorld.GetRow(1);
+    world._31 = row.x;
+    world._33 = row.y;
+    world._32 = row.z;
+    world._34 = 0.0f;
+    row = matWorld.GetRow(3);
+    world._41 = row.x;
+    world._43 = row.y;
+    world._42 = row.z;
+    world._44 = 1.0f;
+}
+void	khgWriter::DumpPoint3(Point3& desc, Point3& src)
+{
+    desc.x = src.x;
+    desc.y = src.z;
+    desc.z = src.y;
+}
+TCHAR* khgWriter::FixupName(MSTR name)
+{
+    TCHAR m_tmpBuffer[MAX_PATH] = { 0, };
+    memset(m_tmpBuffer, 0, sizeof(TCHAR)*MAX_PATH);
+
+    TCHAR* cPtr;
+    _tcscpy_s(m_tmpBuffer, name);
+    cPtr = m_tmpBuffer;
+
+    while (*cPtr)
+    {
+        if (*cPtr == '"')		*cPtr = SINGLE_QUOTE;
+        else if (*cPtr == ' ' || *cPtr <= CTL_CHARS)
+            *cPtr = _T('_');
+        cPtr++;
+    }
+    return m_tmpBuffer;
+}
+struct AscendingSort
+{
+    bool operator()(TriList& rpStart, TriList& rpEnd)
+    {
+        return rpStart.iSubIndex > rpEnd.iSubIndex;
+    }
+};
+static int g_iSearchIndex = 0;
+struct IsSameInt // find_to와 같은지 판단해 주는 함수자   
+{
+    bool operator()(TriList &value)
+    {
+        return value.iSubIndex == g_iSearchIndex;
+    }
+};
+int khgWriter::IsEqulVertexList(PNCT& vertex, VertexList& vList)
+{
+    for (int iVer = 0; iVer < vList.size(); iVer++)
+    {
+        if (EqualPoint3(vertex.p, vList[iVer].p) &&
+            EqualPoint3(vertex.n, vList[iVer].n) &&
+            EqualPoint4(vertex.c, vList[iVer].c) &&
+            EqualPoint2(vertex.t, vList[iVer].t))
+        {
+            return iVer;
+        }
+    }
+    return -1;
+}
+//////////////////////////
 void khgWriter::Set(const TCHAR* name, Interface* mMax)
 {
     m_pMax = mMax;
@@ -12,6 +121,8 @@ void    khgWriter::PreProcess(INode* pNode, TimeValue time)
 {
     if (!pNode)return;
     AddObject(pNode,time);
+    AddMaterial(pNode);
+
     int iNumChildren = pNode->NumberOfChildren();
     for (int iChild = 0; iChild < iNumChildren; iChild++)
     {
@@ -20,13 +131,97 @@ void    khgWriter::PreProcess(INode* pNode, TimeValue time)
     }
 }
 
+bool  khgWriter::Convert()
+{
+    for (int iObj = 0; iObj < m_ObjList.size(); iObj++)
+    {
+        INode* pNode = m_ObjList[iObj];
+        tempMesh tMesh;
+        tMesh.name = FixupName(pNode->GetName());
+        INode* pParentNode = pNode->GetParentNode();
+        if (pParentNode &&
+            // 가상의 부모가 존재
+            pParentNode->IsRootNode() == false)
+        {
+            tMesh.ParentName =
+                FixupName(pParentNode->GetName());
+        }
+        // objTM = s*r*t*p * c;
+        // GetNodeTM = srt * p;
+        Matrix3 wtm = pNode->GetNodeTM(0);
+        DumpMatrix3(wtm, tMesh.matWorld);
+
+        tMesh.iMtrlID = FindMaterial(pNode);  //이전에 addmaterial 해야함.
+        if (m_MtlInfoList[tMesh.iMtrlID].subMtrl.size() > 0)
+        {
+            tMesh.iSubMesh = m_MtlInfoList[tMesh.iMtrlID].subMtrl.size();
+        }
+        GetMesh(pNode, 0,tMesh);
+        m_tempMesh.push_back(tMesh);
+    }
+    return true;
+}
+
+void khgWriter::AddMaterial(INode* pNode)
+{
+    Mtl* pMtl = pNode->GetMtl();
+    if (pMtl)
+    {
+        for (int iMtl = 0; iMtl < m_MaterialList.size(); iMtl++)
+        {
+            if (m_MaterialList[iMtl] == pMtl)
+            {
+                return;
+            }
+        }
+        m_MaterialList.push_back(pMtl);
+        GetMaterial(pNode);
+    }
+}
+
 void khgWriter::GetMaterial(INode* pNode)
 {
-    Mtl* pSrcMtl = pNode->GetMtl();
-    //서브 매터리얼 유무 조건 todo
-    GetTexture(pSrcMtl);
+    Mtl* pRootMtl = pNode->GetMtl();
+    MtlInfo mi;
+    mi.szName = FixupName(pRootMtl->GetName());
+    // sub-material
+    int iNumSub = pRootMtl->NumSubMtls();
+    if (iNumSub > 0)
+    {
+        for (int iSub = 0; iSub < iNumSub; iSub++)
+        {
+            Mtl* pSubMtl = pRootMtl->GetSubMtl(iSub);
+            MtlInfo  tSubMtrl;
+            tSubMtrl.szName = FixupName(pSubMtl->GetName());
+            GetTexture(pSubMtl, tSubMtrl);
+            mi.subMtrl.push_back(tSubMtrl);
+        }
+    }
+    else
+    {
+        GetTexture(pRootMtl, mi);
+    }
+    m_MtlInfoList.push_back(mi);
+
+    //GetTexture(pRootMtl);
 }
-void  khgWriter::GetTexture(Mtl* pMtl)
+
+int khgWriter::FindMaterial(INode* pNode)
+{
+    Mtl* pMtl = pNode->GetMtl();
+    if (pMtl)
+    {
+        for (int iMtl = 0; iMtl < m_MtlInfoList.size(); iMtl++)
+        {
+            if (m_MaterialList[iMtl] == pMtl)
+            {
+                return iMtl;
+            }
+        }
+    }
+    return -1;
+}
+void  khgWriter::GetTexture(Mtl* pMtl, MtlInfo& desc)
 {
     int iNumMap = pMtl->NumSubTexmaps();
     for (int iSubMap = 0; iSubMap < iNumMap; iSubMap++)
@@ -36,123 +231,171 @@ void  khgWriter::GetTexture(Mtl* pMtl)
         {
             if (tex->ClassID() == Class_ID(BMTEX_CLASS_ID, 0X00))
             {
-                MtlInfo tMtl;
-                tMtl.iMapID = iSubMap;
+                texInfo ti;
+                ti.iMapID = iSubMap;
 
                 TSTR fullName;
                 TSTR mapName = ((BitmapTex*)(tex))->GetMapName();
-                SplitPathFile(mapName, &fullName, &tMtl.szName);
-                m_MtlInfoList.push_back(tMtl);
+                SplitPathFile(mapName, &fullName, &ti.szName);
+                desc.TextureList.push_back(ti);
             }
         }
     }
 }
-
-
 bool khgWriter::Export()
 {
-    FILE* pStream;
+    Convert();
+
+    FILE* pStream=nullptr;
     _tfopen_s(&pStream,m_filename.c_str(), _T("wt"));
-    _ftprintf(pStream, _T("%s %d"), _T("khgExporter 100"),m_ObjList.size());
-    for (int iObj = 0; iObj < m_ObjList.size(); iObj++)
+    _ftprintf(pStream, _T("%s %d"), _T("khgExporter_100"),m_ObjList.size());
+    for (int iMtl = 0; iMtl < m_MtlInfoList.size(); iMtl++)
     {
-        INode* pNode = m_ObjList[iObj];
-        GetMesh(pNode,m_time);
-       // 갯 매터리얼~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  todo
-        GetMaterial(pNode);
-        _ftprintf(pStream, _T("\n%s %d %d"), pNode->GetName(), m_TriList.size(), m_MtlInfoList.size());
-        for (int iobj = 0; iobj < m_MtlInfoList.size(); iobj++)
-        {
-            _ftprintf(pStream, _T("\n%d %s\n%d"),
-                m_MtlInfoList[iobj].iMapID,
-                m_MtlInfoList[iobj].szName);
-        }
-        for (int iTri = 0; iTri < m_TriList.size(); iTri++)
-        {
-            bool finding;
 
-            for (int iVer = 0; iVer < 3; iVer++)
+
+
+        _ftprintf(pStream, _T("\n%d %s %d"),
+            m_MtlInfoList[iMtl].iMapID,
+            m_MtlInfoList[iMtl].szName,
+            m_MtlInfoList[iMtl].subMtrl.size());
+
+        if (m_MtlInfoList[iMtl].subMtrl.size() > 0)
+        {
+            for (int iSubMtrl = 0; iSubMtrl < m_MtlInfoList[iMtl].subMtrl.size(); iSubMtrl++)
             {
-                finding = false;
-                //auto iter = m_finder.find(m_TriList[iTri].v[iVer]);
-                for (auto iter = m_finder.begin(); iter != m_finder.end(); iter++)
+                _ftprintf(pStream, _T("\n%s %d"),
+                    m_MtlInfoList[iMtl].subMtrl[iSubMtrl].szName,
+                    m_MtlInfoList[iMtl].subMtrl[iSubMtrl].TextureList.size());
+
+                for (int iTex = 0; iTex < m_MtlInfoList[iMtl].subMtrl[iSubMtrl].TextureList.size(); iTex++)
                 {
-                    if (iter->first->p == m_TriList[iTri].v[iVer].p)
-                    {
-                        if (iter->first->n == m_TriList[iTri].v[iVer].n)
-                        {
-                            m_IndexList.push_back(iter->second);
-                            finding = true;
-                            break;
-                        }
-                    }
+                    _ftprintf(pStream, _T("\n%d %s"),
+                        m_MtlInfoList[iMtl].subMtrl[iSubMtrl].TextureList[iTex].iMapID,
+                        m_MtlInfoList[iMtl].subMtrl[iSubMtrl].TextureList[iTex].szName);
                 }
-                if (finding)
-                {
-                    continue;
-                }
-                //Index//
-                    //m_finder.insert(std::make_pair(m_TriList[iTri].v[iVer], m_IndexList.size()));
-                m_IndexList.push_back(m_finder.size());
-                m_finder[&m_TriList[iTri].v[iVer]] = m_finder.size();
-             
-                
-                /*for (int i = iTri;i<m_TriList.size();i++)
-                {
-                    for (int j = iVer; j < 3; j++)
-                    {
-                        if(m_TriList[iTri].v[iVer].p == m_TriList[i].v[j].p)
-                    }
-                }
-                if(m_TriList[iTri].v[iVer].p==)*/
-
-                //여기서 중복제거 하고 뽑기!
-
-                _ftprintf(pStream, _T("\n%10.4f %10.4f %10.4f"),
-                    m_TriList[iTri].v[iVer].p.x,
-                    m_TriList[iTri].v[iVer].p.y,
-                    m_TriList[iTri].v[iVer].p.z);
-                _ftprintf(pStream, _T("%10.4f %10.4f %10.4f"),
-                    m_TriList[iTri].v[iVer].n.x,
-                    m_TriList[iTri].v[iVer].n.y,
-                    m_TriList[iTri].v[iVer].n.z);
-                _ftprintf(pStream, _T("%10.4f %10.4f %10.4f %10.4f"),
-                    m_TriList[iTri].v[iVer].c.x,
-                    m_TriList[iTri].v[iVer].c.y,
-                    m_TriList[iTri].v[iVer].c.z,
-                    m_TriList[iTri].v[iVer].c.w);
-                _ftprintf(pStream, _T("%10.4f %10.4f"),
-                    m_TriList[iTri].v[iVer].t.x,
-                    m_TriList[iTri].v[iVer].t.y);
-
-                
-
             }
-          
         }
-        _ftprintf(pStream, _T("\n%3d\n"),m_IndexList.size());
-        for (int i = 0; i < m_IndexList.size(); i++)
+        else
         {
-            _ftprintf(pStream, _T("%3d "), m_IndexList[i]);
+            _ftprintf(pStream, _T("\n%s %d"),
+                L"none",
+                m_MtlInfoList[iMtl].TextureList.size()
+            );
+
+            for (int iTex = 0; iTex < m_MtlInfoList[iMtl].TextureList.size(); iTex++)
+            {
+                _ftprintf(pStream, _T("\n%d %s"),
+                    m_MtlInfoList[iMtl].TextureList[iTex].iMapID,
+                    m_MtlInfoList[iMtl].TextureList[iTex].szName);
+            }
         }
     }
+        // mesh list
+        //INode* pNode = m_ObjList[iMtl];
+        //_ftprintf(pStream, _T("\n%s %d %d"), pNode->GetName(), m_FaceInfoList.size(), m_tempMesh[iMtl].triList_List.size());
+
+        for (int iObj = 0; iObj < m_tempMesh.size(); iObj++)
+        {
+            _ftprintf(pStream, _T("\n%s %s %d %d"),
+                m_tempMesh[iObj].name,
+                m_tempMesh[iObj].ParentName,
+                m_tempMesh[iObj].iMtrlID,
+                m_tempMesh[iObj].triList_List.size());
+
+            _ftprintf(pStream, _T("\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f"),
+                m_tempMesh[iObj].matWorld._11,
+                m_tempMesh[iObj].matWorld._12,
+                m_tempMesh[iObj].matWorld._13,
+                m_tempMesh[iObj].matWorld._14,
+
+                m_tempMesh[iObj].matWorld._21,
+                m_tempMesh[iObj].matWorld._22,
+                m_tempMesh[iObj].matWorld._23,
+                m_tempMesh[iObj].matWorld._24,
+
+                m_tempMesh[iObj].matWorld._31,
+                m_tempMesh[iObj].matWorld._32,
+                m_tempMesh[iObj].matWorld._33,
+                m_tempMesh[iObj].matWorld._34,
+
+                m_tempMesh[iObj].matWorld._41,
+                m_tempMesh[iObj].matWorld._42,
+                m_tempMesh[iObj].matWorld._43,
+                m_tempMesh[iObj].matWorld._44);
+
+
+            ///
+            for (int iSubTri = 0; iSubTri < m_tempMesh[iObj].triList_List.size(); iSubTri++)
+            {
+                VertexList& vList = m_tempMesh[iObj].vb[iSubTri];
+                _ftprintf(pStream, _T("\nVertex: %d"), vList.size());
+                for (int iVer = 0; iVer < vList.size(); iVer++)
+                {
+                    _ftprintf(pStream, _T("\n%10.4f %10.4f %10.4f"),
+                        vList[iVer].p.x,
+                        vList[iVer].p.y,
+                        vList[iVer].p.z);
+                    _ftprintf(pStream, _T("%10.4f %10.4f %10.4f"),
+                        vList[iVer].n.x,
+                        vList[iVer].n.y,
+                        vList[iVer].n.z);
+                    _ftprintf(pStream, _T("%10.4f %10.4f %10.4f %10.4f"),
+                        vList[iVer].c.x,
+                        vList[iVer].c.y,
+                        vList[iVer].c.z,
+                        vList[iVer].c.w);
+                    _ftprintf(pStream, _T("%10.4f %10.4f"),
+                        vList[iVer].t.x,
+                        vList[iVer].t.y);
+
+                }
+
+                IndexList& iList =
+                    m_tempMesh[iObj].ib[iSubTri];
+                _ftprintf(pStream, _T("\nIndexList %d"), iList.size());
+                for (int iIndex = 0; iIndex < iList.size(); iIndex += 3)
+                {
+                    _ftprintf(pStream, _T("\n%d %d %d"),
+                        iList[iIndex + 0],
+                        iList[iIndex + 1],
+                        iList[iIndex + 2]);
+                }
+            }
+            
+        }
+
+        _ftprintf(pStream, _T("\nDebug"));
+        for (int iVer = 0; iVer < testvb.size(); iVer++)
+        {
+            _ftprintf(pStream, _T("\n%10.4f %10.4f %10.4f"),
+                testvb[iVer].p.x,
+                testvb[iVer].p.y,
+                testvb[iVer].p.z);
+            _ftprintf(pStream, _T("%10.4f %10.4f %10.4f"),
+                testvb[iVer].n.x,
+                testvb[iVer].n.y,
+                testvb[iVer].n.z);
+            _ftprintf(pStream, _T("%10.4f %10.4f %10.4f %10.4f"),
+                testvb[iVer].c.x,
+                testvb[iVer].c.y,
+                testvb[iVer].c.z,
+                testvb[iVer].c.w);
+            _ftprintf(pStream, _T("%10.4f %10.4f"),
+                testvb[iVer].t.x,
+                testvb[iVer].t.y);
+
+        }
+
+
     fclose(pStream);
     //메시지 박스 하나
     MessageBox(GetActiveWindow(), m_filename.c_str(), L"Succsess", MB_OK);/////////////////////////////////////////
     return true;
 }
-khgWriter::khgWriter()
-{
-    m_time = 0;
-}
-
 void khgWriter::Setting()
 {
     
 }
-
-
-
 khgWriter::~khgWriter()
 {
 }
@@ -191,7 +434,7 @@ bool khgWriter::TMNegParity(Matrix3 tm)
 return true;
 }
 
-void    khgWriter::GetMesh(INode* pNode,TimeValue time)
+void    khgWriter::GetMesh(INode* pNode,TimeValue time, tempMesh& desc)
 {
     Matrix3 tm = pNode->GetObjTMAfterWSM(time);
     ///////////////////////1) 트라이엥글 오브젝트[]
@@ -210,93 +453,187 @@ void    khgWriter::GetMesh(INode* pNode,TimeValue time)
     {
         v0 = 0; v1 = 1; v2 = 2;
     }
-    //페이스
-    int iFacenum = mesh->numFaces;
-    m_FaceInfoList.resize(iFacenum);
-    DWORD num[3];
-    for (int iface = 0; iface < iFacenum; iface++)
-    {
-        m_FaceInfoList[iface].a= mesh->faces[iface].v[0];
-        m_FaceInfoList[iface].b = mesh->faces[iface].v[0];
-        m_FaceInfoList[iface].c = mesh->faces[iface].v[0];
-    }
-    
-    //버택스 
+  
+
     if (mesh)                                                         //X,Y축이 반대라 0 2 1 순으로 받아서 0 1 2 순서로 넣는다.
     {
-        int iNumFace = mesh->getNumVerts();
-        m_VertexList.resize(iNumFace);
+        //페이스
+        int iFacenum = mesh->numFaces;
+        m_FaceInfoList.resize(iFacenum);
+        vectorTriList& tri = desc.triList;
+        tri.resize(iFacenum);
+        desc.triList_List.resize(desc.iSubMesh);
 
-        for (int iVer = 0; iVer < iNumFace; iVer++)
+
+        //DWORD num[3];
+        /* int iNumVertex = mesh->getNumVerts();
+         m_VertexList.resize(iNumVertex);*/
+        
+
+
+        for (int iface = 0; iface < iFacenum; iface++)
         {
-            //의사코de
-            /*m_IndexList.push_back(mesh->faces[iVer].v[v0]);
-            m_IndexList.push_back(mesh->faces[iVer].v[v2]);
-            m_IndexList.push_back(mesh->faces[iVer].v[v1]);
+            PNCT temp1;
+            PNCT temp2;
+            PNCT temp3;
+            m_FaceInfoList[iface].v[0] = mesh->faces[iface].v[0];
+            m_FaceInfoList[iface].v[1] = mesh->faces[iface].v[2];
+            m_FaceInfoList[iface].v[2] = mesh->faces[iface].v[1];
 
-            m_TriList[iVer].v[0].p = ;
-            m_TriList[iVer].v[1].p = ;
-            m_TriList[iVer].v[2].p = ;*/
-            //Point3 p3 = mesh->verts[iVer].;  //tm 곱해주면 그전이 어느 좌표계든 월드로 변환됨//
-
-            //
             //Position//
-            Point3 p3 = mesh->verts[iVer] * tm;    //tm 곱해주면 그전이 어느 좌표계든 월드로 변환됨//
-            DumpPoint3(m_VertexList[iVer].p, p3);
+            int iNumPos = mesh->getNumVerts();
+            if (iNumPos > 0)
+            {
+                Point3 p3 = mesh->verts[mesh->faces[iface].v[v0]] * tm;    //tm 곱해주면 그전이 어느 좌표계든 월드로 변환됨//
+                DumpPoint3(tri[iface].v[0].p, p3);
+                temp1.p = p3;
 
+                p3 = mesh->verts[mesh->faces[iface].v[v2]] * tm;
+                DumpPoint3(tri[iface].v[1].p, p3);
+                temp3.p = p3;
+
+                p3 = mesh->verts[mesh->faces[iface].v[v1]] * tm;
+                DumpPoint3(tri[iface].v[2].p, p3);
+                temp2.p = p3;
+            }
             //Color// 
             int iNumColor = mesh->getNumVertCol();
-            m_VertexList[iVer].c = Point4(1, 1, 1, 1);
-
+            tri[iface].v[0].c = Point4(1, 1, 1, 1);
+            tri[iface].v[1].c = Point4(1, 1, 1, 1);
+            tri[iface].v[2].c = Point4(1, 1, 1, 1);
+            temp1.c = Point4(1, 1, 1, 1);
+            temp2.c = Point4(1, 1, 1, 1);
+            temp3.c = Point4(1, 1, 1, 1);
             if (iNumColor > 0)
             {
-                m_VertexList[iVer].c = mesh->vertCol[iVer];
-               
+                temp1.c = tri[iface].v[0].c = mesh->vertCol[mesh->vcFace[iface].t[v0]];
+                temp3.c = tri[iface].v[1].c = mesh->vertCol[mesh->vcFace[iface].t[v2]];
+                temp2.c = tri[iface].v[2].c = mesh->vertCol[mesh->vcFace[iface].t[v1]];
             }
+         
 
             //Texcoord//
             int INumTex = mesh->getNumTVerts();
             if (INumTex > 0)
             {
-                Point2 p2 = (Point2)mesh->tVerts[iVer];
-                m_VertexList[iVer].t.x = p2.x;
-                m_VertexList[iVer].t.y = 1.0f - p2.y;
+                Point2 p2 = (Point2)mesh->tVerts[mesh->tvFace[iface].t[v0]];
+                temp1.t.x=tri[iface].v[0].t.x = p2.x;
+                temp1.t.y=tri[iface].v[0].t.y = 1.0f - p2.y;
+
+                p2 = (Point2)mesh->tVerts[mesh->tvFace[iface].t[v2]];
+                temp3.t.x=tri[iface].v[1].t.x = p2.x;
+                temp3.t.y=tri[iface].v[1].t.y = 1.0f - p2.y;
+
+                p2 = (Point2)mesh->tVerts[mesh->tvFace[iface].t[v1]];
+                temp2.t.x=tri[iface].v[2].t.x = p2.x;
+                temp2.t.y=tri[iface].v[2].t.y = 1.0f - p2.y;
             }
 
             //Normal//
             //GetVertexNormal 완전 이해는 어려우면 걍 쓰기.?
 
             mesh->buildNormals();
-            RVertex* rVertex = mesh->getRVertPtr(iVer);
+            int vert = mesh->faces[iface].getVert(v0);
+            RVertex* rVertex = mesh->getRVertPtr(vert);
+            Point3 vn = GetVertexNormal(mesh, iface, rVertex);
+            DumpPoint3(tri[iface].v[v0].n, vn);
+            DumpPoint3(temp1.n, vn);
 
-            Point3 vn = GetVertexNormal(mesh, iVer, rVertex);
-            DumpPoint3(m_TriList[iVer].v[v0].n, vn);
+            vert = mesh->faces[iface].getVert(v2);
+            rVertex = mesh->getRVertPtr(vert);
+            vn = GetVertexNormal(mesh, iface, rVertex);
+            DumpPoint3(tri[iface].v[v1].n, vn);
+            DumpPoint3(temp3.n, vn);
 
-            
+            vert = mesh->faces[iface].getVert(v1);
+            rVertex = mesh->getRVertPtr(vert);
+            vn = GetVertexNormal(mesh, iface, rVertex);
+            DumpPoint3(tri[iface].v[v2].n, vn);
+            DumpPoint3(temp2.n, vn);
+
+            // sub material index
+            tri[iface].iSubIndex =
+                mesh->faces[iface].getMatID();
+            if (m_MtlInfoList[desc.iMtrlID].subMtrl.size() <= 0)
+            {
+                tri[iface].iSubIndex = 0;
+            }
+            desc.triList_List[
+                tri[iface].iSubIndex].push_back(
+                    tri[iface]);
+
+
+
+
+                temp1.c.w = tri[iface].iSubIndex;
+                temp3.c.w = tri[iface].iSubIndex;
+                temp2.c.w = tri[iface].iSubIndex;
+                testvb.push_back(temp1);
+                testvb.push_back(temp2);
+                testvb.push_back(temp3);
+
+          /*      std::sort(tri.begin(), tri.end(), AscendingSort());
+                int iFace;
+                for (int iMtrl = 0; iMtrl < desc.iSubMesh; iMtrl++)
+                {
+                    g_iSearchIndex = iMtrl;
+                    iFace = count_if(tri.begin(),
+                        tri.end(),
+                        IsSameInt());
+                }*/
 
             ////Normal 은 임시로 1,1,1;
-            //m_TriList[iVer].v[0].n = Point3(1, 1, 1);
-            //m_TriList[iVer].v[2].n = Point3(1, 1, 1);
-            //m_TriList[iVer].v[1].n = Point3(1, 1, 1);
-            
+        //m_TriList[iVer].v[0].n = Point3(1, 1, 1);
+        //m_TriList[iVer].v[2].n = Point3(1, 1, 1);
+        //m_TriList[iVer].v[1].n = Point3(1, 1, 1);
             //Index//
-            //// 인덱스... 는  full vertex 버전이라 무쓸모?
-            //m_IndexList.push_back(mesh->faces[iVer].v[0]);
-            //m_IndexList.push_back(mesh->faces[iVer].v[2]);
-            //m_IndexList.push_back(mesh->faces[iVer].v[1]);
-            
-
+        //// 인덱스... 는  full vertex 버전이라 무쓸모?
+        //m_IndexList.push_back(mesh->faces[iVer].v[0]);
+        //m_IndexList.push_back(mesh->faces[iVer].v[2]);
+        //m_IndexList.push_back(mesh->faces[iVer].v[1]);
             //서브 매터리얼 인덱스.   todo
-
 
         }
         //vb 만들.
-
+        SetUniqueBuffer(desc);
     }
 
     if (deleteit) delete tri;
 }
-
+void khgWriter::SetUniqueBuffer(tempMesh& tMesh)
+{
+    tMesh.vb.resize(tMesh.triList_List.size());
+    tMesh.ib.resize(tMesh.triList_List.size());
+    for (int iSub = 0; iSub < tMesh.triList_List.size();
+        iSub++)
+    {
+        for (int iFace = 0; iFace < tMesh.triList_List[iSub].size(); iFace++)
+        {
+            vectorTriList& triArray = tMesh.triList_List[iSub];
+            TriList& tri = triArray[iFace];
+            VertexList& vList = tMesh.vb[iSub];
+            IndexList& iList = tMesh.ib[iSub];
+            for (int iVer = 0; iVer < 3; iVer++)
+            {
+                int iPos = IsEqulVertexList(tri.v[iVer], vList);
+                if (iPos < 0)
+                {
+                    vList.push_back(tri.v[iVer]);
+                    iPos = vList.size() - 1;
+                }
+                iList.push_back(iPos);
+            }
+        }
+    }
+    for (int a = 0; a < testvb.size(); a++)
+    {
+        int iPos = IsEqulVertexList(testvb[a], testvb2);
+        if (iPos < 0)
+        {
+            testvb2.push_back(testvb[a]);
+        }
+    }
+}
 Point3 khgWriter::GetVertexNormal(Mesh* mesh, int iFace, RVertex* rVertex)///////////
 {
     Face* face = &mesh->faces[iFace];
@@ -333,9 +670,6 @@ Point3 khgWriter::GetVertexNormal(Mesh* mesh, int iFace, RVertex* rVertex)//////
     }
     return vertexNormal;
 }
-
-
-
 TriObject*    khgWriter::AddTriangleFromObject(INode* pNode, TimeValue time, bool& DeleteIt)
 {
     Object* obj = pNode->EvalWorldState(time).obj;
@@ -347,9 +681,7 @@ TriObject*    khgWriter::AddTriangleFromObject(INode* pNode, TimeValue time, boo
     }
     return nullptr;
 }
-void	khgWriter::DumpPoint3(Point3& desc, Point3& src)
+khgWriter::khgWriter()
 {
-    desc.x = src.x;
-    desc.y = src.z;
-    desc.z = src.y;
+    m_time = 0;
 }

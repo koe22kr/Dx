@@ -2,6 +2,23 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <algorithm>
+
+#define CTL_CHARS		31
+#define SINGLE_QUOTE	39 // ( ' )
+#define ALMOST_ZERO		1.0e-3f
+
+typedef struct _D3D_MATRIX {
+    union {
+        struct {
+            float        _11, _12, _13, _14;
+            float        _21, _22, _23, _24;
+            float        _31, _32, _33, _34;
+            float        _41, _42, _43, _44;
+        };
+        float m[4][4];
+    };
+}D3D_MATRIX, *LPD3D_MATRIX;
 struct PNCT
 {
     Point3 p;
@@ -11,20 +28,72 @@ struct PNCT
 };
 struct FaceInfo
 {
-    DWORD a;
-    DWORD b;
-    DWORD c;
+    union{
+        struct 
+        {
+            DWORD a;
+            DWORD b;
+            DWORD c;
+        };
+        DWORD v[3];
+    };
 };
 struct TriList
 {
     int iSubIndex;
     PNCT   v[3];
 };
-struct MtlInfo
+
+struct texInfo
 {
     int   iMapID;
     TSTR  szName;
+};
+
+struct MtlInfo
+{
+    //INode* pINode; 추가?
+    int   iMapID;
+    TSTR  szName;
+    std::vector< texInfo> TextureList;
     std::vector<MtlInfo> subMtrl;
+    MtlInfo()
+    {
+        iMapID = -1;
+        szName = L"None";
+    }
+};
+typedef std::vector<TriList>   vectorTriList;
+using IndexList = std::vector<DWORD>;
+using VertexList = std::vector<PNCT>;
+//OBJ 로 보면 될듯.
+struct tempMesh 
+{
+    INode*  pINode;
+    int     iSubMesh; //서브매쉬 갯수
+    TSTR    name;//1
+    TSTR    ParentName;//1
+    Matrix3    wtm;//1
+    D3D_MATRIX matWorld;//1
+
+    std::vector<TriList>			triList;
+    std::vector<vectorTriList>		triList_List;
+   // std::vector<PNCT>	triList;
+    //std::vector<FaceInfo>   indexList; //인덱스 겸 페이스;
+
+    std::vector<VertexList> vb;
+    std::vector<IndexList> ib;
+    //std::vector<vertexList>   vbList;
+    //std::vector<IndexList>    ibList;
+
+    int     iMtrlID;
+    tempMesh()
+    {
+        name = L"none";
+        ParentName = L"none";
+        iMtrlID = -1;
+        iSubMesh = 1;
+    }
 };
 class khgWriter
 {
@@ -33,31 +102,55 @@ class khgWriter
     std::wstring m_filename;
     INode* m_pRootNode; //트리인데 그래프 형식 이라 보면된다함.
     std::vector<INode*> m_ObjList;
-    std::vector<TriList> m_TriList;
-    std::vector<MtlInfo> m_MtlInfoList;                             //매터리얼 info인데 오브젝트 정보 들어가있음. 매터리얼 정보도 받아야함.
-    std::vector<FaceInfo> m_FaceInfoList;
 
+    //std::vector<TriList> m_TriList
+    std::vector<Mtl*>    m_MaterialList;//매터리얼 리스트..?
+    std::vector<MtlInfo> m_MtlInfoList;                             //매터리얼 여기에 다 입력.
     
-    std::vector<DWORD> m_IndexList;
-    std::vector<PNCT> m_VertexList;
-    std::map<PNCT*,int> m_finder;
+
+
+    std::vector<FaceInfo> m_FaceInfoList;                           //인덱스용
+    std::vector<tempMesh> m_tempMesh;
+    
+   VertexList testvb;
+   VertexList testvb2;
+    //std::vector<PNCT> m_VertexList;
+    //std::map<PNCT*,int> m_finder;
 public:
-    void    AddObject(INode* pNode, TimeValue time);
-    void    GetMesh(INode* pNode, TimeValue time);
-    TriObject*    AddTriangleFromObject(INode* pNode,TimeValue time,bool& DeleteIt);
-    void    PreProcess(INode* pNode, TimeValue time);
-   
-    void GetMaterial(INode* pNode);
-    void  GetTexture(Mtl* pNode);
-
-    bool TMNegParity( Matrix3 tm);
-    void	DumpPoint3(Point3& desc, Point3& src);
-
-    void DumpPoint3_Index(Face& src);
-    Point3 GetVertexNormal(Mesh* mesh, int iFace, RVertex* rVertex);
-    void Setting();
     void Set(const TCHAR* name, Interface* mMax);
+    void    PreProcess(INode* pNode, TimeValue time);
+    bool  Convert();
+    void Setting();
     bool Export();
+
+    void    AddObject(INode* pNode, TimeValue time);
+
+    void    GetMesh(INode* pNode, TimeValue time, tempMesh& desc);
+
+    TriObject*    AddTriangleFromObject(INode* pNode,TimeValue time,bool& DeleteIt);
+
+    //매터리얼
+    void AddMaterial(INode* pNode);
+    void GetMaterial(INode* pNode);
+    int   FindMaterial(INode* pNode);
+    //
+    void  GetTexture(Mtl* pNode, MtlInfo& desc);
+
+    Point3 GetVertexNormal(Mesh* mesh, int iFace, RVertex* rVertex);
+    void SetUniqueBuffer(tempMesh& tMesh);
+
+    //
+    bool	EqualPoint2(Point2 p1, Point2 p2);
+    bool	EqualPoint3(Point3 p1, Point3 p2);
+    bool	EqualPoint4(Point4 p1, Point4 p2);
+    int IsEqulVertexList(PNCT& vertex, VertexList& vList);
+
+    bool TMNegParity(Matrix3 tm);
+    void	DumpPoint3(Point3& desc, Point3& src);
+    TCHAR* FixupName(MSTR name);
+    void   DumpMatrix3(Matrix3& matWorld, D3D_MATRIX& world);
+    //
+
     khgWriter();
     ~khgWriter();
 };
