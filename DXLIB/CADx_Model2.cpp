@@ -49,6 +49,7 @@ namespace DX
     }
     HRESULT CADx_Model2::CreateVertexBuffer() {
         HRESULT hr = S_OK;
+        if (m_Vertex_List.size() <= 0)  return S_OK;
         m_helper.m_iVertexSize = sizeof(PNCT_VERTEX2);
         m_helper.m_iNumVertex = m_Vertex_List.size();;
         m_helper.m_pVertexBuffer.Attach(

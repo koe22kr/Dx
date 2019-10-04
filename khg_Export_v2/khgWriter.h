@@ -31,11 +31,11 @@ struct FaceInfo
     union{
         struct 
         {
-            DWORD a;
-            DWORD b;
-            DWORD c;
+            int a;
+            int b;
+            int c;
         };
-        DWORD v[3];
+        int v[3];
     };
 };
 struct TriList

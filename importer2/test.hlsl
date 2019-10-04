@@ -59,9 +59,23 @@ VS_OUTPUT VS(VS_INPUT vIn)
 
 float4 PS(VS_OUTPUT vIn) : SV_Target
 {
-    /*float4 vTexColor = g_txDiffuse.Sample(s0, vIn.t);
-     float4 vFinalColor = vTexColor * (Diffuse(vIn.n) + Specular(vIn.n))* vIn.c;*/
-    vIn.c.w = 1.0f;
-    return vIn.c;
-  //   return g_txDiffuse.Sample(s0, vIn.t);
+    switch (vIn.c.w)
+    {
+        case -1.0:
+        {
+            vIn.c.x = 0.0f;
+            vIn.c.y = 0.0f;
+            vIn.c.z = 0.0f;
+            vIn.c.w = 0.3f;
+            vIn.t.y = 0.0f;
+            vIn.t.x = 0.0f;
+            return vIn.c;
+        }
+        default:
+        {
+            vIn.c.w = 1.0f;
+            return g_txDiffuse.Sample(s0, vIn.t)*vIn.c;
+        }
+    }
 }
+//float4

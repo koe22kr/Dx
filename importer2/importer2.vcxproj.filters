@@ -34,5 +34,8 @@
     <FxCompile Include="test.hlsl">
       <Filter>소스 파일</Filter>
     </FxCompile>
+    <FxCompile Include="color.hlsl">
+      <Filter>소스 파일</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

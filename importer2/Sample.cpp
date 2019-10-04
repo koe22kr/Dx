@@ -4,15 +4,15 @@ using namespace std;
 
 bool Sample::Init()
 {
-    m_loader.Load("test.MD");
-    m_loader.m_pnct_List = &m_pnct_List;
-    m_loader.Create(CADevice::m_pDevice, L"test.hlsl", nullptr);
+    m_loader.Load("cam.MD");
+   // m_loader.m_pnct_List = &m_pnct_List;
+    m_loader.LoaderCreate(CADevice::m_pDevice, L"test.hlsl", nullptr);
     wstring temp;
     string atemp;
     //temp. = atemp.c_str();
 
     m_loader.m_helper.m_iNumIndex = 0;
-
+    m_loader.Costom_LoadTexture();
     return true;
 }
 bool Sample::Frame()
@@ -24,8 +24,8 @@ bool Sample::Frame()
 bool Sample::Render()
 {
 
-    m_loader.SetMatrix((D3DXMATRIX*)&m_loader.m_matWorld, &m_pMain_Cam->m_matView, &m_pMain_Cam->m_matProj);
-    m_loader.Render(CADevice::m_pImmediate_Device_Context);
+    m_loader.LoaderSetMatrix((D3DXMATRIX*)&m_loader.m_matWorld, &m_pMain_Cam->m_matView, &m_pMain_Cam->m_matProj);
+    m_loader.LoaderRender(CADevice::m_pImmediate_Device_Context);
 
     return true;
 }

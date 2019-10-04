@@ -152,11 +152,15 @@ bool  khgWriter::Convert()
         DumpMatrix3(wtm, tMesh.matWorld);
 
         tMesh.iMtrlID = FindMaterial(pNode);  //이전에 addmaterial 해야함.
-        if (m_MtlInfoList[tMesh.iMtrlID].subMtrl.size() > 0)
+        if (tMesh.iMtrlID >= 0 && tMesh.iMtrlID != -1)
         {
-            tMesh.iSubMesh = m_MtlInfoList[tMesh.iMtrlID].subMtrl.size();
+            if (m_MtlInfoList[tMesh.iMtrlID].subMtrl.size() > 0)
+            {
+                tMesh.iSubMesh = m_MtlInfoList[tMesh.iMtrlID].subMtrl.size();
+            }
         }
-        GetMesh(pNode, 0,tMesh);
+
+            GetMesh(pNode, 0,tMesh);
         m_tempMesh.push_back(tMesh);
     }
     return true;
@@ -554,16 +558,26 @@ void    khgWriter::GetMesh(INode* pNode,TimeValue time, tempMesh& desc)
             // sub material index
             tri[iface].iSubIndex =
                 mesh->faces[iface].getMatID();
-            if (m_MtlInfoList[desc.iMtrlID].subMtrl.size() <= 0)
+            if (desc.iMtrlID < 0 || m_MtlInfoList[desc.iMtrlID].subMtrl.size() <= 0)
             {
                 tri[iface].iSubIndex = 0;
+                tri[iface].v[0].c.w = -1;
+                tri[iface].v[1].c.w = -1;
+                tri[iface].v[2].c.w = -1;
+            }
+            else
+            {
+                //c.w 에 서브마태리얼 삽입
+                tri[iface].v[0].c.w = tri[iface].iSubIndex;
+                tri[iface].v[1].c.w = tri[iface].iSubIndex;
+                tri[iface].v[2].c.w = tri[iface].iSubIndex;
             }
             desc.triList_List[
                 tri[iface].iSubIndex].push_back(
                     tri[iface]);
 
 
-
+               
 
                 temp1.c.w = tri[iface].iSubIndex;
                 temp3.c.w = tri[iface].iSubIndex;

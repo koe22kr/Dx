@@ -109,44 +109,7 @@ void Load_Shape::Load(const char* maxconvertfile)
     m_Vertex_List = m_VertexList_List[0];
     m_Texture_Count = m_Render_Count = nobj_material_size;
 
-#endif // DEBUG
-    //in >> iNumFace;
-    //in >> iNumTexture;
-    //for (int i = 0; i < iNumTexture; i++)
-    //{
-    //    in >> iNumTexture_Index;
-    //    in >> filename;
-    //    wfilename.assign(filename.begin(), filename.end());
-    //    m_filename_map[iNumTexture_Index] = wfilename;
-    //
-    //    filename.clear();
-    //    iNumTexture_Index = 0;
-    //}
-
-    //DX::PNCT_VERTEX2 temp;
-    //for (int i = 0; i < iNumFace; i++)
-    //{
-    //    in >> temp.p.x >> temp.p.y >> temp.p.z;
-    //    in >> temp.n.x >> temp.n.y >> temp.n.z;
-    //    in >> temp.c.x >> temp.c.y >> temp.c.z >> temp.c.w;
-    //    in >> temp.t.x >> temp.t.y;
-
-    //    //find if temp -    m_pnct_list;
-    //    m_Vertex_List.push_back(temp);
-
-
-    //}
-    //in >> iNumIndex;
-   
-    //for (int a = 0; a < iNumIndex; a++)
-    //{
-    //    in >> iIndex_data;
-    //    m_Index_List.push_back(iIndex_data);
-    //}
-    //getline(in, name);
-    //in.close();
-    //int a = 0;
-    //return &m_pnct_List;
+#endif 
 }
 Load_Shape::Load_Shape()
 {
@@ -157,10 +120,6 @@ Load_Shape::~Load_Shape()
 {
 }
 
-#ifdef Use_Origin
-
-
-#else
 
 
 bool Load_Shape::PostRender(
@@ -185,7 +144,7 @@ bool Load_Shape::PostRender(
 
         if (iCount == 0) iCount = m_IndexList_List[i].size();
         if (iCount != 0)
-            pContext->DrawIndexed(iCount, i, 0);
+            pContext->DrawIndexed(iCount, 0, 0);
         else
             pContext->Draw(m_VertexList_List[i].size(), 0);
     }
@@ -215,10 +174,10 @@ bool Load_Shape::PostRender(
 
         int iCount = m_IndexList_List[i].size();
         if (iCount != 0)
-            pContext->DrawIndexed(iCount, i, 0);
+            pContext->DrawIndexed(iCount, 0, 0);
         else
             pContext->Draw(m_VertexList_List[i].size(), 0);
-    }
+   }
     return true;
 }
 void Load_Shape::LoadTextureIndex(const TCHAR* pLoadTextureFile)
@@ -262,4 +221,3 @@ bool Load_Shape::Costom_LoadTexture()
     return true;
 }
 
-#endif // Use_Origin
