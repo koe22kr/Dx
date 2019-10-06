@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#define khgExport_CLASS_ID Class_ID(0x60272e, 0xcc40773)
+#define khgExport_CLASS_ID Class_ID(0x460a1268, 0x37e72dd)
 #include "khgWriter.h"
 
 

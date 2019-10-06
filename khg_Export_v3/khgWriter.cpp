@@ -115,15 +115,20 @@ void khgWriter::Set(const TCHAR* name, Interface* mMax)
     m_pMax = mMax;
     m_filename = name;
     m_pRootNode = m_pMax->GetRootNode();
+    
     m_Interval = m_pMax->GetAnimRange();
-
+    
+    m_Scene.iFirst_Frame = m_Interval.Start() / GetTicksPerFrame();
+    m_Scene.iLast_Frame = m_Interval.End() / GetTicksPerFrame();
+    m_Scene.iFrame_Speed = GetFrameRate();
+    m_Scene.iTick_Per_Frame = GetTicksPerFrame();
 
     PreProcess(m_pRootNode, m_time);
 }
 void    khgWriter::PreProcess(INode* pNode, TimeValue time)
 {
     if (!pNode)return;
-    AddObject(pNode,time);
+    AddObject(pNode, time);
     AddMaterial(pNode);
 
     int iNumChildren = pNode->NumberOfChildren();
@@ -133,7 +138,6 @@ void    khgWriter::PreProcess(INode* pNode, TimeValue time)
         PreProcess(pChild, time);
     }
 }
-
 bool  khgWriter::Convert()
 {
     for (int iObj = 0; iObj < m_ObjList.size(); iObj++)
@@ -155,14 +159,99 @@ bool  khgWriter::Convert()
         DumpMatrix3(wtm, tMesh.matWorld);
 
         tMesh.iMtrlID = FindMaterial(pNode);  //이전에 addmaterial 해야함.
-        if (m_MtlInfoList[tMesh.iMtrlID].subMtrl.size() > 0)
+        if (tMesh.iMtrlID >= 0 &&m_MtlInfoList[tMesh.iMtrlID].subMtrl.size() > 0)
         {
             tMesh.iSubMesh = m_MtlInfoList[tMesh.iMtrlID].subMtrl.size();
         }
-        GetMesh(pNode, 0,tMesh);
-        m_tempMesh.push_back(tMesh);
+
+        GetMesh(pNode, 0, tMesh);
+        GetAnimation(pNode, tMesh);
+        m_tempMesh_List.push_back(tMesh);
     }
     return true;
+}
+void khgWriter::GetAnimation(INode* pNode, tempMesh& tMesh)
+{
+    tMesh.bAnimation[0] = false;
+    tMesh.bAnimation[1] = false;
+    tMesh.bAnimation[2] = false;
+    //0프래임의 값
+    TimeValue startframe = m_Interval.Start();
+    Matrix3 tm = pNode->GetNodeTM(startframe)*Inverse(pNode->GetParentTM(startframe)); //자신의tm * 부모 inv tm//원점의 변형tm
+    
+    AffineParts StartAP;
+    decomp_affine(tm, &StartAP);
+
+    Point3 Start_RotAxis;
+    float Start_RotValue;
+    AngAxisFromQ(StartAP.q, &Start_RotValue, Start_RotAxis);
+
+    AnimTrack start_track;
+    ZeroMemory(&start_track,sizeof(AnimTrack));
+    start_track.i = startframe;
+    
+    start_track.p = StartAP.t;
+    start_track.q = StartAP.q;
+    tMesh.Anim_R.push_back(start_track);
+    tMesh.Anim_T.push_back(start_track);
+    start_track.p = StartAP.k;
+    start_track.q = StartAP.u;
+    tMesh.Anim_S.push_back(start_track);
+    // 
+    TimeValue start = m_Interval.Start() + GetTicksPerFrame();
+    TimeValue end = m_Interval.End();
+    for (TimeValue frame = start; frame <= end; frame += GetTicksPerFrame())
+    {
+        Matrix3 tm = Inverse(pNode->GetParentTM(frame))*pNode->GetNodeTM(frame);// 순서 반대로 바꿈. 이게 맞는거 같음?//191006
+        AffineParts FrameAP;
+        decomp_affine(tm, &FrameAP);
+
+        AnimTrack frame_stack;
+        ZeroMemory(&frame_stack, sizeof(AnimTrack));
+        frame_stack.i = frame;
+        frame_stack.p = FrameAP.t;
+        frame_stack.q = FrameAP.q;
+        tMesh.Anim_T.push_back(frame_stack);
+        tMesh.Anim_R.push_back(frame_stack);
+        frame_stack.p = FrameAP.k;
+        frame_stack.q = FrameAP.u;
+        tMesh.Anim_S.push_back(frame_stack);
+
+        Point3 Frame_RotAxis;
+        float Frame_RotValue;
+        AngAxisFromQ(FrameAP.q, &Frame_RotValue, Frame_RotAxis);
+
+        if (!tMesh.bAnimation[0]) {
+            if (!EqualPoint3(StartAP.k, FrameAP.k))//u도 비교 해야하지 않을까?..
+            {
+                tMesh.bAnimation[0] = true;
+            }
+        }
+       
+
+        if (!tMesh.bAnimation[1]) {
+            if (!EqualPoint3(Start_RotAxis, Frame_RotAxis))
+            {
+                tMesh.bAnimation[1] = true;
+            }
+            else
+            {
+                if (Frame_RotValue != Frame_RotValue)
+                {
+                    tMesh.bAnimation[1] = true;
+                }
+            }
+        }
+
+        if (!tMesh.bAnimation[2]) {
+            if (!EqualPoint3(StartAP.t, FrameAP.t))
+            {
+                tMesh.bAnimation[2] = true;
+            }
+        }
+      
+
+    }
 }
 
 void khgWriter::AddMaterial(INode* pNode)
@@ -181,7 +270,6 @@ void khgWriter::AddMaterial(INode* pNode)
         GetMaterial(pNode);
     }
 }
-
 void khgWriter::GetMaterial(INode* pNode)
 {
     Mtl* pRootMtl = pNode->GetMtl();
@@ -208,7 +296,6 @@ void khgWriter::GetMaterial(INode* pNode)
 
     //GetTexture(pRootMtl);
 }
-
 int khgWriter::FindMaterial(INode* pNode)
 {
     Mtl* pMtl = pNode->GetMtl();
@@ -249,9 +336,10 @@ bool khgWriter::Export()
 {
     Convert();
 
-    FILE* pStream=nullptr;
-    _tfopen_s(&pStream,m_filename.c_str(), _T("wt"));
-    _ftprintf(pStream, _T("%s %d"), _T("khgExporter_100"),m_ObjList.size());
+    FILE* pStream = nullptr;
+    _tfopen_s(&pStream, m_filename.c_str(), _T("wt"));
+    _ftprintf(pStream, _T("%s %d"), _T("khgExporter_100"), m_ObjList.size());
+    _ftprintf(pStream, _T("\n%d %d %d %d"),m_Scene.iFirst_Frame, m_Scene.iLast_Frame, m_Scene.iFrame_Speed, m_Scene.iTick_Per_Frame);
     for (int iMtl = 0; iMtl < m_MtlInfoList.size(); iMtl++)
     {
 
@@ -293,101 +381,107 @@ bool khgWriter::Export()
             }
         }
     }
-        // mesh list
-        //INode* pNode = m_ObjList[iMtl];
-        //_ftprintf(pStream, _T("\n%s %d %d"), pNode->GetName(), m_FaceInfoList.size(), m_tempMesh[iMtl].triList_List.size());
+    // mesh list
+    //INode* pNode = m_ObjList[iMtl];
+    //_ftprintf(pStream, _T("\n%s %d %d"), pNode->GetName(), m_FaceInfoList.size(), m_tempMesh_List[iMtl].triList_List.size());
 
-        for (int iObj = 0; iObj < m_tempMesh.size(); iObj++)
+    for (int iObj = 0; iObj < m_tempMesh_List.size(); iObj++)
+    {
+        _ftprintf(pStream, _T("\n%s %s %d %d %d %d %d"),
+            m_tempMesh_List[iObj].name,
+            m_tempMesh_List[iObj].ParentName,
+            m_tempMesh_List[iObj].iMtrlID,
+            m_tempMesh_List[iObj].triList_List.size(),
+            m_tempMesh_List[iObj].bAnimation[0],
+            m_tempMesh_List[iObj].bAnimation[1],
+            m_tempMesh_List[iObj].bAnimation[2]
+        );
+
+        _ftprintf(pStream, _T("\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f"),
+            m_tempMesh_List[iObj].matWorld._11,
+            m_tempMesh_List[iObj].matWorld._12,
+            m_tempMesh_List[iObj].matWorld._13,
+            m_tempMesh_List[iObj].matWorld._14,
+
+            m_tempMesh_List[iObj].matWorld._21,
+            m_tempMesh_List[iObj].matWorld._22,
+            m_tempMesh_List[iObj].matWorld._23,
+            m_tempMesh_List[iObj].matWorld._24,
+
+            m_tempMesh_List[iObj].matWorld._31,
+            m_tempMesh_List[iObj].matWorld._32,
+            m_tempMesh_List[iObj].matWorld._33,
+            m_tempMesh_List[iObj].matWorld._34,
+
+            m_tempMesh_List[iObj].matWorld._41,
+            m_tempMesh_List[iObj].matWorld._42,
+            m_tempMesh_List[iObj].matWorld._43,
+            m_tempMesh_List[iObj].matWorld._44);
+
+
+        ///
+        for (int iSubTri = 0; iSubTri < m_tempMesh_List[iObj].triList_List.size(); iSubTri++)
         {
-            _ftprintf(pStream, _T("\n%s %s %d %d"),
-                m_tempMesh[iObj].name,
-                m_tempMesh[iObj].ParentName,
-                m_tempMesh[iObj].iMtrlID,
-                m_tempMesh[iObj].triList_List.size());
-
-            _ftprintf(pStream, _T("\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f"),
-                m_tempMesh[iObj].matWorld._11,
-                m_tempMesh[iObj].matWorld._12,
-                m_tempMesh[iObj].matWorld._13,
-                m_tempMesh[iObj].matWorld._14,
-
-                m_tempMesh[iObj].matWorld._21,
-                m_tempMesh[iObj].matWorld._22,
-                m_tempMesh[iObj].matWorld._23,
-                m_tempMesh[iObj].matWorld._24,
-
-                m_tempMesh[iObj].matWorld._31,
-                m_tempMesh[iObj].matWorld._32,
-                m_tempMesh[iObj].matWorld._33,
-                m_tempMesh[iObj].matWorld._34,
-
-                m_tempMesh[iObj].matWorld._41,
-                m_tempMesh[iObj].matWorld._42,
-                m_tempMesh[iObj].matWorld._43,
-                m_tempMesh[iObj].matWorld._44);
-
-
-            ///
-            for (int iSubTri = 0; iSubTri < m_tempMesh[iObj].triList_List.size(); iSubTri++)
+            VertexList& vList = m_tempMesh_List[iObj].vb[iSubTri];
+            _ftprintf(pStream, _T("\nVertex: %d"), vList.size());
+            for (int iVer = 0; iVer < vList.size(); iVer++)
             {
-                VertexList& vList = m_tempMesh[iObj].vb[iSubTri];
-                _ftprintf(pStream, _T("\nVertex: %d"), vList.size());
-                for (int iVer = 0; iVer < vList.size(); iVer++)
-                {
-                    _ftprintf(pStream, _T("\n%10.4f %10.4f %10.4f"),
-                        vList[iVer].p.x,
-                        vList[iVer].p.y,
-                        vList[iVer].p.z);
-                    _ftprintf(pStream, _T("%10.4f %10.4f %10.4f"),
-                        vList[iVer].n.x,
-                        vList[iVer].n.y,
-                        vList[iVer].n.z);
-                    _ftprintf(pStream, _T("%10.4f %10.4f %10.4f %10.4f"),
-                        vList[iVer].c.x,
-                        vList[iVer].c.y,
-                        vList[iVer].c.z,
-                        vList[iVer].c.w);
-                    _ftprintf(pStream, _T("%10.4f %10.4f"),
-                        vList[iVer].t.x,
-                        vList[iVer].t.y);
+                _ftprintf(pStream, _T("\n%10.4f %10.4f %10.4f"),
+                    vList[iVer].p.x,
+                    vList[iVer].p.y,
+                    vList[iVer].p.z);
+                _ftprintf(pStream, _T("%10.4f %10.4f %10.4f"),
+                    vList[iVer].n.x,
+                    vList[iVer].n.y,
+                    vList[iVer].n.z);
+                _ftprintf(pStream, _T("%10.4f %10.4f %10.4f %10.4f"),
+                    vList[iVer].c.x,
+                    vList[iVer].c.y,
+                    vList[iVer].c.z,
+                    vList[iVer].c.w);
+                _ftprintf(pStream, _T("%10.4f %10.4f"),
+                    vList[iVer].t.x,
+                    vList[iVer].t.y);
 
-                }
-
-                IndexList& iList =
-                    m_tempMesh[iObj].ib[iSubTri];
-                _ftprintf(pStream, _T("\nIndexList %d"), iList.size());
-                for (int iIndex = 0; iIndex < iList.size(); iIndex += 3)
-                {
-                    _ftprintf(pStream, _T("\n%d %d %d"),
-                        iList[iIndex + 0],
-                        iList[iIndex + 1],
-                        iList[iIndex + 2]);
-                }
             }
-            
-        }
 
-        _ftprintf(pStream, _T("\nDebug"));
-        for (int iVer = 0; iVer < testvb.size(); iVer++)
-        {
-            _ftprintf(pStream, _T("\n%10.4f %10.4f %10.4f"),
-                testvb[iVer].p.x,
-                testvb[iVer].p.y,
-                testvb[iVer].p.z);
-            _ftprintf(pStream, _T("%10.4f %10.4f %10.4f"),
-                testvb[iVer].n.x,
-                testvb[iVer].n.y,
-                testvb[iVer].n.z);
-            _ftprintf(pStream, _T("%10.4f %10.4f %10.4f %10.4f"),
-                testvb[iVer].c.x,
-                testvb[iVer].c.y,
-                testvb[iVer].c.z,
-                testvb[iVer].c.w);
-            _ftprintf(pStream, _T("%10.4f %10.4f"),
-                testvb[iVer].t.x,
-                testvb[iVer].t.y);
-
+            IndexList& iList =
+                m_tempMesh_List[iObj].ib[iSubTri];
+            _ftprintf(pStream, _T("\nIndexList %d"), iList.size());
+            for (int iIndex = 0; iIndex < iList.size(); iIndex += 3)
+            {
+                _ftprintf(pStream, _T("\n%d %d %d"),
+                    iList[iIndex + 0],
+                    iList[iIndex + 1],
+                    iList[iIndex + 2]);
+            }
         }
+        //애니메이션 data 출력
+        ExportAnimation(m_tempMesh_List[iObj], pStream);
+
+    }
+
+    _ftprintf(pStream, _T("\nDebug"));
+    for (int iVer = 0; iVer < testvb.size(); iVer++)
+    {
+        _ftprintf(pStream, _T("\n%10.4f %10.4f %10.4f"),
+            testvb[iVer].p.x,
+            testvb[iVer].p.y,
+            testvb[iVer].p.z);
+        _ftprintf(pStream, _T("%10.4f %10.4f %10.4f"),
+            testvb[iVer].n.x,
+            testvb[iVer].n.y,
+            testvb[iVer].n.z);
+        _ftprintf(pStream, _T("%10.4f %10.4f %10.4f %10.4f"),
+            testvb[iVer].c.x,
+            testvb[iVer].c.y,
+            testvb[iVer].c.z,
+            testvb[iVer].c.w);
+        _ftprintf(pStream, _T("%10.4f %10.4f"),
+            testvb[iVer].t.x,
+            testvb[iVer].t.y);
+
+    }
 
 
     fclose(pStream);
@@ -395,9 +489,90 @@ bool khgWriter::Export()
     MessageBox(GetActiveWindow(), m_filename.c_str(), L"Succsess", MB_OK);/////////////////////////////////////////
     return true;
 }
-void khgWriter::Setting()
+
+void khgWriter::ExportAnimation(tempMesh& tmesh, FILE* pstream)
 {
-    
+    _ftprintf(pstream, _T("\n%s %d %d %d"),
+        L"#AnimationData",
+        (tmesh.bAnimation[0]) ? tmesh.Anim_S.size() : 1,
+        (tmesh.bAnimation[1]) ? tmesh.Anim_R.size() : 1,
+        (tmesh.bAnimation[2]) ? tmesh.Anim_T.size() : 1);
+    if (tmesh.bAnimation[0])
+    {
+        for (int iTrack = 0; iTrack < tmesh.Anim_S.size(); iTrack++)
+        {
+            _ftprintf(pstream, _T("\n%d %d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f"),
+                iTrack,
+                tmesh.Anim_S[iTrack].i,
+                tmesh.Anim_S[iTrack].p.x,
+                tmesh.Anim_S[iTrack].p.z,
+                tmesh.Anim_S[iTrack].p.y,
+                tmesh.Anim_S[iTrack].q.x,
+                tmesh.Anim_S[iTrack].q.z,
+                tmesh.Anim_S[iTrack].q.y,
+                tmesh.Anim_S[iTrack].q.w);
+        }
+    }
+    else
+    {
+        _ftprintf(pstream, _T("\n%d %d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f"),
+            0,
+            tmesh.Anim_S[0].i,
+            tmesh.Anim_S[0].p.x,
+            tmesh.Anim_S[0].p.z,
+            tmesh.Anim_S[0].p.y,
+            tmesh.Anim_S[0].q.x,
+            tmesh.Anim_S[0].q.z,
+            tmesh.Anim_S[0].q.y,
+            tmesh.Anim_S[0].q.w);
+    }
+    if (tmesh.bAnimation[1])
+    {
+        for (int iTrack = 0; iTrack < tmesh.Anim_R.size(); iTrack++)
+        {
+            _ftprintf(pstream, _T("\n%d %d %10.4f %10.4f %10.4f %10.4f"),
+                iTrack,
+                tmesh.Anim_R[iTrack].i,
+                tmesh.Anim_R[iTrack].q.x,
+                tmesh.Anim_R[iTrack].q.z,
+                tmesh.Anim_R[iTrack].q.y,
+                tmesh.Anim_R[iTrack].q.w);
+        }
+    }
+    else
+    {
+        _ftprintf(pstream, _T("\n%d %d %10.4f %10.4f %10.4f %10.4f"),
+            0,
+            tmesh.Anim_R[0].i,
+            tmesh.Anim_R[0].q.x,
+            tmesh.Anim_R[0].q.z,
+            tmesh.Anim_R[0].q.y,
+            tmesh.Anim_R[0].q.w);
+    }
+    if (tmesh.bAnimation[2])
+    {
+        for (int iTrack = 0; iTrack < tmesh.Anim_T.size(); iTrack++)
+        {
+          
+
+            _ftprintf(pstream, _T("\n%d %d %10.4f %10.4f %10.4f"),
+                iTrack,
+                tmesh.Anim_T[iTrack].i,
+                tmesh.Anim_T[iTrack].p.x,
+                tmesh.Anim_T[iTrack].p.z,
+                tmesh.Anim_T[iTrack].p.y);
+        }
+    }
+    else
+    {
+        _ftprintf(pstream, _T("\n%d %d %10.4f %10.4f %10.4f"),
+            0,
+            tmesh.Anim_T[0].i,
+            tmesh.Anim_T[0].p.x,
+            tmesh.Anim_T[0].p.z,
+            tmesh.Anim_T[0].p.y);
+
+    }
 }
 khgWriter::~khgWriter()
 {
@@ -426,7 +601,6 @@ void    khgWriter::AddObject(INode* pNode, TimeValue time)
     }
 
 }
-
 bool khgWriter::TMNegParity(Matrix3 tm)
 {
     Point3 v0 = tm.GetRow(0);
@@ -434,10 +608,9 @@ bool khgWriter::TMNegParity(Matrix3 tm)
     Point3 v2 = tm.GetRow(2);
     Point3 vCross = CrossProd(v0, v1);
     return (DotProd(vCross, v2) < 0.0f) ? true : false;
-return true;
+    return true;
 }
-
-void    khgWriter::GetMesh(INode* pNode,TimeValue time, tempMesh& desc)
+void    khgWriter::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
 {
     Matrix3 tm = pNode->GetObjTMAfterWSM(time);
     ///////////////////////1) 트라이엥글 오브젝트[]
@@ -456,7 +629,7 @@ void    khgWriter::GetMesh(INode* pNode,TimeValue time, tempMesh& desc)
     {
         v0 = 0; v1 = 1; v2 = 2;
     }
-  
+
 
     if (mesh)                                                         //X,Y축이 반대라 0 2 1 순으로 받아서 0 1 2 순서로 넣는다.
     {
@@ -471,7 +644,7 @@ void    khgWriter::GetMesh(INode* pNode,TimeValue time, tempMesh& desc)
         //DWORD num[3];
         /* int iNumVertex = mesh->getNumVerts();
          m_VertexList.resize(iNumVertex);*/
-        
+
 
 
         for (int iface = 0; iface < iFacenum; iface++)
@@ -513,23 +686,23 @@ void    khgWriter::GetMesh(INode* pNode,TimeValue time, tempMesh& desc)
                 temp3.c = tri[iface].v[1].c = mesh->vertCol[mesh->vcFace[iface].t[v2]];
                 temp2.c = tri[iface].v[2].c = mesh->vertCol[mesh->vcFace[iface].t[v1]];
             }
-         
+
 
             //Texcoord//
             int INumTex = mesh->getNumTVerts();
             if (INumTex > 0)
             {
                 Point2 p2 = (Point2)mesh->tVerts[mesh->tvFace[iface].t[v0]];
-                temp1.t.x=tri[iface].v[0].t.x = p2.x;
-                temp1.t.y=tri[iface].v[0].t.y = 1.0f - p2.y;
+                temp1.t.x = tri[iface].v[0].t.x = p2.x;
+                temp1.t.y = tri[iface].v[0].t.y = 1.0f - p2.y;
 
                 p2 = (Point2)mesh->tVerts[mesh->tvFace[iface].t[v2]];
-                temp3.t.x=tri[iface].v[1].t.x = p2.x;
-                temp3.t.y=tri[iface].v[1].t.y = 1.0f - p2.y;
+                temp3.t.x = tri[iface].v[1].t.x = p2.x;
+                temp3.t.y = tri[iface].v[1].t.y = 1.0f - p2.y;
 
                 p2 = (Point2)mesh->tVerts[mesh->tvFace[iface].t[v1]];
-                temp2.t.x=tri[iface].v[2].t.x = p2.x;
-                temp2.t.y=tri[iface].v[2].t.y = 1.0f - p2.y;
+                temp2.t.x = tri[iface].v[2].t.x = p2.x;
+                temp2.t.y = tri[iface].v[2].t.y = 1.0f - p2.y;
             }
 
             //Normal//
@@ -557,9 +730,19 @@ void    khgWriter::GetMesh(INode* pNode,TimeValue time, tempMesh& desc)
             // sub material index
             tri[iface].iSubIndex =
                 mesh->faces[iface].getMatID();
-            if (m_MtlInfoList[desc.iMtrlID].subMtrl.size() <= 0)
+            if (desc.iMtrlID < 0 || m_MtlInfoList[desc.iMtrlID].subMtrl.size() <= 0)
             {
                 tri[iface].iSubIndex = 0;
+                tri[iface].v[0].c.w = -1;
+                tri[iface].v[1].c.w = -1;
+                tri[iface].v[2].c.w = -1;
+            }
+            else
+            {
+                //c.w 에 서브마태리얼 삽입
+                tri[iface].v[0].c.w = tri[iface].iSubIndex;
+                tri[iface].v[1].c.w = tri[iface].iSubIndex;
+                tri[iface].v[2].c.w = tri[iface].iSubIndex;
             }
             desc.triList_List[
                 tri[iface].iSubIndex].push_back(
@@ -575,26 +758,26 @@ void    khgWriter::GetMesh(INode* pNode,TimeValue time, tempMesh& desc)
                 testvb.push_back(temp2);
                 testvb.push_back(temp3);
 
-          /*      std::sort(tri.begin(), tri.end(), AscendingSort());
-                int iFace;
-                for (int iMtrl = 0; iMtrl < desc.iSubMesh; iMtrl++)
-                {
-                    g_iSearchIndex = iMtrl;
-                    iFace = count_if(tri.begin(),
-                        tri.end(),
-                        IsSameInt());
-                }*/
+                /*      std::sort(tri.begin(), tri.end(), AscendingSort());
+                      int iFace;
+                      for (int iMtrl = 0; iMtrl < desc.iSubMesh; iMtrl++)
+                      {
+                          g_iSearchIndex = iMtrl;
+                          iFace = count_if(tri.begin(),
+                              tri.end(),
+                              IsSameInt());
+                      }*/
 
-            ////Normal 은 임시로 1,1,1;
-        //m_TriList[iVer].v[0].n = Point3(1, 1, 1);
-        //m_TriList[iVer].v[2].n = Point3(1, 1, 1);
-        //m_TriList[iVer].v[1].n = Point3(1, 1, 1);
-            //Index//
-        //// 인덱스... 는  full vertex 버전이라 무쓸모?
-        //m_IndexList.push_back(mesh->faces[iVer].v[0]);
-        //m_IndexList.push_back(mesh->faces[iVer].v[2]);
-        //m_IndexList.push_back(mesh->faces[iVer].v[1]);
-            //서브 매터리얼 인덱스.   todo
+                      ////Normal 은 임시로 1,1,1;
+                  //m_TriList[iVer].v[0].n = Point3(1, 1, 1);
+                  //m_TriList[iVer].v[2].n = Point3(1, 1, 1);
+                  //m_TriList[iVer].v[1].n = Point3(1, 1, 1);
+                      //Index//
+                  //// 인덱스... 는  full vertex 버전이라 무쓸모?
+                  //m_IndexList.push_back(mesh->faces[iVer].v[0]);
+                  //m_IndexList.push_back(mesh->faces[iVer].v[2]);
+                  //m_IndexList.push_back(mesh->faces[iVer].v[1]);
+                      //서브 매터리얼 인덱스.   todo
 
         }
         //vb 만들.

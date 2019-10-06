@@ -13,41 +13,25 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="imm">
-      <UniqueIdentifier>{177612c3-26e0-40ba-864e-7049edf10a35}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="khgWriter.h">
+    <ClInclude Include="Sample.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>imm</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>imm</Filter>
+    <ClInclude Include="Load_Shape.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="khgWriter.cpp">
+    <ClCompile Include="Sample.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>imm</Filter>
-    </ClCompile>
-    <ClCompile Include="khg_Export_v3.cpp">
-      <Filter>imm</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>imm</Filter>
+    <ClCompile Include="Load_Shape.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Source.def">
-      <Filter>imm</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Read_Me.txt" />
+    <FxCompile Include="color.hlsl" />
+    <FxCompile Include="test.hlsl" />
   </ItemGroup>
 </Project>
