@@ -96,7 +96,7 @@ struct tempMesh
     TSTR    ParentName;//1
     Matrix3    wtm;//1
     D3D_MATRIX matWorld;//1
-
+    Matrix3 matworld_inv;
     std::vector<TriList>			triList;
     std::vector<vectorTriList>		triList_List;
     // std::vector<PNCT>	triList;

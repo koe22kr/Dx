@@ -51,6 +51,7 @@ struct Scene
 struct Animation_Info
 {
     D3DXMATRIX  m_matCalculation;
+    D3DXMATRIX mat_world;
     D3DXMATRIX mat_world_inv;
     D3DXMATRIX mAnim_Tran;
     D3DXMATRIX mAnim_Rot;

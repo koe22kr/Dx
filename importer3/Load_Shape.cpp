@@ -120,12 +120,23 @@ void Load_Shape::Interpolate(int obj_index, bool have_parent, float tick)
     }
 
     D3DXMATRIX matAnim;
-    matAnim = target->mAnim_Scal * target->mAnim_Rot;
-   matAnim._41 += target->mAnim_Tran._41;
-   matAnim._42 += target->mAnim_Tran._42;
-   matAnim._43 += target->mAnim_Tran._43;
+    matAnim = target->mAnim_Scal*target->mAnim_Rot;
+   matAnim._41 = target->mAnim_Tran._41;
+   matAnim._42 = target->mAnim_Tran._42;
+   matAnim._43 = target->mAnim_Tran._43;
     //target->m_matCalculation = target->mAnim_Scal;
-    target->m_matCalculation =target->mat_world_inv* matAnim;//mat inv 는 있어야 겠다.
+   if (m_obj_info_List[obj_index].parent_index != -1)
+   {
+       target->m_matCalculation = matAnim; /** m_obj_anim_List[m_obj_info_List[obj_index].parent_index].m_matCalculation;*/
+   }
+   else
+   {
+       
+       target->m_matCalculation = matAnim;// *m_obj_anim_List[obj_index].mat_world;
+   }
+   
+
+    
 }
 bool Load_Shape::GetAnimationTrack(float fElapseTime, std::vector<AnimTrack>& trackList, AnimTrack& StartTrack, AnimTrack& EndTrack)
 {
@@ -193,10 +204,11 @@ void Load_Shape::Load(const char* maxconvertfile)
         }
         else
         {
+            Material_Info mtl;
             for (int i = 0; i < nNum_Sub_Material; i++)
             {
 
-                Material_Info mtl;
+                
                 Texture_Info tex;
                 in >> mtl.material_name >> mtl.texture_size;
                 for (int j = 0; j < mtl.texture_size; j++)
@@ -235,9 +247,12 @@ void Load_Shape::Load(const char* maxconvertfile)
             in >> matworld._31 >> matworld._32 >> matworld._33 >> matworld._34;
             in >> matworld._41 >> matworld._42 >> matworld._43 >> matworld._44;
             D3DXMatrixInverse(&m_obj_anim_List[imain].mat_world_inv, NULL, &matworld);
+            m_obj_anim_List[imain].mat_world = matworld;
+
             for (int isub_mtl = 0; isub_mtl < use_material_size; isub_mtl++)
             {
-                m_obj_mtl_List[imain][isub_mtl].m_matWorld = *((DirectX::XMMATRIX*)&matworld);
+                //m_obj_mtl_List[imain][isub_mtl].m_matWorld = *((DirectX::XMMATRIX*)&matworld);
+
                 //m_obj_mtl_List[imain][isub_mtl].m_matWorld = DirectX::XMLoadFloat4x4(&matworld);
 
 
@@ -291,9 +306,9 @@ void Load_Shape::Load(const char* maxconvertfile)
                     m_obj_mtl_List[imain][isub_mtl].m_Vertex_List[0].c.w != -1)
                 {
 
-
+                    wstring path = L"../../_data/obj/";
                     m_obj_mtl_List[imain][isub_mtl].m_my_material_index = m_obj_mtl_List[imain][isub_mtl].m_Vertex_List[0].c.w;
-                    m_obj_mtl_List[imain][isub_mtl].SRV_Index = I_TextureMgr.Load(CADevice::m_pDevice, m_Tex_filename_list[m_obj_mtl_List[imain][isub_mtl].m_my_material_index]);
+                    m_obj_mtl_List[imain][isub_mtl].SRV_Index = I_TextureMgr.Load(CADevice::m_pDevice, path+m_Tex_filename_list[m_obj_mtl_List[imain][isub_mtl].m_my_material_index]);
                     m_obj_mtl_List[imain][isub_mtl].m_helper.m_pSRV = I_TextureMgr.GetPtr(m_obj_mtl_List[imain][isub_mtl].SRV_Index)->m_pSRV;
                 }
 

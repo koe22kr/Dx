@@ -156,6 +156,7 @@ bool  khgWriter::Convert()
         // objTM = s*r*t*p * c;
         // GetNodeTM = srt * p;
         Matrix3 wtm = pNode->GetNodeTM(0);
+        tMesh.matworld_inv = Inverse(wtm);
         DumpMatrix3(wtm, tMesh.matWorld);
 
         tMesh.iMtrlID = FindMaterial(pNode);  //이전에 addmaterial 해야함.
@@ -177,8 +178,8 @@ void khgWriter::GetAnimation(INode* pNode, tempMesh& tMesh)
     tMesh.bAnimation[2] = false;
     //0프래임의 값
     TimeValue startframe = m_Interval.Start();
-    Matrix3 tm = pNode->GetNodeTM(startframe)*Inverse(pNode->GetParentTM(startframe)); //자신의tm * 부모 inv tm//원점의 변형tm
-    
+    //Matrix3 tm =   pNode->GetNodeTM(startframe)*Inverse(pNode->GetParentTM(startframe)); //자신의tm * 부모 inv tm//원점의 변형tm
+    Matrix3 tm = pNode->GetNodeTM(startframe);
     AffineParts StartAP;
     decomp_affine(tm, &StartAP);
 
@@ -202,7 +203,8 @@ void khgWriter::GetAnimation(INode* pNode, tempMesh& tMesh)
     TimeValue end = m_Interval.End();
     for (TimeValue frame = start; frame <= end; frame += GetTicksPerFrame())
     {
-        Matrix3 tm = Inverse(pNode->GetParentTM(frame))*pNode->GetNodeTM(frame);// 순서 반대로 바꿈. 이게 맞는거 같음?//191006
+        //Matrix3 tm = pNode->GetNodeTM(frame)*Inverse(pNode->GetParentTM(frame));
+        Matrix3 tm =pNode->GetNodeTM(frame);
         AffineParts FrameAP;
         decomp_affine(tm, &FrameAP);
 
@@ -591,10 +593,11 @@ void    khgWriter::AddObject(INode* pNode, TimeValue time)
         switch (os.obj->SuperClassID())
         {
         case GEOMOBJECT_CLASS_ID:
+        case HELPER_CLASS_ID:
         {
             m_ObjList.push_back(pNode);
         }
-        //case HELPER_CLASS_ID:
+        
         default:
             break;
         }
@@ -613,6 +616,8 @@ bool khgWriter::TMNegParity(Matrix3 tm)
 void    khgWriter::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
 {
     Matrix3 tm = pNode->GetObjTMAfterWSM(time);
+    Matrix3 invtm;
+    Inverse(invtm, pNode->GetNodeTM(time));
     ///////////////////////1) 트라이엥글 오브젝트[]
     bool deleteit = false;
     TriObject* tri = AddTriangleFromObject(pNode, time, deleteit);
@@ -660,15 +665,15 @@ void    khgWriter::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
             int iNumPos = mesh->getNumVerts();
             if (iNumPos > 0)
             {
-                Point3 p3 = mesh->verts[mesh->faces[iface].v[v0]] * tm;    //tm 곱해주면 그전이 어느 좌표계든 월드로 변환됨//
+                Point3 p3 = mesh->verts[mesh->faces[iface].v[v0]] * tm * invtm;    //tm 곱해주면 그전이 어느 좌표계든 월드로 변환됨// + invtm 곱해서 뼈좌표계로
                 DumpPoint3(tri[iface].v[0].p, p3);
                 temp1.p = p3;
 
-                p3 = mesh->verts[mesh->faces[iface].v[v2]] * tm;
+                p3 = mesh->verts[mesh->faces[iface].v[v2]] * tm * invtm;
                 DumpPoint3(tri[iface].v[1].p, p3);
                 temp3.p = p3;
 
-                p3 = mesh->verts[mesh->faces[iface].v[v1]] * tm;
+                p3 = mesh->verts[mesh->faces[iface].v[v1]] * tm * invtm;
                 DumpPoint3(tri[iface].v[2].p, p3);
                 temp2.p = p3;
             }
@@ -730,7 +735,7 @@ void    khgWriter::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
             // sub material index
             tri[iface].iSubIndex =
                 mesh->faces[iface].getMatID();
-            if (desc.iMtrlID < 0 || m_MtlInfoList[desc.iMtrlID].subMtrl.size() <= 0)
+            if (tri[iface].iSubIndex ==255||desc.iMtrlID < 0 || m_MtlInfoList[desc.iMtrlID].subMtrl.size() <= 0)
             {
                 tri[iface].iSubIndex = 0;
                 tri[iface].v[0].c.w = -1;

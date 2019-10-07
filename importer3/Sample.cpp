@@ -4,7 +4,7 @@ using namespace std;
 
 bool Sample::Init()
 {
-    m_loader.Load("animbox.MD");
+    m_loader.Load("t.MD");
     // m_loader.m_pnct_List = &m_pnct_List;
     m_loader.LoaderCreate(CADevice::m_pDevice, L"test.hlsl", nullptr);
     wstring temp;
