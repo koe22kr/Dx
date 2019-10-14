@@ -340,7 +340,7 @@ bool khgWriter::Export()
 
     FILE* pStream = nullptr;
     _tfopen_s(&pStream, m_filename.c_str(), _T("wt"));
-    _ftprintf(pStream, _T("%s %d"), _T("khgExporter_100"), m_ObjList.size());
+    _ftprintf(pStream, _T("%s %d %d"), _T("khgExporter_100"), m_ObjList.size(), m_MtlInfoList.size());
     _ftprintf(pStream, _T("\n%d %d %d %d"),m_Scene.iFirst_Frame, m_Scene.iLast_Frame, m_Scene.iFrame_Speed, m_Scene.iTick_Per_Frame);
     for (int iMtl = 0; iMtl < m_MtlInfoList.size(); iMtl++)
     {
@@ -875,4 +875,11 @@ TriObject*    khgWriter::AddTriangleFromObject(INode* pNode, TimeValue time, boo
 khgWriter::khgWriter()
 {
     m_time = 0;
+}
+
+
+void khgWriter::Test_Fun(INode* pNode, Mesh pMesh)
+{
+    pNode->GetObjTMAfterWSM(0);
+    pNode->GetNodeTM(0);
 }

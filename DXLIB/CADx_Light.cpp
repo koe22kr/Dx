@@ -5,7 +5,7 @@ using namespace DX;
     bool CADx_Light::Init()
     {
         //m_Debug_Line.Create(CADevice::m_pDevice, L"../../_shader/line.hlsl", nullptr);
-
+        
         m_cbLight.g_cAmbientMaterial = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
 
         m_cbLight.g_cDiffuseMaterial = D3DXVECTOR4(1, 1, 1, 1);
@@ -17,10 +17,13 @@ using namespace DX;
         m_cbLight.g_cSpecularLightColor = D3DXVECTOR4(1, 1, 1, 1);
 
         ID3D11Buffer* tempcb;
+        
+        m_shape_Obj.m_helper.m_pSRV = I_TextureMgr.GetPtr(I_TextureMgr.Load(CADevice::m_pDevice, L"../../_data/obj/lightmap.bmp"))->m_pSRV;
 
         I_DXHELPER.Create_Const_Buffer(tempcb, &m_cbLight, 1, sizeof(m_cbLight), CADevice::m_pDevice);
         m_pConstantBufferLight.Attach(tempcb);
         CreateResource();
+        
         return true;
     }
     bool CADx_Light::Release()
@@ -31,6 +34,7 @@ using namespace DX;
 
     bool CADx_Light::Frame(DX::TCamera* now_cam)
     {
+        CADevice::m_pImmediate_Device_Context->PSSetShaderResources(1, 1, m_shape_Obj.m_helper.m_pSRV.GetAddressOf());
         float t = g_fSecondPerFrame * D3DX_PI;
 
         D3DXMATRIX mLightWorld, mTranslate, mRotation;
@@ -60,6 +64,7 @@ using namespace DX;
         D3DXVECTOR4 temp;
         D3DXVec3Transform(&temp, &m_vLightVector, &matWorld);
         ///
+
         m_cbLight.g_vLightDir.x = temp.x;
         m_cbLight.g_vLightDir.y = temp.y;
         m_cbLight.g_vLightDir.z = temp.z;
@@ -79,8 +84,6 @@ using namespace DX;
 
         CADevice::m_pImmediate_Device_Context->VSSetConstantBuffers(1, 1, m_pConstantBufferLight.GetAddressOf());
         CADevice::m_pImmediate_Device_Context->PSSetConstantBuffers(1, 1, m_pConstantBufferLight.GetAddressOf());
-
-
 
         D3DXMatrixIdentity(&m_cbLight.g_matInvWorld);
         CADevice::m_pImmediate_Device_Context->UpdateSubresource(m_pConstantBufferLight.Get(), 0, NULL, &m_cbLight, 0, 0);

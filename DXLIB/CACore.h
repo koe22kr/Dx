@@ -39,7 +39,7 @@ public:
     CATimer m_Timer;   
     CADevice m_Device;
     DX::TBackViewCamera m_Default_Cam;
-    DX::TCamera* m_pMain_Cam;
+    static DX::TCamera* m_pMain_Cam;
    // DX::Sky Sky_box;
 
 

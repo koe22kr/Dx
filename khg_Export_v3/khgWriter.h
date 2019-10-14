@@ -142,21 +142,17 @@ public:
     bool Export();
     void ExportAnimation(tempMesh& tmesh, FILE* pstream);
     void    AddObject(INode* pNode, TimeValue time);
-
     void    GetMesh(INode* pNode, TimeValue time, tempMesh& desc);
 
     TriObject*    AddTriangleFromObject(INode* pNode, TimeValue time, bool& DeleteIt);
-
     //매터리얼
     void AddMaterial(INode* pNode);
     void GetMaterial(INode* pNode);
     int   FindMaterial(INode* pNode);
     //
     void  GetTexture(Mtl* pNode, MtlInfo& desc);
-
     Point3 GetVertexNormal(Mesh* mesh, int iFace, RVertex* rVertex);
     void SetUniqueBuffer(tempMesh& tMesh);
-
     //
     bool	EqualPoint2(Point2 p1, Point2 p2);
     bool	EqualPoint3(Point3 p1, Point3 p2);
@@ -172,5 +168,8 @@ public:
     //
     khgWriter();
     ~khgWriter();
+    //
+    void Test_Fun(INode* pNode,Mesh pMesh);
+
 };
 

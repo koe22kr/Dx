@@ -11,8 +11,7 @@ bool Sample::Init()
     string atemp;
     //temp. = atemp.c_str();
 
-    m_loader.m_helper.m_iNumIndex = 0;
-    m_loader.Costom_LoadTexture();
+   // m_loader.m_helper.m_iNumIndex = 0;
     return true;
 }
 bool Sample::Frame()
@@ -24,7 +23,7 @@ bool Sample::Frame()
 bool Sample::Render()
 {
 
-    m_loader.LoaderSetMatrix((D3DXMATRIX*)&m_loader.m_matWorld, &m_pMain_Cam->m_matView, &m_pMain_Cam->m_matProj);
+    m_loader.LoaderSetMatrix( &m_pMain_Cam->m_matView, &m_pMain_Cam->m_matProj);
     m_loader.LoaderRender(CADevice::m_pImmediate_Device_Context);
 
     return true;
