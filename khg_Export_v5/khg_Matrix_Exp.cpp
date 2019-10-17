@@ -3,6 +3,7 @@
 
 bool    khg_Matrix_Exp::Convert()
 {
+#pragma message (TODO("GetMesh 조건문 변화있엇음."))
     //for (int iObj = 0; iObj < m_ObjList.size(); iObj++)
     //{
     //    INode* pNode = m_ObjList[iObj];

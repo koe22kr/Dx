@@ -9,5 +9,11 @@ public:
     bool    Export() override;
     khg_Matrix_Exp();
     ~khg_Matrix_Exp();
+    //
+    static khg_Matrix_Exp* Get()
+    {
+        static khg_Matrix_Exp instance;
+        return &instance;
+    }
 };
 

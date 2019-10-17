@@ -16,16 +16,18 @@ INT_PTR CALLBACK DlgProc(HWND hWnd,
 
 class khg_Util : public UtilityObj
 {
+public:
     HWND m_hPanel;
-    Interface* m_ip;
+    Interface* m_Objip;
+    Interface* m_Skinip;
 public:
     virtual void BeginEditParams(Interface *ip, IUtil *iu)
     {
-        m_ip = ip;
+        m_Objip = ip;
         m_hPanel = ip->AddRollupPage(hInstance,
             MAKEINTRESOURCE(IDD_DIALOG1),
             DlgProc,
-            _T("tbsExp"), 0);
+            _T("khg_Exp"), 0);
     }
     virtual void EndEditParams(Interface *ip, IUtil *iu)
     {
@@ -37,9 +39,11 @@ public:
 
     virtual void SelectionSetChanged(Interface *ip, IUtil *iu) 
     {
-    #pragma message (TODO("Selection Action+ 여기서 clear() 하기? "))
+        m_Skinip = ip;
+
+
     }
-    static khg_Util* GetInstance()
+    static khg_Util* Get()
     {
         static khg_Util theExp;
         return &theExp;
@@ -56,7 +60,7 @@ class khgExportClassDesc : public ClassDesc2
 {
 public:
     virtual int IsPublic() { return TRUE; }
-    virtual void* Create(BOOL /*loading = FALSE*/) { return khg_Util::GetInstance(); }
+    virtual void* Create(BOOL /*loading = FALSE*/) { return khg_Util::Get(); }
     virtual const TCHAR *	ClassName() { return _T("khg_Util100"); }
     virtual SClass_ID SuperClassID() { return UTILITY_CLASS_ID; }
     virtual Class_ID ClassID() { return KHG_UTIL_CLASS_ID; }
@@ -71,10 +75,6 @@ ClassDesc2* GetExportDesc() {
     static khgExportClassDesc khgExportDesc;
     return &khgExportDesc;
 }
-
-
-
-
 
 INT_PTR CALLBACK DlgProc(HWND hWnd,
     UINT msg, WPARAM wParam, LPARAM lParam)
@@ -92,37 +92,26 @@ INT_PTR CALLBACK DlgProc(HWND hWnd,
         case ID_khg_ObjExp:
         {
 #pragma message (TODO("OBJ_EXP"))
-            /*TSTR szExpFile = TSkinExp::Get().SaveFileDlg(L"skm", L"SkinWriter");
-            if (szExpFile != NULL)
-            {
-                TSkinExp::Get().Set(szExpFile,
-                    tbsExport::GetInstance()->m_ip);
-                TSkinExp::Get().Export();
-            }*/
+            khg_Obj_Exp::Get()->Set(khg_Obj_Exp::Get()->SaveFileDlg(L"obx",L"khg_Obj"),khg_Util::Get()->m_Objip);
+            khg_Obj_Exp::Get()->Export();
+           
+
 
         }break;
         case ID_khg_SkinExp:
         {
 #pragma message (TODO("SKIN_EXP"))
-          /*  TSTR szExpFile = TMatrixExp::Get().SaveFileDlg(L"mat", L"MatrixWriter");
-            if (szExpFile != NULL)
-            {
-                TMatrixExp::Get().Set(szExpFile,
-                    tbsExport::GetInstance()->m_ip);
-                TMatrixExp::Get().Export();
-            }*/
+            khg_Skin_Exp::Get()->Set(khg_Skin_Exp::Get()->SaveFileDlg(L"skx", L"khg_Skin"), khg_Util::Get()->m_Skinip);
+            khg_Skin_Exp::Get()->Export();
+          
 
         }break;
         case ID_khg_MatrixExp:
         {
 #pragma message (TODO("MATRIX_EXP"))
-           /* TSTR szExpFile = kkkWriter::Get().SaveFileDlg(L"tbs", L"kgcWriter");
-            if (szExpFile != NULL)
-            {
-                kkkWriter::Get().Set(szExpFile,
-                    tbsExport::GetInstance()->m_ip);
-                kkkWriter::Get().Export();
-            }*/
+            khg_Matrix_Exp::Get()->Set(khg_Matrix_Exp::Get()->SaveFileDlg(L"mtx",L"khg_Matrix"), khg_Util::Get()->m_Objip);
+            khg_Matrix_Exp::Get()->Export();
+           
 
         }break;
         }

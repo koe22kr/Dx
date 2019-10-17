@@ -19,7 +19,7 @@ public:
    virtual bool    Export();
     void ExportAnimation(tempMesh& tmesh, FILE* pstream);
     void    AddObject(INode* pNode, TimeValue time);
-    void    GetMesh(INode* pNode, TimeValue time, tempMesh& desc);
+   virtual void    GetMesh(INode* pNode, TimeValue time, tempMesh& desc);
     TriObject*    AddTriangleFromObject(INode* pNode, TimeValue time, bool& DeleteIt);
     //매터리얼
     void AddMaterial(INode* pNode);
@@ -41,7 +41,15 @@ public:
     //
     void GetAnimation(INode* pNode, tempMesh& tMesh);
     //
+    TCHAR* SaveFileDlg(TCHAR* szExt, TCHAR* szTitle);
+
     khg_Obj_Exp();
     ~khg_Obj_Exp();
+    //
+    static khg_Obj_Exp* Get()
+    {
+        static khg_Obj_Exp instance;
+        return &instance;
+    }
 };
 

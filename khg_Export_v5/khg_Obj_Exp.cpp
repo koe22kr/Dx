@@ -114,17 +114,34 @@ int khg_Obj_Exp::IsEqulVertexList(PNCT& vertex, VertexList& vList)
 //////////////////////////
 void khg_Obj_Exp::Set(const TCHAR* name, Interface* mMax)
 {
-    m_pMax = mMax;
-    m_filename = name;
-    m_pRootNode = m_pMax->GetRootNode();
-    m_Interval = m_pMax->GetAnimRange();
-    
-    m_Scene.iFirst_Frame = m_Interval.Start() / GetTicksPerFrame();
-    m_Scene.iLast_Frame = m_Interval.End() / GetTicksPerFrame();
-    m_Scene.iFrame_Speed = GetFrameRate();
-    m_Scene.iTick_Per_Frame = GetTicksPerFrame();
-
-    PreProcess(m_pRootNode, m_Interval.Start());
+    if (mMax == m_pMax)
+    {
+        if (name)
+        {
+            m_filename = name;
+        }
+    }
+    else
+    {
+        m_ObjList.clear();
+        m_MaterialList.clear();
+        m_MtlInfoList.clear();
+        m_tempMesh_List.clear();
+        m_Scene.init();
+        m_filename.clear();
+        if (name)
+        {
+            m_filename = name;
+        }
+        m_pMax = mMax;
+        m_pRootNode = m_pMax->GetRootNode();
+        m_Interval = m_pMax->GetAnimRange();
+        m_Scene.iFirst_Frame = m_Interval.Start() / GetTicksPerFrame();
+        m_Scene.iLast_Frame = m_Interval.End() / GetTicksPerFrame();
+        m_Scene.iFrame_Speed = GetFrameRate();
+        m_Scene.iTick_Per_Frame = GetTicksPerFrame();
+        PreProcess(m_pRootNode, m_Interval.Start());
+    }
 }
 void    khg_Obj_Exp::PreProcess(INode* pNode, TimeValue time)
 {
@@ -639,13 +656,13 @@ void    khg_Obj_Exp::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
             int iNumPos = mesh->getNumVerts();
             if (iNumPos > 0)
             {
-                Point3 p3 = mesh->verts[mesh->faces[iface].v[v0]] * tm/* * invtm*/;    //tm °öÇØÁÖ¸é ±×ÀüÀÌ ¾î´À ÁÂÇ¥°èµç ¿ùµå·Î º¯È¯µÊ// + invtm °öÇØ¼­ »ÀÁÂÇ¥°è·Î
+                Point3 p3 = mesh->verts[mesh->faces[iface].v[v0]] * tm * invtm;    //tm °öÇØÁÖ¸é ±×ÀüÀÌ ¾î´À ÁÂÇ¥°èµç ¿ùµå·Î º¯È¯µÊ// + invtm °öÇØ¼­ »ÀÁÂÇ¥°è·Î
                 DumpPoint3(tri[iface].v[0].p, p3);
 
-                p3 = mesh->verts[mesh->faces[iface].v[v2]] * tm /** invtm*/;
+                p3 = mesh->verts[mesh->faces[iface].v[v2]] * tm * invtm;
                 DumpPoint3(tri[iface].v[1].p, p3);
 
-                p3 = mesh->verts[mesh->faces[iface].v[v1]] * tm /** invtm*/;
+                p3 = mesh->verts[mesh->faces[iface].v[v1]] * tm * invtm;
                 DumpPoint3(tri[iface].v[2].p, p3);
             }
             //Color// 
@@ -788,7 +805,8 @@ Point3 khg_Obj_Exp::GetVertexNormal(Mesh* mesh, int iFace, RVertex* rVertex)////
     }
     return vertexNormal;
 }
-TriObject*    khg_Obj_Exp::AddTriangleFromObject(INode* pNode, TimeValue time, bool& DeleteIt)
+TriObject*    khg_Obj_Exp::AddTriangleFromObject(INode* pNode, TimeValue time, bool& 
+DeleteIt)
 {
     Object* obj = pNode->EvalWorldState(time).obj;
     if (obj->CanConvertToType(Class_ID(TRIOBJ_CLASS_ID, 0)))
@@ -799,6 +817,40 @@ TriObject*    khg_Obj_Exp::AddTriangleFromObject(INode* pNode, TimeValue time, b
     }
     return nullptr;
 }
+TCHAR* khg_Obj_Exp::SaveFileDlg(TCHAR* szExt, TCHAR* szTitle)
+{
+    TCHAR szFile[MAX_PATH] = { 0, };
+    TCHAR szFileTitleFile[MAX_PATH] = { 0, };
+    static TCHAR *szFilter;
+    OPENFILENAME ofn;
+    ZeroMemory(&ofn, sizeof(OPENFILENAME));
+    _tcscpy_s(szFile, _T("*."));
+    _tcscat_s(szFile, szExt);
+    _tcscat_s(szFile, _T("\0"));
+
+    ofn.lStructSize = sizeof(OPENFILENAME);
+    ofn.hwndOwner = GetActiveWindow();
+    ofn.lpstrFilter = szFilter;
+    ofn.lpstrCustomFilter = NULL;
+    ofn.nMaxCustFilter = 0L;
+    ofn.nFilterIndex = 1;
+    ofn.lpstrFile = szFile;
+    ofn.nMaxFile = sizeof(szFile);
+    ofn.lpstrFileTitle = szFileTitleFile;
+    ofn.nMaxFileTitle = sizeof(szFileTitleFile);
+    ofn.lpstrInitialDir = NULL;
+    ofn.lpstrTitle = szTitle;
+    ofn.Flags = 0L;
+    ofn.nFileOffset = 0;
+    ofn.nFileExtension = 0;
+    ofn.lpstrDefExt = szExt;
+    if (!GetSaveFileName(&ofn))
+    {
+        return NULL;
+    }
+    return szFile;
+}
+
 khg_Obj_Exp::khg_Obj_Exp()
 {
 }

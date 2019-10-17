@@ -23,6 +23,7 @@ typedef struct _D3D_MATRIX {
 
 struct PNCT
 {
+    int vertex_index;
     Point3 p;
     Point3 n;
     Point4 c;
@@ -80,7 +81,16 @@ struct Scene
     //아래 것들 쓸모?
     int iNum_Obj;
     int iNum_Mtl;
-
+    void init()
+    {
+        iFirst_Frame = 0;
+        iLast_Frame = 0;
+        iFrame_Speed=0;    //30
+        iTick_Per_Frame=0;  //160
+        iNum_Obj = 0;
+        iNum_Mtl = 0;
+         
+    }
 };
 typedef std::vector<TriList>   vectorTriList;
 using IndexList = std::vector<DWORD>;

@@ -100,6 +100,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\\..\\_lib\\maxsdk2019</AdditionalLibraryDirectories>
       <AdditionalDependencies>bmm.lib;core.lib;geom.lib;gfx.lib;mesh.lib;maxutil.lib;maxscrpt.lib;gup.lib;paramblk2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
