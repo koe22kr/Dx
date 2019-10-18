@@ -320,13 +320,7 @@ bool    khg_Skin_Exp::Convert()
 
         // objTM = s*r*t*p * c;
         // GetNodeTM = srt * p;
-        /*Matrix3 wtm = pNode->GetNodeTM(m_Interval.Start());
-        DumpMatrix3(wtm, tMesh.matWorld);
-        Matrix3 invWtm = Inverse(wtm);
-        DumpMatrix3(invWtm, tMesh.matInvWorld);*/
-#pragma message(TODO("GetMesh에서 뼈좌표 로 출력함"))
 
-        
         // 메터리얼 정보 얻고 / 저장
         Mtl* pMtl = pNode->GetMtl();
         if (pMtl)

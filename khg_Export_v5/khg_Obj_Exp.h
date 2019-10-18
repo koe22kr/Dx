@@ -17,7 +17,7 @@ public:
     void    PreProcess(INode* pNode, TimeValue time);
    virtual bool    Convert();
    virtual bool    Export();
-    void ExportAnimation(tempMesh& tmesh, FILE* pstream);
+    virtual void ExportAnimation(tempMesh& tmesh, FILE* pstream);
     void    AddObject(INode* pNode, TimeValue time);
    virtual void    GetMesh(INode* pNode, TimeValue time, tempMesh& desc);
     TriObject*    AddTriangleFromObject(INode* pNode, TimeValue time, bool& DeleteIt);

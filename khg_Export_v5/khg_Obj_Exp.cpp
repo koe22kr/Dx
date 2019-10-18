@@ -120,6 +120,7 @@ void khg_Obj_Exp::Set(const TCHAR* name, Interface* mMax)
         {
             m_filename = name;
         }
+        m_tempMesh_List.clear();
     }
     else
     {
@@ -247,7 +248,6 @@ void khg_Obj_Exp::GetAnimation(INode* pNode, tempMesh& tMesh)
                 tMesh.bAnimation[0] = true;
             }
         }
-       
 
         if (!tMesh.bAnimation[1]) {
             if (!EqualPoint3(Start_RotAxis, Frame_RotAxis))
@@ -269,7 +269,6 @@ void khg_Obj_Exp::GetAnimation(INode* pNode, tempMesh& tMesh)
                 tMesh.bAnimation[2] = true;
             }
         }
-      
 
     }
 }
