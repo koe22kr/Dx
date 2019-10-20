@@ -46,10 +46,10 @@ bool    khg_Matrix_Exp::Convert()
         }
         
         GetAnimation(pNode, tMesh);
-        if (tMesh.iType > 0)
-        {
+        /*if (tMesh.iType > 0)
+        {*/
             pObj->GetDeformBBox(0, box_list[m_tempMesh_List.size()], &pNode->GetObjectTM(0));
-        }
+        //}
         m_tempMesh_List.push_back(tMesh);
     }
     return true;
@@ -164,6 +164,38 @@ void khg_Matrix_Exp::ExportAnimation(tempMesh& tmesh, FILE* pstream,int index)
             tmesh.Anim_T[0].p.y);
 
     }
+}
+
+
+void khg_Matrix_Exp::Set(Interface* mMax)
+{
+
+    if (mMax == nullptr)return;
+    if (mMax == m_pMax && m_ObjList.size() != 0)
+    {
+        m_tempMesh_List.clear();
+    }
+    else
+    {
+        m_ObjList.clear();
+        m_MaterialList.clear();
+        m_MtlInfoList.clear();
+        m_tempMesh_List.clear();
+        m_Scene.init();
+        m_pMax = mMax;
+        m_pRootNode = m_pMax->GetRootNode();
+        m_Interval = m_pMax->GetAnimRange();
+        m_Scene.iFirst_Frame = m_Interval.Start() / GetTicksPerFrame();
+        m_Scene.iLast_Frame = m_Interval.End() / GetTicksPerFrame();
+        m_Scene.iFrame_Speed = GetFrameRate();
+        m_Scene.iTick_Per_Frame = GetTicksPerFrame();
+        PreProcess(m_pRootNode, m_Interval.Start());
+    }
+
+}
+void khg_Matrix_Exp::AddMaterial(INode* pNode)
+{
+    //PreProcess 에서 호출시 아무것도 안할.
 }
 khg_Matrix_Exp::khg_Matrix_Exp()
 {

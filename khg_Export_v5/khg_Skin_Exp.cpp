@@ -2,24 +2,34 @@
 #include "khg_Skin_Exp.h"
 #include <algorithm>
 
-void khg_Skin_Exp::SortIW(Raw_WI_VERTEX& wi)
+void khg_Skin_Exp::SortRawData(Raw_WI_VERTEX& rawwi, IW_VERTEX& outwi)
 {
-    Raw_WI_VERTEX temp;
-    std::vector<float> wsorter = wi.w;
+    //
+    std::vector<float> wsorter = rawwi.w;
+    int loop = wsorter.size() > 8 ? 8 : wsorter.size();
     std::sort(wsorter.begin(), wsorter.end() - 1, [](float a, float b) {return a > b; });
-    for (int i = 0; i < wi.i.size; i++)
+    for (int i = 0; i < loop; i++)
     {
-        for (int j = 0; j < wi.i.size; j++)
+        for (int j = 0; j < loop; j++)
         {
-            if (wsorter[i] == wi.w[j])
+            
+            if (i < 4 && wsorter[i] == rawwi.w[j])
             {
-                temp.w[i] = wi.w[j];
-                temp.i[i] = wi.i[j];
+                outwi.w1[i] = rawwi.w[j];
+                outwi.i1[i] = rawwi.i[j];
                 break;
             }
+            else if (i < 8 && wsorter[i] == rawwi.w[j])
+            {
+                outwi.w2[i-4] = rawwi.w[j];
+                outwi.i2[i-4] = rawwi.i[j];
+                break;
+            }
+
         }
     }
-    wi = temp;
+    outwi.i1[3] = loop;
+    
 }
 int khg_Skin_Exp::GetFindIndex(INode* node)
 {
@@ -41,9 +51,10 @@ void khg_Skin_Exp::ExportPhysiqueData(INode* pNode, Modifier* pModi, tempMesh& t
     pPhyContext->AllowBlending(true);
 
     int iNumVert = pPhyContext->GetNumberVertices();
-    m_Raw_wi_List.resize(iNumVert);
+    std::vector<Raw_WI_VERTEX> wi_vertexs;
     for (int iVert = 0; iVert < iNumVert; iVert++)
     {
+        Raw_WI_VERTEX data;
         IPhyVertexExport* pPhyVertExp = pPhyContext->GetVertexInterface(iVert);
         if (pPhyVertExp)
         {
@@ -55,8 +66,8 @@ void khg_Skin_Exp::ExportPhysiqueData(INode* pNode, Modifier* pModi, tempMesh& t
                     IPhyRigidVertex* pVertex = (IPhyRigidVertex*)pPhyVertExp;
                     INode* node = pVertex->GetNode();
                     int iIndex = GetFindIndex(node);
-                    m_Raw_wi_List[iVert].i.push_back(iIndex);
-                    m_Raw_wi_List[iVert].w.push_back(1.0f);
+                    data.i.push_back(iIndex);
+                    data.w.push_back(1.0f);
                 }break;
                 case RIGID_BLENDED_TYPE:
                 {
@@ -66,8 +77,8 @@ void khg_Skin_Exp::ExportPhysiqueData(INode* pNode, Modifier* pModi, tempMesh& t
                         INode* node = pVertex->GetNode(i);
                         int iIndex = GetFindIndex(node);
                        
-                        m_Raw_wi_List[iVert].i.push_back(iIndex);
-                        m_Raw_wi_List[iVert].w.push_back(pVertex->GetWeight(i));
+                        data.i.push_back(iIndex);
+                        data.w.push_back(pVertex->GetWeight(i));
                     }
                 }break;
                 default:
@@ -78,33 +89,38 @@ void khg_Skin_Exp::ExportPhysiqueData(INode* pNode, Modifier* pModi, tempMesh& t
 
         }
         pPhyContext->ReleaseVertexInterface(pPhyVertExp);
-        SortIW(m_Raw_wi_List[iVert]);//
+        wi_vertexs.push_back(data);
 
     }
     pPhyExp->ReleaseContextInterface(pPhyContext);
     pModi->ReleaseInterface(I_PHYINTERFACE, pPhyExp);
+    tMesh.wi_List.push_back(wi_vertexs);
 }
 void khg_Skin_Exp::ExportSkinData(INode* pNode, Modifier* pModi, tempMesh& tMesh)
 {
     ISkin* skin = (ISkin*)pModi->GetInterface(I_SKIN);
     ISkinContextData* skinData = skin->GetContextInterface(pNode);
+    std::vector<Raw_WI_VERTEX> wi_vertexs;
+
     if (skin && skinData)
     {
         int iNumVertex = skinData->GetNumPoints();
-        m_Raw_wi_List.resize(iNumVertex);
+        //m_Raw_wi_List.resize(iNumVertex);
         for (int iVert = 0; iVert < iNumVertex; iVert++)
         {
+            Raw_WI_VERTEX data;
+
             for (int iBone = 0; iBone < skinData->GetNumAssignedBones(iVert); iBone++)
             {
                 int iBoneID = skinData->GetAssignedBone(iVert, iBone);
                 INode* node = skin->GetBone(iBoneID);
-                m_Raw_wi_List[iVert].i.push_back(GetFindIndex(node));
-                m_Raw_wi_List[iVert].w.push_back(skinData->GetBoneWeight(iVert, iBone));
+               data.i.push_back(GetFindIndex(node));
+               data.w.push_back(skinData->GetBoneWeight(iVert, iBone));
             }
-            SortIW(m_Raw_wi_List[iVert]);//
+            wi_vertexs.push_back(data);
 
         }
-
+        tMesh.wi_List.push_back(wi_vertexs);
     }
 }
 Modifier*  khg_Skin_Exp::FindModifier(INode* pNode, Class_ID classID)
@@ -127,6 +143,7 @@ Modifier*  khg_Skin_Exp::FindModifier(INode* pNode, Class_ID classID)
                 }
                 ModStackIndex++;
             }
+            pObj = pDerivedObject->GetObjRef();
         }
     }
     return nullptr;
@@ -144,33 +161,34 @@ void khg_Skin_Exp::SetBippedInfo(INode* pNode, tempMesh& tMesh)
         ExportSkinData(pNode, skinModi, tMesh);
     }
 }
-void khg_Skin_Exp::ExportIW(int index, FILE* pStream)
-{
-    WI_VERTEX wi_vertex;
-    ZeroMemory(&wi_vertex, sizeof(WI_VERTEX));
-
-    for (int i = 0; i < NUM_WI_EXPORT; i++)
-    {
-
-        if (i < 4)
-        {
-            wi_vertex.i1[i] = m_Raw_wi_List[index].i[i];
-            wi_vertex.w1[i] = m_Raw_wi_List[index].w[i];
-        }
-        else if (i >= 4)
-        {
-            wi_vertex.i2[i - 4] = m_Raw_wi_List[index].i[i];
-            wi_vertex.w2[i - 4] = m_Raw_wi_List[index].w[i];
-        }
-    }
-    wi_vertex.w1[3] = m_Raw_wi_List[index].i.size(); //w[3] , w1[3] // 색인용 주석
-
-    _ftprintf(pStream, _T("%10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f"), wi_vertex.i1[0], wi_vertex.i1[1], wi_vertex.i1[2], wi_vertex.i1[3],
-        wi_vertex.i2[0], wi_vertex.i2[1], wi_vertex.i2[2], wi_vertex.i2[3],
-        wi_vertex.w1[0], wi_vertex.w1[1], wi_vertex.w1[2], wi_vertex.w1[3],
-        wi_vertex.w2[0], wi_vertex.w2[1], wi_vertex.w2[2], wi_vertex.w2[3]
-    );
-}
+//void khg_Skin_Exp::ExportIW(int index, FILE* pStream)
+//{
+//    IW_VERTEX IW_VERTEX;
+//    ZeroMemory(&IW_VERTEX, sizeof(IW_VERTEX));
+//
+//    for (int i = 0; i < NUM_WI_EXPORT; i++)
+//    {
+//
+//        if (i < 4 && i < m_Raw_wi_List[index].i.size())
+//        {
+//            IW_VERTEX.i1[i] = m_Raw_wi_List[index].i[i];
+//            IW_VERTEX.w1[i] = m_Raw_wi_List[index].w[i];
+//        }
+//        else if (i >= 4 && i < m_Raw_wi_List[index].i.size())
+//        {
+//            IW_VERTEX.i2[i - 4] = m_Raw_wi_List[index].i[i];
+//            IW_VERTEX.w2[i - 4] = m_Raw_wi_List[index].w[i];
+//        }
+//    }
+//    IW_VERTEX.w1[3] = m_Raw_wi_List[index].i.size(); //w[3] , w1[3] // 색인용 주석
+//
+//    _ftprintf(pStream, _T("%10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f"), 
+//        IW_VERTEX.i1[0], IW_VERTEX.i1[1], IW_VERTEX.i1[2], IW_VERTEX.i1[3],
+//        IW_VERTEX.i2[0], IW_VERTEX.i2[1], IW_VERTEX.i2[2], IW_VERTEX.i2[3],
+//        IW_VERTEX.w1[0], IW_VERTEX.w1[1], IW_VERTEX.w1[2], IW_VERTEX.w1[3],
+//        IW_VERTEX.w2[0], IW_VERTEX.w2[1], IW_VERTEX.w2[2], IW_VERTEX.w2[3]
+//    );
+//}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -271,7 +289,7 @@ void    khg_Skin_Exp::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
             // tri[iface].v[n].c.w 에 매터리얼 인덱스 삽입.
             tri[iface].iSubIndex =
                 mesh->faces[iface].getMatID();
-            if (tri[iface].iSubIndex == 255 || desc.iMtrlID < 0 || m_MtlInfoList[desc.iMtrlID].subMtrl.size() <= 0)//매터리얼 없을시
+            if (tri[iface].iSubIndex <= 0 || desc.iMtrlID <= 0 || m_MtlInfoList[desc.iMtrlID].subMtrl.size() > tri[iface].iSubIndex)
             {
                 tri[iface].iSubIndex = 0;
                 tri[iface].v[0].c.w = -1;
@@ -302,9 +320,9 @@ void    khg_Skin_Exp::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
 bool    khg_Skin_Exp::Convert()
 {
     //std::vector<TBipedVertex> bipedList;
-    for (int iObj = 0; iObj < m_ObjList.size(); iObj++)
+    for (int iObj = 0; iObj < m_SkinObjList.size(); iObj++)
     {
-        INode* pNode = m_ObjList[iObj];
+        INode* pNode = m_SkinObjList[iObj];
         tempMesh tMesh;
         tMesh.name = FixupName(pNode->GetName());
         INode* pParentNode = pNode->GetParentNode();
@@ -320,7 +338,9 @@ bool    khg_Skin_Exp::Convert()
 
         // objTM = s*r*t*p * c;
         // GetNodeTM = srt * p;
-
+        Matrix3 wtm = pNode->GetNodeTM(0);
+        //tMesh.matworld_inv = Inverse(wtm);
+        DumpMatrix3(wtm, tMesh.matWorld);
         // 메터리얼 정보 얻고 / 저장
         Mtl* pMtl = pNode->GetMtl();
         if (pMtl)
@@ -331,19 +351,20 @@ bool    khg_Skin_Exp::Convert()
             tMesh.iSubMesh = m_MtlInfoList[tMesh.iMtrlID].subMtrl.size();
         }
         GetMesh(pNode,m_Interval.Start(), tMesh);
+        //m_Raw_wi_List.push_back(wi);
+        //wi.clear();
         m_tempMesh_List.push_back(tMesh);
     }
     return true;
 }
 bool    khg_Skin_Exp::Export()
 {
-
     Convert();
 
     FILE* pStream = nullptr;
     _tfopen_s(&pStream, m_filename.c_str(), _T("wt"));
     _ftprintf(pStream, _T("%s "), _T("khgExporter_100"));
-    _ftprintf(pStream, _T("\n%d %d %d %d %d %d "), m_ObjList.size(), m_MtlInfoList.size(), m_Scene.iFirst_Frame, m_Scene.iLast_Frame, m_Scene.iFrame_Speed, m_Scene.iTick_Per_Frame);
+    _ftprintf(pStream, _T("\n%d %d %d %d %d %d "), m_SkinObjList.size(), m_MtlInfoList.size(), m_Scene.iFirst_Frame, m_Scene.iLast_Frame, m_Scene.iFrame_Speed, m_Scene.iTick_Per_Frame);
     for (int iMtl = 0; iMtl < m_MtlInfoList.size(); iMtl++)
     {
 
@@ -386,19 +407,17 @@ bool    khg_Skin_Exp::Export()
         }
     }
     // mesh list
-    //INode* pNode = m_ObjList[iMtl];
+    //INode* pNode = m_SkinObjList[iMtl];
     //_ftprintf(pStream, _T("\n%s %d %d"), pNode->GetName(), m_FaceInfoList.size(), m_tempMesh_List[iMtl].triList_List.size());
 
     for (int iObj = 0; iObj < m_tempMesh_List.size(); iObj++)
     {
-        _ftprintf(pStream, _T("\n%s %s %d %d %d %d %d"),
+        _ftprintf(pStream, _T("\n%s %s %d %d"),
             m_tempMesh_List[iObj].name,
             m_tempMesh_List[iObj].ParentName,
             m_tempMesh_List[iObj].iMtrlID,
-            m_tempMesh_List[iObj].triList_List.size(),
-            m_tempMesh_List[iObj].bAnimation[0],
-            m_tempMesh_List[iObj].bAnimation[1],
-            m_tempMesh_List[iObj].bAnimation[2]
+            m_tempMesh_List[iObj].triList_List.size()
+         
         );
 
         _ftprintf(pStream, _T("\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f"),
@@ -427,6 +446,8 @@ bool    khg_Skin_Exp::Export()
         for (int iSubTri = 0; iSubTri < m_tempMesh_List[iObj].triList_List.size(); iSubTri++)
         {
             VertexList& vList = m_tempMesh_List[iObj].vb[iSubTri];
+            IWList& iwList = m_tempMesh_List[iObj].iwb[iSubTri];
+          /*  Raw_WI_VERTEX& iwList = m_tempMesh_List[iObj].wi_List[iSubTri];*/
             _ftprintf(pStream, _T("\nVertex: %d"), vList.size());
             for (int iVer = 0; iVer < vList.size(); iVer++)
             {
@@ -447,8 +468,42 @@ bool    khg_Skin_Exp::Export()
                     vList[iVer].t.x,
                     vList[iVer].t.y);
                 
-                ExportIW(vList[iVer].vertex_index,pStream);
-#pragma message(TODO("요 디버깅"))
+                if (iwList.size())
+                {
+                    _ftprintf(pStream, _T(" %d %d %d %d %d %d %d %d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f"),
+                        iwList[iVer].i1[0], iwList[iVer].i1[1], iwList[iVer].i1[2], iwList[iVer].i1[3],
+                        iwList[iVer].i2[0], iwList[iVer].i2[1], iwList[iVer].i2[2], iwList[iVer].i2[3],
+                        iwList[iVer].w1[0], iwList[iVer].w1[1], iwList[iVer].w1[2], iwList[iVer].w1[3],
+                        iwList[iVer].w2[0], iwList[iVer].w2[1], iwList[iVer].w2[2], iwList[iVer].w2[3]);
+                }
+                else
+                {
+                    _ftprintf(pStream, _T(" 0 0 0 0 0 0 0 0 0.0000     0.0000    0.0000     0.0000     0.0000     0.0000    0.0000     0.0000     "));
+                }
+                
+                
+                   //for (int i = 0; i < NUM_WI_EXPORT; i++)
+                   //{
+                
+                   //    if (i < 4 && i < m_Raw_wi_List[index].i.size())
+                   //    {
+                   //        IW_VERTEX.i1[i] = m_Raw_wi_List[index].i[i];
+                   //        IW_VERTEX.w1[i] = m_Raw_wi_List[index].w[i];
+                   //    }
+                   //    else if (i >= 4 && i < m_Raw_wi_List[index].i.size())
+                   //    {
+                   //        IW_VERTEX.i2[i - 4] = m_Raw_wi_List[index].i[i];
+                   //        IW_VERTEX.w2[i - 4] = m_Raw_wi_List[index].w[i];
+                   //    }
+                   //}
+                   //IW_VERTEX.w1[3] = m_Raw_wi_List[index].i.size(); //w[3] , w1[3] // 색인용 주석
+                
+                   //_ftprintf(pStream, _T("%10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f%10.4f %10.4f %10.4f %10.4f"), 
+                   //    IW_VERTEX.i1[0], IW_VERTEX.i1[1], IW_VERTEX.i1[2], IW_VERTEX.i1[3],
+                   //    IW_VERTEX.i2[0], IW_VERTEX.i2[1], IW_VERTEX.i2[2], IW_VERTEX.i2[3],
+                   //    IW_VERTEX.w1[0], IW_VERTEX.w1[1], IW_VERTEX.w1[2], IW_VERTEX.w1[3],
+                   //    IW_VERTEX.w2[0], IW_VERTEX.w2[1], IW_VERTEX.w2[2], IW_VERTEX.w2[3]
+#pragma message(TODO("요 디버깅+ 다시 입력해야함 wi export"))
 
             }
 
@@ -471,6 +526,104 @@ bool    khg_Skin_Exp::Export()
     return true;
     return true;
 }
+void    khg_Skin_Exp::AddObject(INode* pNode, TimeValue time)
+{
+
+    ObjectState os = pNode->EvalWorldState(time);
+    if (os.obj)
+    {
+        if (os.obj->ClassID() == Class_ID(TARGET_CLASS_ID, 0))
+        {
+            return;
+        }
+
+        switch (os.obj->SuperClassID())
+        {
+        case GEOMOBJECT_CLASS_ID:
+        case HELPER_CLASS_ID:
+        {
+            m_SkinObjList.push_back(pNode);
+        }
+
+        default:
+            break;
+        }
+    }
+
+}
+void khg_Skin_Exp::SetUniqueBuffer(tempMesh& tMesh)
+{
+    tMesh.vb.resize(tMesh.triList_List.size());
+    tMesh.ib.resize(tMesh.triList_List.size());
+    tMesh.iwb.resize(tMesh.triList_List.size());
+    for (int iSub = 0; iSub < tMesh.triList_List.size();
+        iSub++)
+    {
+        for (int iFace = 0; iFace < tMesh.triList_List[iSub].size(); iFace++)
+        {
+            vectorTriList& triArray = tMesh.triList_List[iSub];
+            TriList& tri = triArray[iFace];
+            VertexList& vList = tMesh.vb[iSub];
+            IndexList& iList = tMesh.ib[iSub];
+            //Raw_WI_VERTEX& wilist = tMesh.wi_List[iSub];
+            IW_VERTEX iwvertex;
+            ZeroMemory(&iwvertex, sizeof(IW_VERTEX));
+            for (int iVer = 0; iVer < 3; iVer++)
+            {
+                int wi_index = 3 * iFace + iVer;
+                int iPos = IsEqulVertexList(tri.v[iVer], vList);
+                if (iPos < 0)
+                {
+                    vList.push_back(tri.v[iVer]);
+                    if (tMesh.wi_List.size())
+                    {
+                        SortRawData(tMesh.wi_List[iSub][tri.v[iVer].vertex_index], iwvertex);
+                        tMesh.iwb[iSub].push_back(iwvertex);
+                    }
+                    iPos = vList.size() - 1;
+                }
+                iList.push_back(iPos);
+            }
+        }
+    }
+
+}
+
+
+
+
+void khg_Skin_Exp::Set(Interface* mMax)
+{
+    if (mMax == nullptr)return;
+    if (mMax == m_pMax && m_SkinObjList.size() != 0)
+    {
+        m_tempMesh_List.clear();
+    }
+    else
+    {
+        m_SkinObjList.clear();
+        m_MaterialList.clear();
+        m_MtlInfoList.clear();
+        m_tempMesh_List.clear();
+        m_Scene.init();
+        m_pMax = mMax;
+        m_Interval = m_pMax->GetAnimRange();
+        m_Scene.iFirst_Frame = m_Interval.Start() / GetTicksPerFrame();
+        m_Scene.iLast_Frame = m_Interval.End() / GetTicksPerFrame();
+        m_Scene.iFrame_Speed = GetFrameRate();
+        m_Scene.iTick_Per_Frame = GetTicksPerFrame();
+
+        int iNumSelect = mMax->GetSelNodeCount();
+        for (int i = 0; i < iNumSelect; i++)
+        {
+            INode* m_Skinip = mMax->GetSelNode(i);
+            AddObject(m_Skinip, m_Interval.Start());
+            AddMaterial(m_Skinip);
+        }
+    }
+
+}
+
 
 khg_Skin_Exp::khg_Skin_Exp()
 {

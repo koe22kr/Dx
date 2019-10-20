@@ -92,10 +92,25 @@ struct Scene
          
     }
 };
+
+struct Raw_WI_VERTEX
+{
+    std::vector<int> i;
+    std::vector<float> w; //w[3]에
+};
+struct IW_VERTEX
+{
+    int i1[4];
+    int i2[4];
+    float w1[4];
+    float w2[4];
+};
 typedef std::vector<TriList>   vectorTriList;
 using IndexList = std::vector<DWORD>;
 using VertexList = std::vector<PNCT>;
+using IWList = std::vector<IW_VERTEX>;
 //OBJ 로 보면 될듯.
+
 struct tempMesh
 {
     bool bAnimation[3];
@@ -116,8 +131,10 @@ struct tempMesh
 
     std::vector<VertexList> vb;
     std::vector<IndexList> ib;
+    std::vector<IWList> iwb;
     //std::vector<vertexList>   vbList;
     //std::vector<IndexList>    ibList;
+    std::vector<std::vector<Raw_WI_VERTEX>> wi_List;
 
     int     iMtrlID;
 

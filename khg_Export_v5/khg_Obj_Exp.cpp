@@ -112,14 +112,11 @@ int khg_Obj_Exp::IsEqulVertexList(PNCT& vertex, VertexList& vList)
     return -1;
 }
 //////////////////////////
-void khg_Obj_Exp::Set(const TCHAR* name, Interface* mMax)
+void khg_Obj_Exp::Set( Interface* mMax)
 {
-    if (mMax == m_pMax)
+    if (mMax == nullptr)return;
+    if (mMax == m_pMax && m_ObjList.size() != 0)
     {
-        if (name)
-        {
-            m_filename = name;
-        }
         m_tempMesh_List.clear();
     }
     else
@@ -129,12 +126,7 @@ void khg_Obj_Exp::Set(const TCHAR* name, Interface* mMax)
         m_MtlInfoList.clear();
         m_tempMesh_List.clear();
         m_Scene.init();
-        m_filename.clear();
-        if (name)
-        {
-            m_filename = name;
-        }
-        m_pMax = mMax;
+            m_pMax = mMax;
         m_pRootNode = m_pMax->GetRootNode();
         m_Interval = m_pMax->GetAnimRange();
         m_Scene.iFirst_Frame = m_Interval.Start() / GetTicksPerFrame();
@@ -361,8 +353,7 @@ bool khg_Obj_Exp::Export()
     _ftprintf(pStream, _T("\n%d %d %d %d"),m_Scene.iFirst_Frame, m_Scene.iLast_Frame, m_Scene.iFrame_Speed, m_Scene.iTick_Per_Frame);
     for (int iMtl = 0; iMtl < m_MtlInfoList.size(); iMtl++)
     {
-
-
+        
 
         _ftprintf(pStream, _T("\n%d %s %d"),
             m_MtlInfoList[iMtl].iMapID,
@@ -406,7 +397,7 @@ bool khg_Obj_Exp::Export()
 
     for (int iObj = 0; iObj < m_tempMesh_List.size(); iObj++)
     {
-        _ftprintf(pStream, _T("\n%s %s %d %d %d %d %d"),
+        _ftprintf(pStream, _T("\n%s %s %d %d %d %d %d "),
             m_tempMesh_List[iObj].name,
             m_tempMesh_List[iObj].ParentName,
             m_tempMesh_List[iObj].iMtrlID,
@@ -414,6 +405,8 @@ bool khg_Obj_Exp::Export()
             m_tempMesh_List[iObj].bAnimation[0],
             m_tempMesh_List[iObj].bAnimation[1],
             m_tempMesh_List[iObj].bAnimation[2]
+
+          
         );
 
         _ftprintf(pStream, _T("\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f"),
@@ -655,6 +648,9 @@ void    khg_Obj_Exp::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
             int iNumPos = mesh->getNumVerts();
             if (iNumPos > 0)
             {
+                
+               
+
                 Point3 p3 = mesh->verts[mesh->faces[iface].v[v0]] * tm * invtm;    //tm °öÇØÁÖ¸é ±×ÀüÀÌ ¾î´À ÁÂÇ¥°èµç ¿ùµå·Î º¯È¯µÊ// + invtm °öÇØ¼­ »ÀÁÂÇ¥°è·Î
                 DumpPoint3(tri[iface].v[0].p, p3);
 
@@ -716,7 +712,7 @@ void    khg_Obj_Exp::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
             // sub material index
             tri[iface].iSubIndex =
                 mesh->faces[iface].getMatID();
-            if (tri[iface].iSubIndex ==255||desc.iMtrlID < 0 || m_MtlInfoList[desc.iMtrlID].subMtrl.size() <= 0)
+            if (tri[iface].iSubIndex <=0||desc.iMtrlID <= 0 || m_MtlInfoList[desc.iMtrlID].subMtrl.size() > tri[iface].iSubIndex)
             {
                 tri[iface].iSubIndex = 0;
                 tri[iface].v[0].c.w = -1;
@@ -738,7 +734,6 @@ void    khg_Obj_Exp::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
         //vb ¸¸µé.
         SetUniqueBuffer(desc);
     }
-
     if (deleteit) delete tri;
 }
 void khg_Obj_Exp::SetUniqueBuffer(tempMesh& tMesh)
@@ -847,6 +842,8 @@ TCHAR* khg_Obj_Exp::SaveFileDlg(TCHAR* szExt, TCHAR* szTitle)
     {
         return NULL;
     }
+    m_filename = szFile;
+
     return szFile;
 }
 

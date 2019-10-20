@@ -13,7 +13,7 @@ class khg_Obj_Exp :public Exprot_Obj
   // std::vector<MtlInfo> m_MtlInfoList; //Mtl* 외의 정보들
   // std::vector<tempMesh> m_tempMesh_List;
 public:
-    void Set(const TCHAR* name, Interface* mMax);
+   virtual void Set(Interface* mMax);
     void    PreProcess(INode* pNode, TimeValue time);
    virtual bool    Convert();
    virtual bool    Export();
@@ -22,7 +22,7 @@ public:
    virtual void    GetMesh(INode* pNode, TimeValue time, tempMesh& desc);
     TriObject*    AddTriangleFromObject(INode* pNode, TimeValue time, bool& DeleteIt);
     //매터리얼
-    void AddMaterial(INode* pNode);
+   virtual void AddMaterial(INode* pNode);
     void GetMaterial(INode* pNode);
     int   FindMaterial(INode* pNode);
     //
