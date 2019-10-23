@@ -30,7 +30,7 @@ bool Load_Shape::Frame()
     }
 
     D3DXMATRIX matParent;
-    D3DXMatrixIdentity(&matParent);
+    D3DXMatrixIdentity(&matParent);K
     for (int iObj = 0; iObj < m_obj_info_List.size(); iObj++)
     {
 
@@ -173,7 +173,6 @@ void Load_Shape::Load(const char* maxconvertfile)
     if (m_Scene.iLast_Frame != 0)
     {
         m_obj_anim_List.resize(iObj_Size);
-
     }
         in >> iMain_Material_Index >> Material_Name >> iSub_Material_Size;
         
@@ -231,20 +230,20 @@ void Load_Shape::Load(const char* maxconvertfile)
 
             in >> m_obj_info_List[imain].obj_name;
             in >> m_obj_info_List[imain].parent_name;
-            in >> dummy;
+            in >> dummy;// 
             in >> iUse_Material_Size;
-            in >> m_obj_anim_List[imain].bAnimation[0] >> m_obj_anim_List[imain].bAnimation[1] >> m_obj_anim_List[imain].bAnimation[2];
+         //   in >> m_obj_anim_List[imain].bAnimation[0] >> m_obj_anim_List[imain].bAnimation[1] >> m_obj_anim_List[imain].bAnimation[2];
             m_obj_mtl_List[imain].resize(iUse_Material_Size + 1);
 
             find_my_parents(imain);
 
-            D3DXMATRIX matworld;
-            in >> matworld._11 >> matworld._12 >> matworld._13 >> matworld._14;
-            in >> matworld._21 >> matworld._22 >> matworld._23 >> matworld._24;
-            in >> matworld._31 >> matworld._32 >> matworld._33 >> matworld._34;
-            in >> matworld._41 >> matworld._42 >> matworld._43 >> matworld._44;
-            D3DXMatrixInverse(&m_obj_anim_List[imain].mat_world_inv, NULL, &matworld);
-            m_obj_anim_List[imain].mat_world = matworld;
+          //  D3DXMATRIX matworld;
+          //  in >> matworld._11 >> matworld._12 >> matworld._13 >> matworld._14;
+          //  in >> matworld._21 >> matworld._22 >> matworld._23 >> matworld._24;
+          //  in >> matworld._31 >> matworld._32 >> matworld._33 >> matworld._34;
+          //  in >> matworld._41 >> matworld._42 >> matworld._43 >> matworld._44;
+         //   D3DXMatrixInverse(&m_obj_anim_List[imain].mat_world_inv, NULL, &matworld);
+         //   m_obj_anim_List[imain].mat_world = matworld;
 
             for (int isub_mtl = 0; isub_mtl < iUse_Material_Size; isub_mtl++)
             {

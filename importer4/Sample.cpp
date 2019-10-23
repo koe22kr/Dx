@@ -4,7 +4,7 @@ using namespace std;
 
 bool Sample::Init()
 {
-    m_loader.Load("t.MD");
+    m_loader.Skin_Load("t.MD", L"../../_data/obj/");
     // m_loader.m_pnct_List = &m_pnct_List;
     m_loader.LoaderCreate(CADevice::m_pDevice, L"test.hlsl", nullptr);
     wstring temp;
@@ -22,7 +22,7 @@ bool Sample::Frame()
 bool Sample::Render()
 {
 
-    m_loader.LoaderSetMatrix( &m_pMain_Cam->m_matView, &m_pMain_Cam->m_matProj);
+    m_loader.LoaderSetMatrix(&m_pMain_Cam->m_matView, &m_pMain_Cam->m_matProj);
     m_loader.LoaderRender(CADevice::m_pImmediate_Device_Context);
 
     return true;

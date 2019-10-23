@@ -13,25 +13,45 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="소스 파일\Obj">
+      <UniqueIdentifier>{332f9e6e-ca39-4468-b309-a509357cca4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\MatMgr  격리">
+      <UniqueIdentifier>{ff0fde3c-8792-4500-a7e1-0b572db31fa0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sample.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Load_Shape.h">
+    <ClInclude Include="ObjectMgr.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Skin_Obj.h">
+      <Filter>소스 파일\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="Mat_Obj.h">
+      <Filter>소스 파일\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="MatMgr.h">
+      <Filter>소스 파일\MatMgr  격리</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sample.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Load_Shape.cpp">
+    <ClCompile Include="ObjectMgr.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="color.hlsl" />
-    <FxCompile Include="test.hlsl" />
+    <ClCompile Include="Mat_Obj.cpp">
+      <Filter>소스 파일\Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="Skin_Obj.cpp">
+      <Filter>소스 파일\Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="MatMgr.cpp">
+      <Filter>소스 파일\MatMgr  격리</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

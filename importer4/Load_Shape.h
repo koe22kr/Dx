@@ -13,6 +13,7 @@ struct AnimTrack
     D3DXVECTOR3 p;
     D3DXQUATERNION q;
 };
+
 struct Scene
 {
     int iFirst_Frame;
@@ -42,16 +43,16 @@ struct Material_Info
     //int material_index;
     int submaterial_size;
     int texture_size;
-    
+
     vector<Texture_Info> texture_info_list;
     vector<Material_Info> sub_material_info_list;
-    
+
 };
 struct Animation_Info
 {
-    //D3DXMATRIX  m_matCalculation;
-    //D3DXMATRIX mat_world;       //현 버전에서는 사용하지 않지만. 버전에 따라 필요할 수 있?
-    //D3DXMATRIX mat_world_inv;   //현 버전에서는 사용하지 않지만. 버전에 따라 필요할 수 있?
+   // D3DXMATRIX  m_matCalculation;
+   // D3DXMATRIX mat_world;       //현 버전에서는 사용하지 않지만. 버전에 따라 필요할 수 있?
+   // D3DXMATRIX mat_world_inv;   //현 버전에서는 사용하지 않지만. 버전에 따라 필요할 수 있?
     D3DXMATRIX mAnim_Tran;
     D3DXMATRIX mAnim_Rot;
     D3DXMATRIX mAnim_Scal;
@@ -76,7 +77,7 @@ struct Object_Info
     }
 };
 
-class Load_Shape                  
+class Load_Shape
 {
 private:
     float m_fElapseTick;
@@ -88,7 +89,7 @@ private:
     std::vector<wstring> m_Tex_filename_list;
     std::vector<Material_Info> m_Material_Info;
 public:
-    void SkinLoad(const char* maxconvertfile);
+    void Skin_Load(const char* maxconvertfile,const TCHAR* texpath);
 public:
     bool Frame();
     void Interpolate(int obj_index, bool have_parent, float tick);
@@ -99,8 +100,8 @@ public:
     void  LoaderSetMatrix(D3DXMATRIX* pView, D3DXMATRIX* pProj);
     void  LoaderRender(ID3D11DeviceContext* pContext);
 public:
-//HRESULT CreateVertexData();
-//HRESULT CreateIndexData();
+    //HRESULT CreateVertexData();
+    //HRESULT CreateIndexData();
     Load_Shape();
     virtual ~Load_Shape();
 };

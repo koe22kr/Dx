@@ -289,7 +289,8 @@ void    khg_Skin_Exp::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
             // tri[iface].v[n].c.w 에 매터리얼 인덱스 삽입.
             tri[iface].iSubIndex =
                 mesh->faces[iface].getMatID();
-            if (tri[iface].iSubIndex <= 0 || desc.iMtrlID <= 0 || m_MtlInfoList[desc.iMtrlID].subMtrl.size() > tri[iface].iSubIndex)
+           
+            if (tri[iface].iSubIndex <= 0 || desc.iMtrlID <= 0 )
             {
                 tri[iface].iSubIndex = 0;
                 tri[iface].v[0].c.w = -1;
@@ -370,8 +371,8 @@ bool    khg_Skin_Exp::Export()
 
 
 
-        _ftprintf(pStream, _T("\n%d %s %d"),
-            m_MtlInfoList[iMtl].iMapID,
+        _ftprintf(pStream, _T("\n %s %d"),
+           /* m_MtlInfoList[iMtl].iMapID,*/
             m_MtlInfoList[iMtl].szName,
             m_MtlInfoList[iMtl].subMtrl.size());
 
@@ -420,27 +421,27 @@ bool    khg_Skin_Exp::Export()
          
         );
 
-        _ftprintf(pStream, _T("\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f"),
-            m_tempMesh_List[iObj].matWorld._11,
-            m_tempMesh_List[iObj].matWorld._12,
-            m_tempMesh_List[iObj].matWorld._13,
-            m_tempMesh_List[iObj].matWorld._14,
-
-            m_tempMesh_List[iObj].matWorld._21,
-            m_tempMesh_List[iObj].matWorld._22,
-            m_tempMesh_List[iObj].matWorld._23,
-            m_tempMesh_List[iObj].matWorld._24,
-
-            m_tempMesh_List[iObj].matWorld._31,
-            m_tempMesh_List[iObj].matWorld._32,
-            m_tempMesh_List[iObj].matWorld._33,
-            m_tempMesh_List[iObj].matWorld._34,
-
-            m_tempMesh_List[iObj].matWorld._41,
-            m_tempMesh_List[iObj].matWorld._42,
-            m_tempMesh_List[iObj].matWorld._43,
-            m_tempMesh_List[iObj].matWorld._44);
-
+      // _ftprintf(pStream, _T("\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f"),
+      //     m_tempMesh_List[iObj].matWorld._11,
+      //     m_tempMesh_List[iObj].matWorld._12,
+      //     m_tempMesh_List[iObj].matWorld._13,
+      //     m_tempMesh_List[iObj].matWorld._14,
+      //
+      //     m_tempMesh_List[iObj].matWorld._21,
+      //     m_tempMesh_List[iObj].matWorld._22,
+      //     m_tempMesh_List[iObj].matWorld._23,
+      //     m_tempMesh_List[iObj].matWorld._24,
+      //
+      //     m_tempMesh_List[iObj].matWorld._31,
+      //     m_tempMesh_List[iObj].matWorld._32,
+      //     m_tempMesh_List[iObj].matWorld._33,
+      //     m_tempMesh_List[iObj].matWorld._34,
+      //
+      //     m_tempMesh_List[iObj].matWorld._41,
+      //     m_tempMesh_List[iObj].matWorld._42,
+      //     m_tempMesh_List[iObj].matWorld._43,
+      //     m_tempMesh_List[iObj].matWorld._44);
+      //
 
         ///
         for (int iSubTri = 0; iSubTri < m_tempMesh_List[iObj].triList_List.size(); iSubTri++)
@@ -509,7 +510,7 @@ bool    khg_Skin_Exp::Export()
 
             IndexList& iList =
                 m_tempMesh_List[iObj].ib[iSubTri];
-            _ftprintf(pStream, _T("\nIndexList %d"), iList.size());
+            _ftprintf(pStream, _T("\nIndex: %d"), iList.size());
             for (int iIndex = 0; iIndex < iList.size(); iIndex += 3)
             {
                 _ftprintf(pStream, _T("\n%d %d %d"),
@@ -520,6 +521,32 @@ bool    khg_Skin_Exp::Export()
         }
     }
 
+    for (int iobj = 0; iobj < m_ObjList.size(); iobj++)
+    {
+        D3D_MATRIX matworld;
+        DumpMatrix3(m_ObjList[iobj]->GetNodeTM(0), matworld);
+
+       _ftprintf(pStream, _T("\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f"),
+           matworld._11,
+           matworld._12,
+           matworld._13,
+           matworld._14,
+       
+           matworld._21,
+           matworld._22,
+           matworld._23,
+           matworld._24,
+
+           matworld._31,
+           matworld._32,
+           matworld._33,
+           matworld._34,
+
+           matworld._41,
+           matworld._42,
+           matworld._43,
+           matworld._44);
+    }
     fclose(pStream);
     //메시지 박스 하나
     MessageBox(GetActiveWindow(), m_filename.c_str(), L"Succsess", MB_OK);/////////////////////////////////////////

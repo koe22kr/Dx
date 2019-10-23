@@ -24,7 +24,7 @@ public:
     void ExportSkinData(INode* pNode, Modifier* pModi, tempMesh& tMesh);
     int GetFindIndex(INode* node);
     void SetUniqueBuffer(tempMesh& tMesh);
-    void GetAnimation(INode* pNode, tempMesh& tMesh);
+   // void GetAnimation(INode* pNode, tempMesh& tMesh);
 
 
     //

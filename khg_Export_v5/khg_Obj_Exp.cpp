@@ -349,14 +349,14 @@ bool khg_Obj_Exp::Export()
 
     FILE* pStream = nullptr;
     _tfopen_s(&pStream, m_filename.c_str(), _T("wt"));
-    _ftprintf(pStream, _T("%s %d %d"), _T("khgExporter_100"), m_ObjList.size(), m_MtlInfoList.size());
-    _ftprintf(pStream, _T("\n%d %d %d %d"),m_Scene.iFirst_Frame, m_Scene.iLast_Frame, m_Scene.iFrame_Speed, m_Scene.iTick_Per_Frame);
+    _ftprintf(pStream, _T("%s"), _T("khgExporter_100"));
+    _ftprintf(pStream, _T("\n%d %d %d %d %d %d"),m_Scene.iFirst_Frame, m_Scene.iLast_Frame, m_Scene.iFrame_Speed, m_Scene.iTick_Per_Frame, m_ObjList.size(), m_MtlInfoList.size());
     for (int iMtl = 0; iMtl < m_MtlInfoList.size(); iMtl++)
     {
         
 
-        _ftprintf(pStream, _T("\n%d %s %d"),
-            m_MtlInfoList[iMtl].iMapID,
+        _ftprintf(pStream, _T("\n %s %d"),
+            /*m_MtlInfoList[iMtl].iMapID,*/
             m_MtlInfoList[iMtl].szName,
             m_MtlInfoList[iMtl].subMtrl.size());
 
@@ -459,7 +459,7 @@ bool khg_Obj_Exp::Export()
 
             IndexList& iList =
                 m_tempMesh_List[iObj].ib[iSubTri];
-            _ftprintf(pStream, _T("\nIndexList %d"), iList.size());
+            _ftprintf(pStream, _T("\nIndex: %d"), iList.size());
             for (int iIndex = 0; iIndex < iList.size(); iIndex += 3)
             {
                 _ftprintf(pStream, _T("\n%d %d %d"),
@@ -485,7 +485,7 @@ bool khg_Obj_Exp::Export()
 void khg_Obj_Exp::ExportAnimation(tempMesh& tmesh, FILE* pstream)
 {
     _ftprintf(pstream, _T("\n%s %d %d %d"),
-        L"#AnimationData",
+        L"AnimationData:",
         (tmesh.bAnimation[0]) ? tmesh.Anim_S.size() : 1,
         (tmesh.bAnimation[1]) ? tmesh.Anim_R.size() : 1,
         (tmesh.bAnimation[2]) ? tmesh.Anim_T.size() : 1);
@@ -712,7 +712,7 @@ void    khg_Obj_Exp::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
             // sub material index
             tri[iface].iSubIndex =
                 mesh->faces[iface].getMatID();
-            if (tri[iface].iSubIndex <=0||desc.iMtrlID <= 0 || m_MtlInfoList[desc.iMtrlID].subMtrl.size() > tri[iface].iSubIndex)
+            if (tri[iface].iSubIndex <=0||desc.iMtrlID <= 0 /*|| m_MtlInfoList[desc.iMtrlID].subMtrl.size() > tri[iface].iSubIndex*/)
             {
                 tri[iface].iSubIndex = 0;
                 tri[iface].v[0].c.w = -1;

@@ -18,13 +18,13 @@ class khg_Util : public UtilityObj
 {
 public:
     HWND m_hPanel;
-    Interface* m_Objip;
-    Interface* m_Skinip;
+    Interface* m_All_ip;
+    Interface* m_Selected_ip;
 public:
     virtual void BeginEditParams(Interface *ip, IUtil *iu)
     {
-        m_Objip = ip;
-        m_Skinip =nullptr;
+        m_All_ip = ip;
+        m_Selected_ip =nullptr;
         m_hPanel = ip->AddRollupPage(hInstance,
             MAKEINTRESOURCE(IDD_DIALOG1),
             DlgProc,
@@ -40,7 +40,7 @@ public:
 
     virtual void SelectionSetChanged(Interface *ip, IUtil *iu) 
     {
-        m_Skinip = ip;
+        m_Selected_ip = ip;
     }
     static khg_Util* Get()
     {
@@ -92,7 +92,7 @@ INT_PTR CALLBACK DlgProc(HWND hWnd,
         {
 #pragma message (TODO("OBJ_EXP"))
             khg_Obj_Exp::Get()->SaveFileDlg(L"obx", L"khg_Obj");
-            khg_Obj_Exp::Get()->Set(khg_Util::Get()->m_Objip);
+            khg_Obj_Exp::Get()->Set(khg_Util::Get()->m_All_ip);
             khg_Obj_Exp::Get()->Export();
            
 
@@ -101,11 +101,11 @@ INT_PTR CALLBACK DlgProc(HWND hWnd,
         case ID_khg_SkinExp:
         {
 #pragma message (TODO("SKIN_EXP"))
-            if (khg_Util::Get()->m_Skinip)
+            if (khg_Util::Get()->m_Selected_ip)
             {
                 khg_Skin_Exp::Get()->SaveFileDlg(L"skx", L"khg_Skin");
-                khg_Matrix_Exp::Get()->Set(khg_Util::Get()->m_Objip);
-                khg_Skin_Exp::Get()->Set(khg_Util::Get()->m_Skinip);
+                khg_Matrix_Exp::Get()->Set(khg_Util::Get()->m_All_ip);
+                khg_Skin_Exp::Get()->Set(khg_Util::Get()->m_Selected_ip);
                 khg_Skin_Exp::Get()->Export();
             }
           
@@ -115,7 +115,7 @@ INT_PTR CALLBACK DlgProc(HWND hWnd,
         {
 #pragma message (TODO("MATRIX_EXP"))
             khg_Matrix_Exp::Get()->SaveFileDlg(L"mtx", L"khg_Matrix");
-            khg_Matrix_Exp::Get()->Set(khg_Util::Get()->m_Objip);
+            khg_Matrix_Exp::Get()->Set(khg_Util::Get()->m_All_ip);
             khg_Matrix_Exp::Get()->Export();
            
 

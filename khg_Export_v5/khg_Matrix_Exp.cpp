@@ -82,7 +82,7 @@ bool    khg_Matrix_Exp::Export()
 void khg_Matrix_Exp::ExportAnimation(tempMesh& tmesh, FILE* pstream,int index)
 {
     _ftprintf(pstream, _T("\n%s %d %d %d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f"),
-        L"#AnimationData",
+        L"AnimationData:",
         (tmesh.bAnimation[0]) ? tmesh.Anim_S.size() : 1,
         (tmesh.bAnimation[1]) ? tmesh.Anim_R.size() : 1,
         (tmesh.bAnimation[2]) ? tmesh.Anim_T.size() : 1,

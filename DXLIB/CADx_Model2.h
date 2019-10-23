@@ -91,14 +91,14 @@ namespace DX
         DirectX::XMMATRIX m_matView;
         DirectX::XMMATRIX m_matProj;
         VS_CB2      m_cb;
-        T_BOX      m_tBox;
-        T_SPHERE   m_tSphere;
+        //T_BOX      m_tBox;
+        //T_SPHERE   m_tSphere;
 
         VS_CONSTANT_BUFFER			m_cbData;
 
 
         vector<PNCT_VERTEX2> m_Vertex_List;
-        vector<PNCTT_VERTEX> m_Vertex_List2;
+        //vector<PNCTT_VERTEX> m_Vertex_List2;
         vector<DWORD>		m_Index_List;
         DX::CADx_Helper2		m_helper;
         ID3D11Device*			m_pDevice;
