@@ -51,6 +51,7 @@ struct Animation_Info
 class Mat_Obj
 {
 public:
+    string m_szMat_File;
     float m_fElapseTick;
     Scene m_Scene;
     std::vector<Animation_Info>             m_anim_obj_List;

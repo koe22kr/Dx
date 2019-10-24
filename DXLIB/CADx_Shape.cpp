@@ -295,12 +295,12 @@ namespace DX
         HRESULT hr = S_OK;
         const TCHAR* g_szSkyTextures[] =
         {
-            L"..\..\_data\sky\C_F.png",
-            L"..\..\_data\sky\C_B.png",
-            L"..\..\_data\sky\C_R.bmp",
-            L"..\..\_data\sky\C_L.bmp",
-            L"..\..\_data\sky\C_U.bmp",
-            L"..\..\_data\sky\C_D.bmp"
+            L"../../_data/sky/C_F.png",
+            L"../../_data/sky/C_B.png",
+            L"../../_data/sky/C_R.bmp",
+            L"../../_data/sky/C_L.bmp",
+            L"../../_data/sky/C_U.bmp",
+            L"../../_data/sky/C_D.bmp"
         };
         for (int iSub = 0; iSub < 6; iSub++)
         {

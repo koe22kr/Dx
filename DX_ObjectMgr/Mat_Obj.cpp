@@ -77,6 +77,7 @@ void Mat_Obj::Mat_Load(const char* mtxconvertfile)
         }
     }
     m_cur_mat.resize(iObj_Size);
+    m_szMat_File = mtxconvertfile;
 }
 void Mat_Obj::Find_curMat(float& elapsetime, int startframe, int lastframe)
 {

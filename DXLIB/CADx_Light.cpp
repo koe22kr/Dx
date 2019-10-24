@@ -22,7 +22,6 @@ using namespace DX;
 
         I_DXHELPER.Create_Const_Buffer(tempcb, &m_cbLight, 1, sizeof(m_cbLight), CADevice::m_pDevice);
         m_pConstantBufferLight.Attach(tempcb);
-        CreateResource();
         
         return true;
     }
@@ -93,14 +92,7 @@ using namespace DX;
     //--------------------------------------------------------------------------------------
     // 
     //--------------------------------------------------------------------------------------
-    HRESULT CADx_Light::CreateResource()
-    {
-        /*  HRESULT hr;
-          if (m_pMain_Cam != nullptr)
-              m_pMain_Cam->SetProjMatrix((float)D3DX_PI * 0.25f,
-                  m_Device.m_Swap_Chain_Desc.BufferDesc.Width / (FLOAT)m_Device.m_Swap_Chain_Desc.BufferDesc.Height, 1.0f, 1000.0f);*/
-        return S_OK;
-    }
+   
     //--------------------------------------------------------------------------------------
     // 
     //--------------------------------------------------------------------------------------

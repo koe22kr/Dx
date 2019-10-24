@@ -41,7 +41,6 @@ class TCamera;
         bool		Frame(DX::TCamera* now_cam);
         bool		Release();
        
-        HRESULT		CreateResource();
     public:
 
         CADx_Light();

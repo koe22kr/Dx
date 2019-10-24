@@ -36,6 +36,9 @@
     <ClInclude Include="MatMgr.h">
       <Filter>소스 파일\MatMgr  격리</Filter>
     </ClInclude>
+    <ClInclude Include="Render_Obj.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sample.cpp">
@@ -52,6 +55,9 @@
     </ClCompile>
     <ClCompile Include="MatMgr.cpp">
       <Filter>소스 파일\MatMgr  격리</Filter>
+    </ClCompile>
+    <ClCompile Include="Render_Obj.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -4,8 +4,6 @@
 #include "CATexture_Mgr.h"
 namespace DX
 {
-
-
     struct PC_VERTEX
     {
         DirectX::XMFLOAT3 p;
@@ -59,7 +57,6 @@ namespace DX
         DirectX::XMMATRIX matWorld;
         DirectX::XMMATRIX matView;
         DirectX::XMMATRIX matProj;
-        float color[4];
         float etc[4];
     };
     struct T_BOX
@@ -98,7 +95,6 @@ namespace DX
 
 
         vector<PNCT_VERTEX2> m_Vertex_List;
-        //vector<PNCTT_VERTEX> m_Vertex_List2;
         vector<DWORD>		m_Index_List;
         DX::CADx_Helper2		m_helper;
         ID3D11Device*			m_pDevice;
@@ -130,7 +126,6 @@ namespace DX
             ID3D11Device* pd3dDevice,
             const TCHAR* pLoadTextureFile);
         virtual bool   UpdateBuffer();
-        virtual HRESULT CreateResource();
         void SetCollisionData();
 
         virtual void  SetMatrix(DirectX::XMMATRIX* pWorld,

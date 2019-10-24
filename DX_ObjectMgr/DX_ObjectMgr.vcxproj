@@ -148,6 +148,7 @@
     <ClInclude Include="MatMgr.h" />
     <ClInclude Include="Mat_Obj.h" />
     <ClInclude Include="ObjectMgr.h" />
+    <ClInclude Include="Render_Obj.h" />
     <ClInclude Include="Sample.h" />
     <ClInclude Include="Skin_Obj.h" />
   </ItemGroup>
@@ -155,6 +156,7 @@
     <ClCompile Include="MatMgr.cpp" />
     <ClCompile Include="Mat_Obj.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />
+    <ClCompile Include="Render_Obj.cpp" />
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="Skin_Obj.cpp" />
   </ItemGroup>

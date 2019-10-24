@@ -82,7 +82,6 @@ namespace DX
         vc.matWorld = DirectX::XMMatrixIdentity();
         vc.matView = m_matView;
         vc.matProj = m_matProj;
-        vc.color[0] = 1.0f;
         vc.etc[0] = 0.0f;
 
         m_helper.m_pConstantBuffer.Attach(
@@ -114,13 +113,10 @@ namespace DX
     {
         return true;
     }
-    HRESULT CADx_Model2::CreateResource() {
-        HRESULT hr = S_OK;
-        return hr;
-    }
+  
     void CADx_Model2::SetCollisionData()
     {
-        m_tBox.vCenter.x = 0.0f;
+        /*m_tBox.vCenter.x = 0.0f;
         m_tBox.vCenter.y = 0.0f;
         m_tBox.vCenter.z = 0.0f;
         m_tBox.vMin = D3DXVECTOR3(-1, -1, -1);
@@ -137,7 +133,7 @@ namespace DX
         v.x = m_tBox.vMax.x - m_tBox.vCenter.x;
         v.y = m_tBox.vMax.y - m_tBox.vCenter.y;
         v.z = m_tBox.vMax.z - m_tBox.vCenter.z;
-        m_tSphere.fRadius = sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
+        m_tSphere.fRadius = sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);*/
     }
     bool  CADx_Model2::Init()
     {
@@ -152,11 +148,14 @@ namespace DX
     }
     bool  CADx_Model2::Render(ID3D11DeviceContext* pContext)
     {
+        
+        PreRender(pContext);
+        PostRender(pContext);
+        return true;
+    }
+    bool  CADx_Model2::PreRender(ID3D11DeviceContext* pContext)
+    {
         float fTime = g_fGameTimer;
-        m_cb.color[0] = cosf(fTime);
-        m_cb.color[1] = sinf(fTime);
-        m_cb.color[2] = 1 - cosf(fTime);
-        m_cb.color[3] = 1.0f;
         m_cb.etc[0] = fTime;
         if (m_helper.m_pConstantBuffer != NULL)
         {
@@ -164,12 +163,6 @@ namespace DX
                 m_helper.m_pConstantBuffer.Get(),
                 0, NULL, &m_cb, 0, 0);
         }
-        PreRender(pContext);
-        PostRender(pContext);
-        return true;
-    }
-    bool  CADx_Model2::PreRender(ID3D11DeviceContext* pContext)
-    {
         m_helper.PreRender(pContext,
             m_helper.m_iVertexSize);
         return true;
@@ -226,11 +219,6 @@ namespace DX
         {
             return false;
         }
-        if (FAILED(CreateResource()))
-        {
-            return false;
-        }
-
         SetCollisionData();
 
         return Init();
@@ -260,10 +248,10 @@ namespace DX
         DirectX::XMStoreFloat4x4(&temp, m_matWorld);
 
 
-        m_tBox.vCenter.x = temp._41;
-        m_tBox.vCenter.y = temp._42;
-        m_tBox.vCenter.z = temp._43;
-        m_tSphere.vCenter = *((DirectX::XMFLOAT3*)(&m_tBox.vCenter));
+        //m_tBox.vCenter.x = temp._41;
+        //m_tBox.vCenter.y = temp._42;
+        //m_tBox.vCenter.z = temp._43;
+        //m_tSphere.vCenter = *((DirectX::XMFLOAT3*)(&m_tBox.vCenter));
     }
     void  CADx_Model2::SetMatrix(D3DXMATRIX* pWorld,
         D3DXMATRIX* pView,
@@ -272,12 +260,12 @@ namespace DX
 
         if (pWorld != nullptr)
         {
-            DirectX::XMFLOAT4X4 temp;
-            DirectX::XMStoreFloat4x4(&temp, m_matWorld);
-            m_tBox.vCenter.x = temp._41;
-            m_tBox.vCenter.y = temp._42;
-            m_tBox.vCenter.z = temp._43;
-            m_tSphere.vCenter = *((DirectX::XMFLOAT3*)&m_tBox.vCenter);
+           //DirectX::XMFLOAT4X4 temp;
+           //DirectX::XMStoreFloat4x4(&temp, m_matWorld);
+           //m_tBox.vCenter.x = temp._41;
+           //m_tBox.vCenter.y = temp._42;
+           //m_tBox.vCenter.z = temp._43;
+           //m_tSphere.vCenter = *((DirectX::XMFLOAT3*)&m_tBox.vCenter);
             m_matWorld = *((DirectX::XMMATRIX*)pWorld);
             
         }

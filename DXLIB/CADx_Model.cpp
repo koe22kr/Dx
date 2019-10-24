@@ -39,9 +39,7 @@ namespace DX
             m_HDX.Load_Shader_Resource_View_From_File_Self(file_name, Key);
         }
 
-           // if (!UpdateBuffer())
-            //if (FAILED(CreateResource()))//
-           // SetCollisionData();
+         
 
         /*Init();*/
         return true;
