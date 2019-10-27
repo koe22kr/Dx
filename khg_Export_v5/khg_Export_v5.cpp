@@ -91,10 +91,11 @@ INT_PTR CALLBACK DlgProc(HWND hWnd,
         case ID_khg_ObjExp:
         {
 #pragma message (TODO("OBJ_EXP"))
-            khg_Obj_Exp::Get()->SaveFileDlg(L"obx", L"khg_Obj");
-            khg_Obj_Exp::Get()->Set(khg_Util::Get()->m_All_ip);
-            khg_Obj_Exp::Get()->Export();
-           
+            if (khg_Obj_Exp::Get()->SaveFileDlg(L"obx", L"khg_Obj"))
+            {
+                khg_Obj_Exp::Get()->Set(khg_Util::Get()->m_All_ip);
+                khg_Obj_Exp::Get()->Export();
+            }
 
 
         }break;
@@ -103,10 +104,12 @@ INT_PTR CALLBACK DlgProc(HWND hWnd,
 #pragma message (TODO("SKIN_EXP"))
             if (khg_Util::Get()->m_Selected_ip)
             {
-                khg_Skin_Exp::Get()->SaveFileDlg(L"skx", L"khg_Skin");
-                khg_Matrix_Exp::Get()->Set(khg_Util::Get()->m_All_ip);
-                khg_Skin_Exp::Get()->Set(khg_Util::Get()->m_Selected_ip);
-                khg_Skin_Exp::Get()->Export();
+                if (khg_Skin_Exp::Get()->SaveFileDlg(L"skx", L"khg_Skin"))
+                {
+                    khg_Matrix_Exp::Get()->Set(khg_Util::Get()->m_All_ip);
+                    khg_Skin_Exp::Get()->Set(khg_Util::Get()->m_Selected_ip);
+                    khg_Skin_Exp::Get()->Export();
+                }
             }
           
 
@@ -114,10 +117,11 @@ INT_PTR CALLBACK DlgProc(HWND hWnd,
         case ID_khg_MatrixExp:
         {
 #pragma message (TODO("MATRIX_EXP"))
-            khg_Matrix_Exp::Get()->SaveFileDlg(L"mtx", L"khg_Matrix");
-            khg_Matrix_Exp::Get()->Set(khg_Util::Get()->m_All_ip);
-            khg_Matrix_Exp::Get()->Export();
-           
+            if (khg_Matrix_Exp::Get()->SaveFileDlg(L"mtx", L"khg_Matrix"))
+            {
+                khg_Matrix_Exp::Get()->Set(khg_Util::Get()->m_All_ip);
+                khg_Matrix_Exp::Get()->Export();
+            }
 
         }break;
         }

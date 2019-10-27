@@ -50,7 +50,7 @@ struct Material_Info
 };
 struct Animation_Info
 {
-   // D3DXMATRIX  m_matCalculation;
+    D3DXMATRIX  m_matCalculation;
    // D3DXMATRIX mat_world;       //현 버전에서는 사용하지 않지만. 버전에 따라 필요할 수 있?
    // D3DXMATRIX mat_world_inv;   //현 버전에서는 사용하지 않지만. 버전에 따라 필요할 수 있?
     D3DXMATRIX mAnim_Tran;
@@ -98,7 +98,7 @@ public:
 public:
     void  LoaderCreate(ID3D11Device* pd3dDevice, const TCHAR* pLoadShaderFile, const TCHAR* pLoadTextureFile);
     void  LoaderSetMatrix(D3DXMATRIX* pView, D3DXMATRIX* pProj);
-    void  LoaderRender(ID3D11DeviceContext* pContext);
+    void  LoaderRender(ID3D11DeviceContext* pContext, D3DXMATRIX* pView, D3DXMATRIX* pProj);
 public:
     //HRESULT CreateVertexData();
     //HRESULT CreateIndexData();

@@ -7,7 +7,7 @@ void khg_Skin_Exp::SortRawData(Raw_WI_VERTEX& rawwi, IW_VERTEX& outwi)
     //
     std::vector<float> wsorter = rawwi.w;
     int loop = wsorter.size() > 8 ? 8 : wsorter.size();
-    std::sort(wsorter.begin(), wsorter.end() - 1, [](float a, float b) {return a > b; });
+    std::sort(wsorter.begin(), wsorter.end(), [](float a, float b) {return a > b; });
     for (int i = 0; i < loop; i++)
     {
         for (int j = 0; j < loop; j++)
@@ -28,7 +28,7 @@ void khg_Skin_Exp::SortRawData(Raw_WI_VERTEX& rawwi, IW_VERTEX& outwi)
 
         }
     }
-    outwi.i1[3] = loop;
+    outwi.w1[3] = loop;
     
 }
 int khg_Skin_Exp::GetFindIndex(INode* node)
@@ -290,7 +290,7 @@ void    khg_Skin_Exp::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
             tri[iface].iSubIndex =
                 mesh->faces[iface].getMatID();
            
-            if (tri[iface].iSubIndex <= 0 || desc.iMtrlID <= 0 )
+            if (tri[iface].iSubIndex < 0 /*|| desc.iMtrlID < 0 */)
             {
                 tri[iface].iSubIndex = 0;
                 tri[iface].v[0].c.w = -1;
@@ -364,15 +364,14 @@ bool    khg_Skin_Exp::Export()
 
     FILE* pStream = nullptr;
     _tfopen_s(&pStream, m_filename.c_str(), _T("wt"));
-    _ftprintf(pStream, _T("%s "), _T("khgExporter_100"));
-    _ftprintf(pStream, _T("\n%d %d %d %d %d %d "), m_SkinObjList.size(), m_MtlInfoList.size(), m_Scene.iFirst_Frame, m_Scene.iLast_Frame, m_Scene.iFrame_Speed, m_Scene.iTick_Per_Frame);
+    _ftprintf(pStream, _T("%s %d %d"), _T("khgExporter_100"), m_SkinObjList.size(), m_MtlInfoList.size());
     for (int iMtl = 0; iMtl < m_MtlInfoList.size(); iMtl++)
     {
 
 
 
-        _ftprintf(pStream, _T("\n %s %d"),
-           /* m_MtlInfoList[iMtl].iMapID,*/
+        _ftprintf(pStream, _T("\n%s %d"),
+            /*m_MtlInfoList[iMtl].iMapID,*/
             m_MtlInfoList[iMtl].szName,
             m_MtlInfoList[iMtl].subMtrl.size());
 
@@ -594,7 +593,7 @@ void khg_Skin_Exp::SetUniqueBuffer(tempMesh& tMesh)
             IndexList& iList = tMesh.ib[iSub];
             //Raw_WI_VERTEX& wilist = tMesh.wi_List[iSub];
             IW_VERTEX iwvertex;
-            ZeroMemory(&iwvertex, sizeof(IW_VERTEX));
+            
             for (int iVer = 0; iVer < 3; iVer++)
             {
                 int wi_index = 3 * iFace + iVer;
@@ -604,6 +603,7 @@ void khg_Skin_Exp::SetUniqueBuffer(tempMesh& tMesh)
                     vList.push_back(tri.v[iVer]);
                     if (tMesh.wi_List.size())
                     {
+                        ZeroMemory(&iwvertex, sizeof(IW_VERTEX));
                         SortRawData(tMesh.wi_List[iSub][tri.v[iVer].vertex_index], iwvertex);
                         tMesh.iwb[iSub].push_back(iwvertex);
                     }
@@ -622,11 +622,11 @@ void khg_Skin_Exp::SetUniqueBuffer(tempMesh& tMesh)
 void khg_Skin_Exp::Set(Interface* mMax)
 {
     if (mMax == nullptr)return;
-    if (mMax == m_pMax && m_SkinObjList.size() != 0)
+   /* if (mMax == m_pMax && m_SkinObjList.size() != 0)
     {
         m_tempMesh_List.clear();
     }
-    else
+    else*/
     {
         m_SkinObjList.clear();
         m_MaterialList.clear();

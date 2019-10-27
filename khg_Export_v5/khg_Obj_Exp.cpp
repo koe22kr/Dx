@@ -355,7 +355,7 @@ bool khg_Obj_Exp::Export()
     {
         
 
-        _ftprintf(pStream, _T("\n %s %d"),
+        _ftprintf(pStream, _T("\n%s %d"),
             /*m_MtlInfoList[iMtl].iMapID,*/
             m_MtlInfoList[iMtl].szName,
             m_MtlInfoList[iMtl].subMtrl.size());
@@ -397,10 +397,10 @@ bool khg_Obj_Exp::Export()
 
     for (int iObj = 0; iObj < m_tempMesh_List.size(); iObj++)
     {
-        _ftprintf(pStream, _T("\n%s %s %d %d %d %d %d "),
+        _ftprintf(pStream, _T("\n%s %s %d %d %d %d "),
             m_tempMesh_List[iObj].name,
             m_tempMesh_List[iObj].ParentName,
-            m_tempMesh_List[iObj].iMtrlID,
+            /*m_tempMesh_List[iObj].iMtrlID,*/
             m_tempMesh_List[iObj].triList_List.size(),
             m_tempMesh_List[iObj].bAnimation[0],
             m_tempMesh_List[iObj].bAnimation[1],
@@ -409,7 +409,7 @@ bool khg_Obj_Exp::Export()
           
         );
 
-        _ftprintf(pStream, _T("\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f"),
+        /*_ftprintf(pStream, _T("\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f"),
             m_tempMesh_List[iObj].matWorld._11,
             m_tempMesh_List[iObj].matWorld._12,
             m_tempMesh_List[iObj].matWorld._13,
@@ -428,7 +428,7 @@ bool khg_Obj_Exp::Export()
             m_tempMesh_List[iObj].matWorld._41,
             m_tempMesh_List[iObj].matWorld._42,
             m_tempMesh_List[iObj].matWorld._43,
-            m_tempMesh_List[iObj].matWorld._44);
+            m_tempMesh_List[iObj].matWorld._44);*/
 
 
         ///
@@ -712,7 +712,7 @@ void    khg_Obj_Exp::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
             // sub material index
             tri[iface].iSubIndex =
                 mesh->faces[iface].getMatID();
-            if (tri[iface].iSubIndex <=0||desc.iMtrlID <= 0 /*|| m_MtlInfoList[desc.iMtrlID].subMtrl.size() > tri[iface].iSubIndex*/)
+            if (tri[iface].iSubIndex <0/*||desc.iMtrlID <= 0*/ /*|| m_MtlInfoList[desc.iMtrlID].subMtrl.size() > tri[iface].iSubIndex*/)
             {
                 tri[iface].iSubIndex = 0;
                 tri[iface].v[0].c.w = -1;
@@ -814,8 +814,8 @@ DeleteIt)
 TCHAR* khg_Obj_Exp::SaveFileDlg(TCHAR* szExt, TCHAR* szTitle)
 {
     TCHAR szFile[MAX_PATH] = { 0, };
-    TCHAR szFileTitleFile[MAX_PATH] = { 0, };
-    static TCHAR *szFilter;
+    TCHAR szFileTitleFile[MAX_PATH] = { L"skx", };
+    static TCHAR *szFilter = {L"Skin_X(*.skx)\0*.skx\0AllFiles(*.*)\0*.*\0"};
     OPENFILENAME ofn;
     ZeroMemory(&ofn, sizeof(OPENFILENAME));
     _tcscpy_s(szFile, _T("*."));
@@ -827,7 +827,7 @@ TCHAR* khg_Obj_Exp::SaveFileDlg(TCHAR* szExt, TCHAR* szTitle)
     ofn.lpstrFilter = szFilter;
     ofn.lpstrCustomFilter = NULL;
     ofn.nMaxCustFilter = 0L;
-    ofn.nFilterIndex = 1;
+    ofn.nFilterIndex = 3;
     ofn.lpstrFile = szFile;
     ofn.nMaxFile = sizeof(szFile);
     ofn.lpstrFileTitle = szFileTitleFile;

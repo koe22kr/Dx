@@ -14,7 +14,7 @@ public:
         const TCHAR* pLoadShaderFile,
         const TCHAR* pLoadTextureFile);
 
-    //virtual HRESULT SetInputLayout();
+    virtual HRESULT SetInputLayout()override;
     virtual HRESULT CreateVertexData()override;
     virtual HRESULT CreateIndexData()override;
     virtual HRESULT CreateVertexBuffer()override;

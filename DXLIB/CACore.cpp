@@ -226,9 +226,10 @@ bool CACore::CACoreRender()
     m_Device.Render();
     m_Heightmap.Render(CADevice::m_pImmediate_Device_Context,nullptr, &m_pMain_Cam->m_matView,&m_pMain_Cam->m_matProj);
     Render();
+    
 
 #ifdef _DEBUG
-    Debug_Render();
+   Debug_Render();
  //   m_Debug_Shape.Render(CADevice::m_pImmediate_Device_Context,m_Debug_Shape.m_Index_List.size());
 #endif
     m_Device.Post_Render();

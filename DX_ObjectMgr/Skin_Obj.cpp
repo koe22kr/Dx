@@ -1,14 +1,43 @@
 #include "Skin_Obj.h"
 
-void Skin_Obj::Skin_Load(const char* maxconvertfile, const TCHAR* texpath)
+int Skin_Obj::Get_obj_size()
+{
+    return m_obj_mtl_List.size();
+}
+int Skin_Obj::Get_mtl_size(int iobj)
+{
+    return m_obj_mtl_List[iobj].size();
+}
+
+int Skin_Obj::Get_Render_Obj_index()
+{
+    return m_iShader_index;
+}
+int Skin_Obj::Get_Mat_index()
+{
+    return m_iMat_index;
+}
+Sorted_Vertex_by_Texture* Skin_Obj::Get(int iobj, int imtl)
+{
+    return &m_obj_mtl_List[iobj][imtl];
+}
+
+//
+//void Skin_Obj::Render(ID3D11DeviceContext* pContext)
+//{
+//    m_obj_mtl_List
+//}
+
+void Skin_Obj::Skin_Load(const char* maxconvertfile, const TCHAR* texpath, ID3D11Device* pDevice)
 {
     int dummy;
+    float dummyfloat;
     string dummy_str;
 
     string key;
     int iObj_Size;
     int iMainMtl_Size = 0;
-    int iMain_Material_Index = 0;
+   /* int iMain_Material_Index = 0;*/
     string Material_Name;
     int iSub_Material_Size;
     int iUse_Material_Size;
@@ -19,9 +48,8 @@ void Skin_Obj::Skin_Load(const char* maxconvertfile, const TCHAR* texpath)
     ifstream in(maxconvertfile);
 
     in >> key >> iObj_Size >> iMainMtl_Size;
-    
     m_Material_Info.resize(iMainMtl_Size);
-    in >> iMain_Material_Index >> Material_Name >> iSub_Material_Size;
+    in /*>> iMain_Material_Index*/ >> Material_Name >> iSub_Material_Size;
 
     m_obj_mtl_List.resize(iObj_Size);
     m_Obj_Info_List.resize(iObj_Size);
@@ -66,7 +94,7 @@ void Skin_Obj::Skin_Load(const char* maxconvertfile, const TCHAR* texpath)
             m_Material_Info[m].submaterial_size = iSub_Material_Size;
             if (iMainMtl_Size > m + 1)
             {
-                in >> iMain_Material_Index >> Material_Name >> iSub_Material_Size;
+                in /*>> iMain_Material_Index*/ >> Material_Name >> iSub_Material_Size;
             }
         }
     }
@@ -92,11 +120,18 @@ void Skin_Obj::Skin_Load(const char* maxconvertfile, const TCHAR* texpath)
 
             for (int ivertex = 0; ivertex < vertex_size; ivertex++)
             {
-                DX::PNCT_VERTEX2 temp;
+                PNCTI4W4 temp;
+                //ZeroMemory(&temp, sizeof(temp));
                 in >> temp.p.x >> temp.p.y >> temp.p.z;
                 in >> temp.n.x >> temp.n.y >> temp.n.z;
                 in >> temp.c.x >> temp.c.y >> temp.c.z >> temp.c.w;
                 in >> temp.t.x >> temp.t.y;
+                in >> temp.i.x >> temp.i.y >> temp.i.z >> temp.i.w;
+                in >> dummy >> dummy >> dummy >> dummy;
+                in >> temp.w.x >> temp.w.y >> temp.w.z >> temp.w.w;
+                in >> dummyfloat >> dummyfloat >> dummyfloat >> dummyfloat;
+
+
 
                 if (temp.c.w != -1)
                 {
@@ -125,18 +160,45 @@ void Skin_Obj::Skin_Load(const char* maxconvertfile, const TCHAR* texpath)
                 }
             }
 
-            if (m_obj_mtl_List[iobj][isub_mtl].m_Vertex_List.size() > 0 &&
-                m_obj_mtl_List[iobj][isub_mtl].m_Vertex_List[0].c.w != -1)
+            if (m_obj_mtl_List[iobj][isub_mtl].m_Vertex_List.size() > 0)
             {
-                //SRV
-                int texture_index = (int)m_obj_mtl_List[iobj][isub_mtl].m_Vertex_List[0].c.w;
-                m_Obj_Info_List[iobj].SRV_Index = I_TextureMgr.Load(CADevice::m_pDevice, texpath + m_Tex_filename_list[texture_index]);
-                m_obj_mtl_List[iobj][isub_mtl].m_pSRV = I_TextureMgr.GetPtr(m_Obj_Info_List[iobj].SRV_Index)->m_pSRV;
+                HRESULT hr;
+                //VB IB
+                D3D11_BUFFER_DESC bd;
+                ZeroMemory(&bd, sizeof(bd));
+                bd.ByteWidth = sizeof(PNCTI4W4)*m_obj_mtl_List[iobj][isub_mtl].m_Vertex_List.size();
+                bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+                bd.CPUAccessFlags = 0;
+                bd.Usage = D3D11_USAGE_DEFAULT;
+                D3D11_SUBRESOURCE_DATA sd;
+                ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+                sd.pSysMem = &m_obj_mtl_List[iobj][isub_mtl].m_Vertex_List.at(0);
+                if (FAILED(hr = pDevice->CreateBuffer(&bd, &sd, &m_obj_mtl_List[iobj][isub_mtl].VB)))
+                {
+                    MessageBox(NULL, L"Skin_obj_VB_fail", L"Skin_obj_VB_fail", S_OK);
+                }
+
+                bd.ByteWidth = sizeof(DWORD)*m_obj_mtl_List[iobj][isub_mtl].m_Index_List.size();
+                bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+                sd.pSysMem = &m_obj_mtl_List[iobj][isub_mtl].m_Index_List.at(0);
+                if (FAILED(hr = pDevice->CreateBuffer(&bd, &sd, &m_obj_mtl_List[iobj][isub_mtl].IB)))
+                {
+                    MessageBox(NULL, L"Skin_obj_IB_fail", L"Skin_obj_IB_fail", S_OK);
+                }
+                if (m_obj_mtl_List[iobj][isub_mtl].m_Vertex_List[0].c.w != -1)
+                {
+                    //SRV
+                    int texture_index = (int)m_obj_mtl_List[iobj][isub_mtl].m_Vertex_List[0].c.w;
+                    m_Obj_Info_List[iobj].SRV_Index = I_TextureMgr.Load(CADevice::m_pDevice, texpath + m_Tex_filename_list[texture_index]);
+                    m_obj_mtl_List[iobj][isub_mtl].m_pSRV = I_TextureMgr.GetPtr(m_Obj_Info_List[iobj].SRV_Index)->m_pSRV;
+                }
+
+                
             }
 
         }//isub_mtl end
     }
-
+//    pDevice->CreateBuffer(,NULL,)
 }
 
 

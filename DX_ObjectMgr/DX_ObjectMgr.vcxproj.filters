@@ -60,4 +60,7 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\_Shader\Chara.hlsl" />
+  </ItemGroup>
 </Project>

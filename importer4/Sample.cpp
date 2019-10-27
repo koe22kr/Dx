@@ -22,8 +22,8 @@ bool Sample::Frame()
 bool Sample::Render()
 {
 
-    m_loader.LoaderSetMatrix(&m_pMain_Cam->m_matView, &m_pMain_Cam->m_matProj);
-    m_loader.LoaderRender(CADevice::m_pImmediate_Device_Context);
+    //m_loader.LoaderSetMatrix(&m_pMain_Cam->m_matView, &m_pMain_Cam->m_matProj);
+    m_loader.LoaderRender(CADevice::m_pImmediate_Device_Context, &m_pMain_Cam->m_matView, &m_pMain_Cam->m_matProj);
 
     return true;
 }

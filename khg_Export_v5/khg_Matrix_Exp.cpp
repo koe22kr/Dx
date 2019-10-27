@@ -60,7 +60,7 @@ bool    khg_Matrix_Exp::Export()
 
     FILE* pStream = nullptr;
     _tfopen_s(&pStream, m_filename.c_str(), _T("wt"));
-    _ftprintf(pStream, _T("%s %d %d"), _T("khgExporter_100"), m_ObjList.size(), m_MtlInfoList.size());
+    _ftprintf(pStream, _T("%s %d"), _T("khgExporter_100"), m_ObjList.size());
     _ftprintf(pStream, _T("\n%d %d %d %d"), m_Scene.iFirst_Frame, m_Scene.iLast_Frame, m_Scene.iFrame_Speed, m_Scene.iTick_Per_Frame);
 
     for (int iObj = 0; iObj < m_tempMesh_List.size(); iObj++)

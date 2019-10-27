@@ -18,18 +18,18 @@ class ObjectMgr
 {
 private:
     int Load_Render_Obj(ID3D11Device* pDevice, const TCHAR* shader_file_name);
-    int Load_Mat(const char* mat_file_name);
-    void Load_Skin(const char* skin_file_name, int shader_index, int mat_index);
+    int Load_Mat(const char* mat_file_name, ID3D11Device* pDevice);
+    void Load_Skin(const char* skin_file_name, int shader_index, int mat_index, ID3D11Device* pDevice);
 
 public:
-    wstring texture_path=L"../../_data/obj";
+    wstring texture_path=L"../../_data/obj/";
     std::vector <Mat_Obj>  m_Mat_List;
     std::vector <Skin_Obj> m_Skin_List;//shader index 맴버변수 추가후 인덱스 달때 숫자 size()부터
     std::vector<Render_Obj> m_Render_Obj_List;
 
 public:
     void Load_Cit(ID3D11Device* pDevice,const TCHAR* cit_file_name);
-   
+    void Render(ID3D11DeviceContext* pContext, int iskin, float& elapsetime, int startframe, int lastframe, D3DXMATRIX* matworld, D3DXMATRIX* matview, D3DXMATRIX* matproj);
 
 public:
     bool Init();

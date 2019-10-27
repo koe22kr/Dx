@@ -72,6 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>../../output/$(ProjectName)/</OutDir>
+    <IntDir>../../output/$(ProjectName)/debug</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -159,6 +161,11 @@
     <ClCompile Include="Render_Obj.cpp" />
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="Skin_Obj.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\_Shader\Chara.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

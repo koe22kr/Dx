@@ -71,6 +71,7 @@ void Load_Shape::Interpolate(int obj_index, bool have_parent, float tick)
         qRotatin = target->Anim_R[0].q;
     }
     D3DXMatrixRotationQuaternion(&target->mAnim_Rot, &qRotatin);
+
     //S
     if (target->Anim_S.size() > 1)
     {
@@ -122,16 +123,16 @@ void Load_Shape::Interpolate(int obj_index, bool have_parent, float tick)
     matAnim._42 = target->mAnim_Tran._42;
     matAnim._43 = target->mAnim_Tran._43;
     //target->m_matCalculation = target->mAnim_Scal;
-    if (m_obj_info_List[obj_index].parent_index != -1)
-    {
-        target->m_matCalculation = matAnim; /** m_obj_anim_List[m_obj_info_List[obj_index].parent_index].m_matCalculation;*/
-#pragma message(TODO("need a branch 2type "))
-    }
-    else
-    {
-#pragma message(TODO("need a branch 2type "))
-        target->m_matCalculation = matAnim;// *m_obj_anim_List[obj_index].mat_world;
-    }
+    //if (m_obj_info_List[obj_index].parent_index != -1)
+    //{
+    //    target->m_matCalculation = matAnim; /** m_obj_anim_List[m_obj_info_List[obj_index].parent_index].m_matCalculation;*/
+    //    //#pragma message(TODO("need a branch 2type "))
+    //}
+    //else
+    //{
+        //#pragma message(TODO("need a branch 2type "))
+    target->m_matCalculation = matAnim;// *m_obj_anim_List[obj_index].mat_world;
+    //}
 
 
 
@@ -361,7 +362,7 @@ void  Load_Shape::LoaderSetMatrix(D3DXMATRIX* pView, D3DXMATRIX* pProj)
 
         for (int i = 0; i < m_obj_mtl_List[j].size(); i++)
         {
-            m_obj_mtl_List[j][i].SetMatrix(&m_obj_anim_List[j].m_matCalculation, pView, pProj);
+           // m_obj_mtl_List[j][i].SetMatrix(&m_obj_anim_List[j].m_matCalculation, pView, pProj);
         }
     }
 }
@@ -371,6 +372,7 @@ void  Load_Shape::LoaderCreate(ID3D11Device* pd3dDevice, const TCHAR* pLoadShade
     {
         for (int i = 0; i < m_obj_mtl_List[j].size(); i++)
         {
+           
             if (i != m_obj_mtl_List[j].size() - 1)
             {
                 //쉐이더 나누게 되면 여기서 멤버로 쉐이더 이름 가지고 그걸로 로드?
@@ -383,20 +385,16 @@ void  Load_Shape::LoaderCreate(ID3D11Device* pd3dDevice, const TCHAR* pLoadShade
         }
     }
 }
-void  Load_Shape::LoaderRender(ID3D11DeviceContext* pContext)
+void  Load_Shape::LoaderRender(ID3D11DeviceContext* pContext, D3DXMATRIX* pView, D3DXMATRIX* pProj)
 {
     for (auto j = 0; j < m_obj_mtl_List.size(); j++)
     {
-
         for (int i = 0; i < m_obj_mtl_List[j].size(); i++)
         {
-
-            //pContext->PSSetShaderResources(0, 1, m_helper.m_pSRV.GetAddressOf());
-
-            //쉐이더 나누게 되면 여기서 멤버로 쉐이더 이름 가지고 그걸로 로드?
+            m_obj_mtl_List[j][i].SetMatrix(&m_obj_anim_List[j].m_matCalculation, pView, pProj);
             m_obj_mtl_List[j][i].Render(pContext);
-
         }
     }
 
-}
+} 
+//pContext->PSSetShaderResources(0, 1, m_helper.m_pSRV.GetAddressOf());

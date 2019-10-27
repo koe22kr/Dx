@@ -42,7 +42,6 @@ struct Animation_Info
     //D3DXVECTOR3 vTran;
     //D3DXQUATERNION vRot;
     //D3DXVECTOR3 vScale;
-    bool bAnimation[3];
     std::vector<AnimTrack> Anim_S;
     std::vector<AnimTrack> Anim_R;
     std::vector<AnimTrack> Anim_T;
@@ -56,9 +55,15 @@ public:
     Scene m_Scene;
     std::vector<Animation_Info>             m_anim_obj_List;
     std::vector<D3DXMATRIX> m_cur_mat;
+    ID3D11Buffer* m_Cur_Mat_Buffer;
+    ID3D11ShaderResourceView* m_Cur_Mat_SRV;
 public:
+    void Release();
     void Find_curMat(float& elapsetime, int startframe,int lastframe);
-    void Mat_Load(const char* mtxconvertfile);
+    void Mat_Load(const char* mtxconvertfile, ID3D11Device* pDevice);
+    void Update_Render_Mat(ID3D11DeviceContext* pContext);
+    void Interpolate();
+
 public:
 
 public:

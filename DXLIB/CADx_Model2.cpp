@@ -260,8 +260,8 @@ namespace DX
 
         if (pWorld != nullptr)
         {
-           //DirectX::XMFLOAT4X4 temp;
-           //DirectX::XMStoreFloat4x4(&temp, m_matWorld);
+           DirectX::XMFLOAT4X4 temp;
+           DirectX::XMStoreFloat4x4(&temp, m_matWorld);
            //m_tBox.vCenter.x = temp._41;
            //m_tBox.vCenter.y = temp._42;
            //m_tBox.vCenter.z = temp._43;
