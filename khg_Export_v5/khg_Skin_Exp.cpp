@@ -227,13 +227,13 @@ void    khg_Skin_Exp::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
             int iNumPos = mesh->getNumVerts();
             if (iNumPos > 0)
             {
-                Point3 p3 = mesh->verts[mesh->faces[iface].v[v0]] * tm * invtm;    //tm °öÇØÁÖ¸é ±×ÀüÀÌ ¾î´À ÁÂÇ¥°èµç ¿ùµå·Î º¯È¯µÊ// + invtm °öÇØ¼­ »ÀÁÂÇ¥°è·Î
+                Point3 p3 = mesh->verts[mesh->faces[iface].v[v0]] * tm /** invtm*/;    //tm °öÇØÁÖ¸é ±×ÀüÀÌ ¾î´À ÁÂÇ¥°èµç ¿ùµå·Î º¯È¯µÊ// + invtm °öÇØ¼­ »ÀÁÂÇ¥°è·Î
                 DumpPoint3(tri[iface].v[0].p, p3);
 
-                p3 = mesh->verts[mesh->faces[iface].v[v2]] * tm * invtm;
+                p3 = mesh->verts[mesh->faces[iface].v[v2]] * tm/* * invtm*/;
                 DumpPoint3(tri[iface].v[1].p, p3);
 
-                p3 = mesh->verts[mesh->faces[iface].v[v1]] * tm * invtm;
+                p3 = mesh->verts[mesh->faces[iface].v[v1]] * tm/* * invtm*/;
                 DumpPoint3(tri[iface].v[2].p, p3);
             }
             //Color// 
@@ -364,7 +364,7 @@ bool    khg_Skin_Exp::Export()
 
     FILE* pStream = nullptr;
     _tfopen_s(&pStream, m_filename.c_str(), _T("wt"));
-    _ftprintf(pStream, _T("%s %d %d"), _T("khgExporter_100"), m_SkinObjList.size(), m_MtlInfoList.size());
+    _ftprintf(pStream, _T("%s %d %d %d"), _T("khgExporter_100"), m_SkinObjList.size(), m_MtlInfoList.size(),m_ObjList.size());
     for (int iMtl = 0; iMtl < m_MtlInfoList.size(); iMtl++)
     {
 
@@ -484,7 +484,6 @@ bool    khg_Skin_Exp::Export()
                 
                    //for (int i = 0; i < NUM_WI_EXPORT; i++)
                    //{
-                
                    //    if (i < 4 && i < m_Raw_wi_List[index].i.size())
                    //    {
                    //        IW_VERTEX.i1[i] = m_Raw_wi_List[index].i[i];
@@ -497,7 +496,6 @@ bool    khg_Skin_Exp::Export()
                    //    }
                    //}
                    //IW_VERTEX.w1[3] = m_Raw_wi_List[index].i.size(); //w[3] , w1[3] // »öÀÎ¿ë ÁÖ¼®
-                
                    //_ftprintf(pStream, _T("%10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f%10.4f %10.4f %10.4f %10.4f"), 
                    //    IW_VERTEX.i1[0], IW_VERTEX.i1[1], IW_VERTEX.i1[2], IW_VERTEX.i1[3],
                    //    IW_VERTEX.i2[0], IW_VERTEX.i2[1], IW_VERTEX.i2[2], IW_VERTEX.i2[3],
@@ -523,7 +521,7 @@ bool    khg_Skin_Exp::Export()
     for (int iobj = 0; iobj < m_ObjList.size(); iobj++)
     {
         D3D_MATRIX matworld;
-        DumpMatrix3(m_ObjList[iobj]->GetNodeTM(0), matworld);
+        DumpMatrix3(Inverse(m_ObjList[iobj]->GetNodeTM(0)), matworld);
 
        _ftprintf(pStream, _T("\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f"),
            matworld._11,

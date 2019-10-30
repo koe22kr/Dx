@@ -73,6 +73,9 @@ public:
     std::vector<wstring> m_Tex_filename_list;
     std::vector<Material_Info> m_Material_Info;
     std::vector<Object_Info>               m_Obj_Info_List;
+    std::vector<D3DXMATRIX> m_matinv_World_List;
+    ID3D11Buffer* m_pmatinv_World_Buffer;
+    ID3D11ShaderResourceView* m_pinv_World_SRV;
 
     std::vector<std::vector< Sorted_Vertex_by_Texture >>   m_obj_mtl_List;
 public:

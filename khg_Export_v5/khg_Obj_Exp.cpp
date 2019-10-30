@@ -189,7 +189,7 @@ void khg_Obj_Exp::GetAnimation(INode* pNode, tempMesh& tMesh)
     tMesh.bAnimation[2] = false;
     //0프래임의 값
     TimeValue startframe = m_Interval.Start();
-    Matrix3 tm = Inverse(pNode->GetNodeTM(startframe)) * pNode->GetNodeTM(startframe); //자신의tm * 부모 inv tm//원점의 변형tm
+    Matrix3 tm =/* Inverse(pNode->GetNodeTM(startframe)) **/ pNode->GetNodeTM(startframe); //자신의tm * 부모 inv tm//원점의 변형tm
     //Matrix3 tm = pNode->GetNodeTM(startframe);
     AffineParts StartAP;
     decomp_affine(tm, &StartAP);
@@ -214,7 +214,7 @@ void khg_Obj_Exp::GetAnimation(INode* pNode, tempMesh& tMesh)
     TimeValue end = m_Interval.End();
     for (TimeValue frame = start; frame <= end; frame += GetTicksPerFrame())
     {
-        Matrix3 tm = Inverse(pNode->GetNodeTM(startframe)) * pNode->GetNodeTM(frame);
+        Matrix3 tm = /*Inverse(pNode->GetNodeTM(startframe)) **/ pNode->GetNodeTM(frame);
         //Matrix3 tm =pNode->GetNodeTM(frame);
         AffineParts FrameAP;
         decomp_affine(tm, &FrameAP);

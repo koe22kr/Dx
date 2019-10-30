@@ -154,6 +154,7 @@ void Mat_Obj::Interpolate()
             mat._41 = Tran._41;
             mat._42 = Tran._42;
             mat._43 = Tran._43;
+           // D3DXMatrixTranspose(&mat, &mat);
             m_anim_obj_List[iobj].mat_Final_Anim_list.push_back(mat);
         }
 
@@ -163,15 +164,16 @@ void Mat_Obj::Interpolate()
 void Mat_Obj::Find_curMat(float& elapsetime, int startframe, int lastframe)
 {
     int curframe = (int)(elapsetime * m_Scene.iFrame_Speed);
-    while  (curframe >= lastframe)
+    if  (curframe >= lastframe)
     {
         elapsetime = 0;
-        curframe -= lastframe;
+        curframe = startframe;
     }
     for (int i = 0; i < m_cur_mat.size(); i++)
     {
         if (m_anim_obj_List[i].mat_Final_Anim_list.size() == 1)
         {
+
             m_cur_mat[i] = m_anim_obj_List[i].mat_Final_Anim_list[0];
             //
         }
@@ -181,14 +183,11 @@ void Mat_Obj::Find_curMat(float& elapsetime, int startframe, int lastframe)
             //
         }
     }
-    
-
 }
 
 void Mat_Obj::Update_Render_Mat(ID3D11DeviceContext* pContext)
 {
     pContext->UpdateSubresource(m_Cur_Mat_Buffer, 0, NULL, &m_cur_mat.at(0), 0, 0);
-    
 }
 
 void Mat_Obj::Release()

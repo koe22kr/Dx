@@ -5,6 +5,7 @@ void ObjectMgr::Render(ID3D11DeviceContext* pContext,int iskin,float& elapsetime
     
     //for (int iskin = 0; iskin < m_Skin_List.size(); iskin++)//이건 모두다 render
     {
+        //
         Render_Obj* pRO = &m_Render_Obj_List[m_Skin_List[iskin].Get_Render_Obj_index()];
         pRO->m_cb.etc[0] = 0;
         pRO->m_cb.etc[1] = 0;
@@ -12,14 +13,19 @@ void ObjectMgr::Render(ID3D11DeviceContext* pContext,int iskin,float& elapsetime
         pRO->m_cb.etc[3] = 0;
         pRO->SetMatrix(matworld, matview, matproj);
         pContext->UpdateSubresource(pRO->m_helper.m_pConstantBuffer.Get(), 0, NULL, &pRO->m_cb, 0, 0);
+        //
         Mat_Obj* pMO = &m_Mat_List[m_Skin_List[iskin].Get_Mat_index()];
         pMO->Find_curMat(elapsetime, startframe, lastframe);
         pMO->Update_Render_Mat(pContext);//상수버퍼 set은 여기서
         //pContext->VSSetConstantBuffers(2,1,&pMO->m_Cur_Mat_Buffer);
-        //pContext->VSSetShaderResources(2, 1, &pMO->m_Cur_Mat_SRV);
+        pContext->VSSetShaderResources(3, 1, &pMO->m_Cur_Mat_SRV);
+        //
+        //pContext->VSSetConstantBuffers(2, 1, &m_Skin_List[iskin].m_pmatinv_World_Buffer);
+        pContext->VSSetShaderResources(2, 1, &m_Skin_List[iskin].m_pinv_World_SRV);
+
         for (int iobj = 0; iobj < m_Skin_List[iskin].Get_obj_size(); iobj++)
         {
-            for (int imtl = 0; imtl < m_Skin_List[iskin].m_obj_mtl_List[iobj].size(); imtl++)
+            for (int imtl = 0; imtl < m_Skin_List[iskin].m_obj_mtl_List[iobj].size()-1; imtl++)
             {
                 if (m_Skin_List[iskin].m_obj_mtl_List[iobj][imtl].m_Index_List.size() > 0)
                 {
