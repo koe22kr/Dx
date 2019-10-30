@@ -180,7 +180,7 @@ bool CACore::CACoreInit()
     m_Default_Cam.SetProjMatrix(D3DX_PI / 4,
         (float)g_rtClient.right / (float)g_rtClient.bottom,
         1.0f,
-        3000.0f);
+        300.0f);
     m_Default_Cam.m_vCameraPos = { 0.0f,100.0f,-100.0f };
     m_pMain_Cam = &m_Default_Cam;
     m_pMain_Cam->m_vTargetPos = *(D3DVECTOR*)&DirectX::XMVectorSet(m_pMain_Cam->m_vCameraPos.x, m_pMain_Cam->m_vCameraPos.y, m_pMain_Cam->m_vCameraPos.z, 0);

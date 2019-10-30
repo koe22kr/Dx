@@ -59,18 +59,7 @@ namespace DX
         DirectX::XMMATRIX matProj;
         float etc[4];
     };
-    struct T_BOX
-    {
-        // Common
-        D3DXVECTOR3		vCenter;
-        D3DXVECTOR3		vPos[8];
-        // AABB
-        D3DXVECTOR3		vMax;
-        D3DXVECTOR3		vMin;
-        // OBB
-        D3DXVECTOR3		vAxis[3];
-        float			fExtent[3];
-    };
+    
     struct T_SPHERE
     {
         DirectX::XMFLOAT3 vCenter;

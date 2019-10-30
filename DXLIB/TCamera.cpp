@@ -272,7 +272,7 @@ namespace DX
 
 
         D3DXMatrixIdentity(&m_matWorld);
-        SetProjMatrix(D3DX_PI / 4.0f, 1.0f, 0.1f, 1000.0f);
+        SetProjMatrix(D3DX_PI / 4.0f, (float)g_rtClient.right/(float)g_rtClient.bottom, 10.0f, 3000.0f);
         SetViewMatrix(D3DXVECTOR3(0.0f, 0.0f, 10.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 1.0f, 0.0f));
     }
 

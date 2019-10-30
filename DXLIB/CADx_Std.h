@@ -21,8 +21,7 @@
 #pragma comment( lib, "d2d1.lib")
 #pragma comment (lib, "dxgi.lib")
 
-namespace DX
-{
+
 #ifdef _DEBUG
 #pragma comment (lib, "d3d11.lib")
 #pragma comment( lib, "d3dx10d.lib" )	
@@ -40,6 +39,12 @@ namespace DX
 
 #endif // DEBUG
 
+
+namespace DX
+{
+
+   
+
     struct T_PLANE
     {
         float	fA, fB, fC, fD;
@@ -56,6 +61,18 @@ namespace DX
 
     };
 
+    struct T_BOX
+    {
+        // Common
+        D3DXVECTOR3		vCenter;
+        D3DXVECTOR3		vPos[8];
+        // AABB
+        D3DXVECTOR3		vMax;
+        D3DXVECTOR3		vMin;
+        // OBB
+        D3DXVECTOR3		vAxis[3];
+        float			fExtent[3];
+    };
 
     struct VS_CONSTANT_BUFFER
     {
@@ -65,26 +82,27 @@ namespace DX
         D3DXVECTOR4 Color; // 12
     };
 
+    
 
-}
-struct PNCT_VERTEX
-{
-    DirectX::XMFLOAT3 p;
-    DirectX::XMFLOAT3 n;
-    DirectX::XMFLOAT4 c;
-    DirectX::XMFLOAT2 t;
-
-    PNCT_VERTEX() {}
-    PNCT_VERTEX(DirectX::XMFLOAT3 in_p, DirectX::XMFLOAT3 in_n, DirectX::XMFLOAT4 in_c, DirectX::XMFLOAT2 in_t)
+    /*struct PNCT_VERTEX
     {
-        p = in_p;
-        n = in_n;
-        c = in_c;
-        t = in_t;
-    }
+        DirectX::XMFLOAT3 p;
+        DirectX::XMFLOAT3 n;
+        DirectX::XMFLOAT4 c;
+        DirectX::XMFLOAT2 t;
+
+        PNCT_VERTEX() {}
+        PNCT_VERTEX(DirectX::XMFLOAT3 in_p, DirectX::XMFLOAT3 in_n, DirectX::XMFLOAT4 in_c, DirectX::XMFLOAT2 in_t)
+        {
+            p = in_p;
+            n = in_n;
+            c = in_c;
+            t = in_t;
+        }
 
 
-};
+    };*/
+}
 
 //////////////////////////////////////////////
 // 객체 및 배열 할당과 삭제 및 소멸 매크로

@@ -79,6 +79,7 @@ public:
 
     std::vector<std::vector< Sorted_Vertex_by_Texture >>   m_obj_mtl_List;
 public:
+    void Release();
     int Get_Render_Obj_index();
     int Get_Mat_index();
     int Get_obj_size();

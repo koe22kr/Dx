@@ -242,12 +242,48 @@ void Skin_Obj::Skin_Load(const char* maxconvertfile, const TCHAR* texpath, ID3D1
 //    pDevice->CreateBuffer(,NULL,)
 }
 
+void Skin_Obj::Release()
+{
+    for (int iobj = 0; iobj < m_obj_mtl_List.size(); iobj++)
+    {
+        for (int imtl = 0; imtl < m_obj_mtl_List[iobj].size(); imtl++)
+        {
+            if (m_obj_mtl_List[iobj][imtl].IB)
+            {
+                m_obj_mtl_List[iobj][imtl].IB->Release();
+
+            }
+            if (m_obj_mtl_List[iobj][imtl].VB)
+            {
+                m_obj_mtl_List[iobj][imtl].VB->Release();
+
+            }
+            if (m_obj_mtl_List[iobj][imtl].m_pSRV)
+            {
+                m_obj_mtl_List[iobj][imtl].m_pSRV->Release();
+            }
+        }
+    }
+    m_obj_mtl_List.clear();
+
+    if (m_pmatinv_World_Buffer)
+    {
+        m_pmatinv_World_Buffer->Release();
+    }
+    if (m_pinv_World_SRV)
+    {
+        m_pinv_World_SRV->Release();
+    }
+}
 
 Skin_Obj::Skin_Obj()
 {
+    m_pmatinv_World_Buffer = NULL;
+    m_pinv_World_SRV = NULL;
 }
 
 
 Skin_Obj::~Skin_Obj()
 {
+    Release();
 }

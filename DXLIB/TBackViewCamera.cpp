@@ -170,7 +170,7 @@ namespace DX
         m_vTargetPos += vDirection * fValue;
         m_vCameraDestination = m_vTargetPos + (vDirection * GetDecideDirection(fValue));
         m_vCameraDestination.y += m_vTargetPos.y + m_vOffsetDistance.y;
-z        SetMatrix(&m_matWorld, &m_matView, &m_matProj);
+        SetMatrix(&m_matWorld, &m_matView, &m_matProj);
     }
     void TBackViewCamera::SetOffsetDistance(float fDistX, float fDistY, float fDistZ)
     {
