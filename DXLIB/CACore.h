@@ -16,7 +16,7 @@
 
 class CACore :public CAWindow                 
 {
-#if defined _DEBUG || DEBUG
+#if defined _DEBUG /* || DEBUG*/
     UINT RS_COUNT = 2;
     bool AB_FLAG = 1;
     bool SS_FLAG = 1;

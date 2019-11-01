@@ -8,8 +8,8 @@ namespace DX
         MapDesc md;
         if (m_iNumCols == 0 || m_iNumRows == 0)
         {
-            m_iNumCols = 100;
-            m_iNumRows = 100;
+            m_iNumCols = 129;//2^n+1 개로 해야 나누기 수월함.
+            m_iNumRows = 129;
         }
         md.iNumCols = m_iNumCols;
         md.iNumRows = m_iNumRows;
@@ -297,10 +297,10 @@ namespace DX
     HRESULT CADx_HeightMap::CreateVertexBuffer() {
         HRESULT hr = S_OK;
         m_helper.m_iVertexSize = sizeof(PNCTT_VERTEX);
-        m_helper.m_iNumVertex = m_Vertex_List2.size();;
+        m_helper.m_iNumVertex = m_PNCTT_Vertex_List.size();;
         m_helper.m_pVertexBuffer.Attach(
             DX::CreateVertexBuffer(m_pDevice,
-                &m_Vertex_List2.at(0), m_helper.m_iNumVertex, m_helper.m_iVertexSize)
+                &m_PNCTT_Vertex_List.at(0), m_helper.m_iNumVertex, m_helper.m_iVertexSize)
         );
         if (m_helper.m_pVertexBuffer.Get() == nullptr)
             return false;
@@ -376,21 +376,21 @@ namespace DX
         float ftxOffsetU = 1.0f / (m_iNumCols - 1);
         float ftxOffsetV = 1.0f / (m_iNumRows - 1);
 
-        m_Vertex_List2.resize(m_iNumVertices);
+        m_PNCTT_Vertex_List.resize(m_iNumVertices);
         for (int iRow = 0; iRow < m_iNumRows; iRow++)
         {
             for (int iCol = 0; iCol < m_iNumCols; iCol++)
             {
                 int iVertexIndex = iRow * m_iNumCols + iCol;
-                m_Vertex_List2[iVertexIndex].p.x = (iCol - fHalfCols)*m_fCellDistance;
-                m_Vertex_List2[iVertexIndex].p.z = -((iRow - fHalfRows)*m_fCellDistance);
-                m_Vertex_List2[iVertexIndex].t.x = iCol * ftxOffsetU;
-                m_Vertex_List2[iVertexIndex].t.y = iRow * ftxOffsetV;
+                m_PNCTT_Vertex_List[iVertexIndex].p.x = (iCol - fHalfCols)*m_fCellDistance;
+                m_PNCTT_Vertex_List[iVertexIndex].p.z = -((iRow - fHalfRows)*m_fCellDistance);
+                m_PNCTT_Vertex_List[iVertexIndex].t.x = iCol * ftxOffsetU;
+                m_PNCTT_Vertex_List[iVertexIndex].t.y = iRow * ftxOffsetV;
 
-                m_Vertex_List2[iVertexIndex].p.y = GetHeightMap(iVertexIndex);
-                //m_Vertex_List2[iVertexIndex].n = // CreateIndexData 에서 입력
-                m_Vertex_List2[iVertexIndex].c = GetColorMap(iVertexIndex);
-                //  m_Vertex_List2[iVertexIndex].tangent = Get_Tangent(iVertexIndex);  //CreateIndexData 에서 입력
+                m_PNCTT_Vertex_List[iVertexIndex].p.y = GetHeightMap(iVertexIndex);
+                //m_PNCTT_Vertex_List[iVertexIndex].n = // CreateIndexData 에서 입력
+                m_PNCTT_Vertex_List[iVertexIndex].c = GetColorMap(iVertexIndex);
+                //  m_PNCTT_Vertex_List[iVertexIndex].tangent = Get_Tangent(iVertexIndex);  //CreateIndexData 에서 입력
                   //
             }
         }
@@ -402,9 +402,9 @@ namespace DX
     {
         DirectX::XMVECTOR vNormal;
         DirectX::XMVECTOR v0, v1, v2;
-        v0 = DirectX::XMVectorSet(m_Vertex_List2[i0].p.x, m_Vertex_List2[i0].p.y, m_Vertex_List2[i0].p.z, 0);
-        v1 = DirectX::XMVectorSet(m_Vertex_List2[i1].p.x, m_Vertex_List2[i1].p.y, m_Vertex_List2[i1].p.z, 0);
-        v2 = DirectX::XMVectorSet(m_Vertex_List2[i2].p.x, m_Vertex_List2[i2].p.y, m_Vertex_List2[i2].p.z, 0);
+        v0 = DirectX::XMVectorSet(m_PNCTT_Vertex_List[i0].p.x, m_PNCTT_Vertex_List[i0].p.y, m_PNCTT_Vertex_List[i0].p.z, 0);
+        v1 = DirectX::XMVectorSet(m_PNCTT_Vertex_List[i1].p.x, m_PNCTT_Vertex_List[i1].p.y, m_PNCTT_Vertex_List[i1].p.z, 0);
+        v2 = DirectX::XMVectorSet(m_PNCTT_Vertex_List[i2].p.x, m_PNCTT_Vertex_List[i2].p.y, m_PNCTT_Vertex_List[i2].p.z, 0);
 
         DirectX::XMVECTOR vEdge0;
         vEdge0 = DirectX::XMVectorSubtract(v1, v0);
@@ -446,20 +446,20 @@ namespace DX
                 //
                 DirectX::XMVECTOR temp;
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i0].n);
+                temp = DirectX::XMLoadFloat3(&m_PNCTT_Vertex_List[i0].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List2[i0].n, temp);
+                DirectX::XMStoreFloat3(&m_PNCTT_Vertex_List[i0].n, temp);
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i1].n);
+                temp = DirectX::XMLoadFloat3(&m_PNCTT_Vertex_List[i1].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List2[i1].n, temp);
+                DirectX::XMStoreFloat3(&m_PNCTT_Vertex_List[i1].n, temp);
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i2].n);
+                temp = DirectX::XMLoadFloat3(&m_PNCTT_Vertex_List[i2].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List2[i2].n, temp);
+                DirectX::XMStoreFloat3(&m_PNCTT_Vertex_List[i2].n, temp);
 
                 m_Index_List[iIndex + 3] = m_Index_List[iIndex + 2];
                 m_Index_List[iIndex + 4] = m_Index_List[iIndex + 1];
@@ -473,20 +473,20 @@ namespace DX
                 vNormal = ComputeFaceNormal(i0, i1, i2);
 
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i0].n);
+                temp = DirectX::XMLoadFloat3(&m_PNCTT_Vertex_List[i0].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List2[i0].n, temp);
+                DirectX::XMStoreFloat3(&m_PNCTT_Vertex_List[i0].n, temp);
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i1].n);
+                temp = DirectX::XMLoadFloat3(&m_PNCTT_Vertex_List[i1].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List2[i1].n, temp);
+                DirectX::XMStoreFloat3(&m_PNCTT_Vertex_List[i1].n, temp);
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i2].n);
+                temp = DirectX::XMLoadFloat3(&m_PNCTT_Vertex_List[i2].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List2[i2].n, temp);
+                DirectX::XMStoreFloat3(&m_PNCTT_Vertex_List[i2].n, temp);
 
 
                 //
@@ -554,9 +554,9 @@ namespace DX
     {
         DirectX::XMVECTOR vNormal;
         DirectX::XMVECTOR v0, v1, v2;
-        v0 = DirectX::XMVectorSet(m_Vertex_List2[i0].p.x, m_Vertex_List2[i0].p.y, m_Vertex_List2[i0].p.z, 0);
-        v1 = DirectX::XMVectorSet(m_Vertex_List2[i1].p.x, m_Vertex_List2[i1].p.y, m_Vertex_List2[i1].p.z, 0);
-        v2 = DirectX::XMVectorSet(m_Vertex_List2[i2].p.x, m_Vertex_List2[i2].p.y, m_Vertex_List2[i2].p.z, 0);
+        v0 = DirectX::XMVectorSet(m_PNCTT_Vertex_List[i0].p.x, m_PNCTT_Vertex_List[i0].p.y, m_PNCTT_Vertex_List[i0].p.z, 0);
+        v1 = DirectX::XMVectorSet(m_PNCTT_Vertex_List[i1].p.x, m_PNCTT_Vertex_List[i1].p.y, m_PNCTT_Vertex_List[i1].p.z, 0);
+        v2 = DirectX::XMVectorSet(m_PNCTT_Vertex_List[i2].p.x, m_PNCTT_Vertex_List[i2].p.y, m_PNCTT_Vertex_List[i2].p.z, 0);
 
         DirectX::XMVECTOR vEdge0;
         vEdge0 = DirectX::XMVectorSubtract(v1, v0);
@@ -566,10 +566,10 @@ namespace DX
 
         //일단 여기에 T백터 구하는 걸 얹기
 
-        float fEdge0u = m_Vertex_List2[i1].t.x - m_Vertex_List2[i0].t.x;
-        float fEdge0v = m_Vertex_List2[i1].t.y - m_Vertex_List2[i0].t.y;
-        float fEdge1u = m_Vertex_List2[i2].t.x - m_Vertex_List2[i0].t.x;
-        float fEdge1v = m_Vertex_List2[i2].t.y - m_Vertex_List2[i0].t.y;
+        float fEdge0u = m_PNCTT_Vertex_List[i1].t.x - m_PNCTT_Vertex_List[i0].t.x;
+        float fEdge0v = m_PNCTT_Vertex_List[i1].t.y - m_PNCTT_Vertex_List[i0].t.y;
+        float fEdge1u = m_PNCTT_Vertex_List[i2].t.x - m_PNCTT_Vertex_List[i0].t.x;
+        float fEdge1v = m_PNCTT_Vertex_List[i2].t.y - m_PNCTT_Vertex_List[i0].t.y;
         float fDenominater = fEdge0u * fEdge1v - fEdge0v * fEdge1u;
         float fScale1 = 1.0f / fDenominater;
 
@@ -625,35 +625,35 @@ namespace DX
 
                 DirectX::XMVECTOR vNormal = ComputeFaceNormal(i0, i1, i2);
                 //
-                m_Vertex_List2[i0].tangent = Get_Tangent(i0, i1, i2);
-                m_Vertex_List2[i1].tangent = Get_Tangent(i0, i1, i2);
-                m_Vertex_List2[i2].tangent = Get_Tangent(i0, i1, i2);
+                m_PNCTT_Vertex_List[i0].tangent = Get_Tangent(i0, i1, i2);
+                m_PNCTT_Vertex_List[i1].tangent = Get_Tangent(i0, i1, i2);
+                m_PNCTT_Vertex_List[i2].tangent = Get_Tangent(i0, i1, i2);
 
                 //
                 DirectX::XMVECTOR temp;
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i0].n);
+                temp = DirectX::XMLoadFloat3(&m_PNCTT_Vertex_List[i0].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List2[i0].n, temp);
+                DirectX::XMStoreFloat3(&m_PNCTT_Vertex_List[i0].n, temp);
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i1].n);
+                temp = DirectX::XMLoadFloat3(&m_PNCTT_Vertex_List[i1].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List2[i1].n, temp);
+                DirectX::XMStoreFloat3(&m_PNCTT_Vertex_List[i1].n, temp);
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i2].n);
+                temp = DirectX::XMLoadFloat3(&m_PNCTT_Vertex_List[i2].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List2[i2].n, temp);
+                DirectX::XMStoreFloat3(&m_PNCTT_Vertex_List[i2].n, temp);
 
                 m_Index_List[iIndex + 3] = m_Index_List[iIndex + 2];
                 m_Index_List[iIndex + 4] = m_Index_List[iIndex + 1];
                 m_Index_List[iIndex + 5] = iNextRow * m_iNumCols + iNextCol;
                 ///
-                m_Vertex_List2[i0].tangent = Get_Tangent(i0, i1, i2);
-                m_Vertex_List2[i1].tangent = Get_Tangent(i0, i1, i2);
-                m_Vertex_List2[i2].tangent = Get_Tangent(i0, i1, i2);
+                m_PNCTT_Vertex_List[i0].tangent = Get_Tangent(i0, i1, i2);
+                m_PNCTT_Vertex_List[i1].tangent = Get_Tangent(i0, i1, i2);
+                m_PNCTT_Vertex_List[i2].tangent = Get_Tangent(i0, i1, i2);
                 //아래서도 또 한번 해야함
                 i0 = m_Index_List[iIndex + 3];
                 i1 = m_Index_List[iIndex + 4];
@@ -661,20 +661,20 @@ namespace DX
                 vNormal = ComputeFaceNormal(i0, i1, i2);
 
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i0].n);
+                temp = DirectX::XMLoadFloat3(&m_PNCTT_Vertex_List[i0].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List2[i0].n, temp);
+                DirectX::XMStoreFloat3(&m_PNCTT_Vertex_List[i0].n, temp);
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i1].n);
+                temp = DirectX::XMLoadFloat3(&m_PNCTT_Vertex_List[i1].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List2[i1].n, temp);
+                DirectX::XMStoreFloat3(&m_PNCTT_Vertex_List[i1].n, temp);
 
-                temp = DirectX::XMLoadFloat3(&m_Vertex_List2[i2].n);
+                temp = DirectX::XMLoadFloat3(&m_PNCTT_Vertex_List[i2].n);
                 temp = DirectX::XMVectorAdd(temp, vNormal);
                 temp = DirectX::XMVector3Normalize(temp);
-                DirectX::XMStoreFloat3(&m_Vertex_List2[i2].n, temp);
+                DirectX::XMStoreFloat3(&m_PNCTT_Vertex_List[i2].n, temp);
 
 
                 //

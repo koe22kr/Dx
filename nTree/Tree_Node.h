@@ -16,12 +16,16 @@ public:
     DX::T_BOX m_BBox;
 
     std::vector< Tree_Node*> m_Child_List;
-    //std::vector< BASE_OBJ*> m_Obj_List;
+    std::vector< BASE_OBJ*> m_Obj_List;
 
     std::vector<DWORD> m_Corner_Index_List;
     std::vector<DWORD> m_Index_Data;
     Microsoft::WRL::ComPtr<ID3D11Buffer> m_Index_Buffer;
+    
 public:
+    void Release();
+public:
+
     Tree_Node();
     ~Tree_Node();
 };

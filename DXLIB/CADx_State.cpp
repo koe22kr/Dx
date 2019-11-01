@@ -27,6 +27,8 @@ namespace DX
         HRESULT hr;
 
 #pragma region SAMPLER
+        
+
         D3D11_SAMPLER_DESC sd;
         ZeroMemory(&sd, sizeof(D3D11_SAMPLER_DESC));
         sd.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;

@@ -18,10 +18,10 @@
     <ClInclude Include="Sample.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="QuadTree.h">
+    <ClInclude Include="Tree_Node.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Tree_Node.h">
+    <ClInclude Include="N_Tree.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -29,10 +29,10 @@
     <ClCompile Include="Sample.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="QuadTree.cpp">
+    <ClCompile Include="Tree_Node.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Tree_Node.cpp">
+    <ClCompile Include="N_Tree.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

@@ -19,7 +19,7 @@ namespace DX
     {
     public:
         ///
-        vector<PNCTT_VERTEX> m_Vertex_List2;
+        vector<PNCTT_VERTEX> m_PNCTT_Vertex_List;
 
         virtual bool Init(const TCHAR* shaderfile, const TCHAR* texturefile);
         vector<DirectX::XMFLOAT3> m_vTangent_List;

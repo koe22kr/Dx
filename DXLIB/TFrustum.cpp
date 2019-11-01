@@ -268,7 +268,7 @@ namespace DX
             fPlaneToCenter = m_Plane[iPlane].fA * pBox->vCenter.x + m_Plane[iPlane].fB*pBox->vCenter.y +
                 m_Plane[iPlane].fC * pBox->vCenter.z + m_Plane[iPlane].fD;
 
-            if (fPlaneToCenter <= -fDistance)
+            if (fPlaneToCenter < -fDistance)
             {
                 return FALSE;
             }
@@ -301,7 +301,7 @@ namespace DX
                 t_Position = P_SPANNING;
             }
 
-            if (fPlaneToCenter + 1.0f < -fDistance)
+            if (fPlaneToCenter /*+ 1.0f*/ < -fDistance)// 화면밖 바로컷 하지말고 조금 여유 두고 컷하는?
             {
                 return P_BACK;
             }

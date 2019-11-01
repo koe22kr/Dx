@@ -185,7 +185,7 @@ bool CACore::CACoreInit()
     m_pMain_Cam = &m_Default_Cam;
     m_pMain_Cam->m_vTargetPos = *(D3DVECTOR*)&DirectX::XMVectorSet(m_pMain_Cam->m_vCameraPos.x, m_pMain_Cam->m_vCameraPos.y, m_pMain_Cam->m_vCameraPos.z, 0);
     
-    m_Heightmap.Init(L"../../_shader/light.hlsl", L"../../_data/map/castle.jpg",L"../../_data/map/HEIGHT_CASTLE.bmp");
+    m_Heightmap.Init(L"../../_shader/light.hlsl", L"../../_data/map/castle.jpg",L"../../_data/map/HEIGHT_CASTLE_65.bmp");
 
     m_DiffuseLight.Init();
 
@@ -224,7 +224,7 @@ bool CACore::CACoreRender()
     Pre_Render();
     m_Device.Pre_Render();
     m_Device.Render();
-    m_Heightmap.Render(CADevice::m_pImmediate_Device_Context,nullptr, &m_pMain_Cam->m_matView,&m_pMain_Cam->m_matProj);
+   // m_Heightmap.Render(CADevice::m_pImmediate_Device_Context,nullptr, &m_pMain_Cam->m_matView,&m_pMain_Cam->m_matProj);
     Render();
     
 
