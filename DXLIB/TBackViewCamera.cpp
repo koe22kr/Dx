@@ -167,7 +167,7 @@ namespace DX
     }
     void TBackViewCamera::MovementTarget(float fValue, D3DXVECTOR3 vDirection)
     {
-        m_vTargetPos += vDirection * fValue;
+      //  m_vTargetPos += vDirection * fValue*g_fSecondPerFrame;
         m_vCameraDestination = m_vTargetPos + (vDirection * GetDecideDirection(fValue));
         m_vCameraDestination.y += m_vTargetPos.y + m_vOffsetDistance.y;
         SetMatrix(&m_matWorld, &m_matView, &m_matProj);

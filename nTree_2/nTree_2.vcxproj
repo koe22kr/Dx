@@ -147,14 +147,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Mini_Map.h" />
     <ClInclude Include="N_Tree.h" />
     <ClInclude Include="Quad_Tree.h" />
+    <ClInclude Include="RT_Mgr.h" />
     <ClInclude Include="Sample.h" />
     <ClInclude Include="Tree_Node.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Mini_Map.cpp" />
     <ClCompile Include="N_Tree.cpp" />
     <ClCompile Include="Quad_Tree.cpp" />
+    <ClCompile Include="RT_Mgr.cpp" />
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="Tree_Node.cpp" />
   </ItemGroup>

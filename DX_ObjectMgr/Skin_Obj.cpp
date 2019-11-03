@@ -285,5 +285,5 @@ Skin_Obj::Skin_Obj()
 
 Skin_Obj::~Skin_Obj()
 {
-    Release();
+    //Release();
 }

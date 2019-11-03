@@ -1,9 +1,10 @@
 #include "CADx_RT.h"
 namespace DX
 {
-    HRESULT CADx_RT::Create(FLOAT Width, FLOAT Height, ID3D11Device* pdevice)
+    CADx_RT* CADx_RT::Create(FLOAT Width, FLOAT Height, ID3D11Device* pdevice, const char* name)
     {
-        HRESULT hr = S_OK;
+        m_szName = name;
+
         D3D11_TEXTURE2D_DESC td;
         ZeroMemory(&td, sizeof(D3D11_TEXTURE2D_DESC));
         td.Width = Width;
@@ -35,47 +36,50 @@ namespace DX
         pdevice->CreateDepthStencilView(m_pDSTexture.Get(), &dsvd, m_pDSDSV.GetAddressOf());
 
 
-        m_vp.TopLeftX = 0;
-        m_vp.TopLeftY = 0;
-        m_vp.Width = Width;
-        m_vp.Height = Height;
-        m_vp.MinDepth = 0;
-        m_vp.MaxDepth = 1;
+        m_View_Port.TopLeftX = 0;
+        m_View_Port.TopLeftY = 0;
+        m_View_Port.Width = Width;
+        m_View_Port.Height = Height;
+        m_View_Port.MinDepth = 0;
+        m_View_Port.MaxDepth = 1;
 
-        return hr;
+        return this;
     }
-    bool CADx_RT::Begin(ID3D11DeviceContext* pContext)
+
+    bool CADx_RT::Clear(ID3D11DeviceContext* pContext, float r, float g, float b, float a)
     {
-        m_nTarget_RT;
-        pContext->RSGetViewports(&m_nTarget_RT, &m_vpOLD);
-        pContext->OMGetRenderTargets(m_nTarget_RT, m_prtvOLD.GetAddressOf(), m_pdsvOLD.GetAddressOf());
-
-        float fColor[] = { 0,0,0,0 };
+        float fColor[4] = { r,g,b,a };
         pContext->ClearRenderTargetView(m_pRTV.Get(), fColor);
-        pContext->ClearDepthStencilView(m_pDSDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-        pContext->OMSetRenderTargets(m_nTarget_RT, NULL, NULL);
-        pContext->OMSetRenderTargets(m_nTarget_RT, m_pRTV.GetAddressOf(), m_pDSDSV.Get());
-
-        pContext->RSSetViewports(m_nTarget_RT, NULL);
-        pContext->RSSetViewports(m_nTarget_RT, &m_vp);
+        if (m_pDSDSV)
+        {
+            pContext->ClearDepthStencilView(m_pDSDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+        }
         return true;
     }
-    bool CADx_RT::End(ID3D11DeviceContext* pContext)
+    bool CADx_RT::Set(ID3D11DeviceContext* pContext)
     {
-        pContext->OMSetRenderTargets(m_nTarget_RT, NULL, NULL);
-        pContext->RSSetViewports(m_nTarget_RT, NULL);
+       // pContext->RSSetViewports(1, NULL);
+        pContext->RSSetViewports(1, &m_View_Port);
+        //pContext->OMSetRenderTargets(1, NULL, NULL);
+        pContext->OMSetRenderTargets(1, m_pRTV.GetAddressOf(), m_pDSDSV.Get());
 
-        pContext->OMSetRenderTargets(m_nTarget_RT, m_prtvOLD.GetAddressOf(), m_pdsvOLD.Get());
+       /* pContext->RSSetViewports(m_nTarget_RT, NULL);
         pContext->RSSetViewports(m_nTarget_RT, &m_vpOLD);
+        pContext->OMSetRenderTargets(m_nTarget_RT, NULL, NULL);
+        pContext->OMSetRenderTargets(m_nTarget_RT, m_prtvOLD.GetAddressOf(), m_pdsvOLD.Get());*/
         
-        m_prtvOLD.Reset();
-        m_pdsvOLD.Reset();
+       
         
         return true;
     }
 
     bool CADx_RT::Release()
     {
+        m_pTexture->Release();
+        m_pDSTexture->Release();
+        m_pSRV->Release();
+        m_pRTV->Release();
+        m_pDSDSV->Release();
         return true;
     }
 

@@ -201,12 +201,18 @@ namespace DX
         // 최소값으로 고정
         if (m_fSpeed < 1.0f) m_fSpeed = 1.0f;
 
-        if (I_Input.KeyCheck('W') == KEY_HOLD) 	MoveLook(  2.0f * m_fSpeed);
-        if (I_Input.KeyCheck('S') == KEY_HOLD)		MoveLook(-2.0f* m_fSpeed);
-        if (I_Input.KeyCheck('D') == KEY_HOLD)		MoveSide(2.0f* m_fSpeed);
-        if (I_Input.KeyCheck('A') == KEY_HOLD)		MoveSide(-2.0f* m_fSpeed);
-        if (I_Input.KeyCheck('R') == KEY_HOLD)		MoveUp( 2.0f* m_fSpeed);
-        if (I_Input.KeyCheck('F') == KEY_HOLD)		MoveUp(-2.0f* m_fSpeed);
+        if (I_Input.KeyCheck('W') == KEY_HOLD) 	
+            MoveLook(  2.0f * m_fSpeed);
+        if (I_Input.KeyCheck('S') == KEY_HOLD)		
+            MoveLook(-2.0f* m_fSpeed);
+        if (I_Input.KeyCheck('D') == KEY_HOLD)		
+            MoveSide(2.0f* m_fSpeed);
+        if (I_Input.KeyCheck('A') == KEY_HOLD)		
+            MoveSide(-2.0f* m_fSpeed);
+        if (I_Input.KeyCheck('R') == KEY_HOLD)		
+            MoveUp( 2.0f* m_fSpeed);
+        if (I_Input.KeyCheck('F') == KEY_HOLD)		
+            MoveUp(-2.0f* m_fSpeed);
 
         Update();
         UpdateVector();
@@ -214,15 +220,15 @@ namespace DX
     }
     void TCamera::MoveLook(float fValue)
     {
-        m_vCameraPos += m_vLookVector * fValue;
+        m_vCameraPos += m_vLookVector * fValue*g_fSecondPerFrame;
     }
     void TCamera::MoveSide(float fValue)
     {
-        m_vCameraPos += m_vRightVector * fValue;
+        m_vCameraPos += m_vRightVector * fValue*g_fSecondPerFrame;
     }
     void TCamera::MoveUp(float fValue)
     {
-        m_vCameraPos += m_vUpVector * fValue;
+        m_vCameraPos += m_vUpVector * fValue*g_fSecondPerFrame;
     }
     void TCamera::SetRadius(float fDefaultRadius, float fMinRadius, float fMaxRadius)
     {

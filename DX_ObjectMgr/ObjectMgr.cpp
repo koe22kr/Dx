@@ -13,15 +13,19 @@ void ObjectMgr::Render(ID3D11DeviceContext* pContext,int iskin,float& elapsetime
         pRO->m_cb.etc[3] = 0;
         pRO->SetMatrix(matworld, matview, matproj);
         pContext->UpdateSubresource(pRO->m_helper.m_pConstantBuffer.Get(), 0, NULL, &pRO->m_cb, 0, 0);
+        pContext->VSSetConstantBuffers(0, 1, pRO->m_helper.m_pConstantBuffer.GetAddressOf());
+
         //
         Mat_Obj* pMO = &m_Mat_List[m_Skin_List[iskin].Get_Mat_index()];
         pMO->Find_curMat(elapsetime, startframe, lastframe);
         pMO->Update_Render_Mat(pContext);//상수버퍼 set은 여기서
-        //pContext->VSSetConstantBuffers(2,1,&pMO->m_Cur_Mat_Buffer);
+
+
+        pContext->VSSetShaderResources(2, 1, &m_Skin_List[iskin].m_pinv_World_SRV);
+
         pContext->VSSetShaderResources(3, 1, &pMO->m_Cur_Mat_SRV);
         //
         //pContext->VSSetConstantBuffers(2, 1, &m_Skin_List[iskin].m_pmatinv_World_Buffer);
-        pContext->VSSetShaderResources(2, 1, &m_Skin_List[iskin].m_pinv_World_SRV);
 
         for (int iobj = 0; iobj < m_Skin_List[iskin].Get_obj_size(); iobj++)
         {

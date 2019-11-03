@@ -174,16 +174,19 @@ bool CACore::CACoreInit()
     DX::CADx_State::SetState(m_Device.m_pDevice,m_Device.m_pImmediate_Device_Context);
     //Sky_box.Init();
     m_Default_Cam.Init();
-    D3DXVECTOR3 Eye(0.0f, 5.0f, -5.0f);
-    D3DXVECTOR3 Target(0.0f, 0.0f, 0.0f);
-    m_Default_Cam.SetViewMatrix(Eye,Target);
+    D3DXVECTOR3 Eye(0.0f, 100.0f, -100.0f);
+    D3DXVECTOR3 Target(0.0f, 99.0f, -99.0f);
+    //m_Default_Cam.m_vCameraPos = { 0.0f,100.0f,-100.0f };
+    m_pMain_Cam = &m_Default_Cam;
+   /* m_pMain_Cam->m_vTargetPos = *(D3DVECTOR*)&DirectX::XMVectorSet(m_pMain_Cam->m_vCameraPos.x, m_pMain_Cam->m_vCameraPos.y, m_pMain_Cam->m_vCameraPos.z, 0);*/
     m_Default_Cam.SetProjMatrix(D3DX_PI / 4,
         (float)g_rtClient.right / (float)g_rtClient.bottom,
-        1.0f,
-        300.0f);
-    m_Default_Cam.m_vCameraPos = { 0.0f,100.0f,-100.0f };
-    m_pMain_Cam = &m_Default_Cam;
-    m_pMain_Cam->m_vTargetPos = *(D3DVECTOR*)&DirectX::XMVectorSet(m_pMain_Cam->m_vCameraPos.x, m_pMain_Cam->m_vCameraPos.y, m_pMain_Cam->m_vCameraPos.z, 0);
+        0.10f,
+        3000.0f);
+//    m_Default_Cam.SetViewMatrix(Eye,Target); 타켓 카메라
+    m_Default_Cam.SetViewMatrix(Eye, Target);//1인칭 카메라
+    
+    
     
     m_Heightmap.Init(L"../../_shader/light.hlsl", L"../../_data/map/castle.jpg",L"../../_data/map/HEIGHT_CASTLE_65.bmp");
 
@@ -224,7 +227,7 @@ bool CACore::CACoreRender()
     Pre_Render();
     m_Device.Pre_Render();
     m_Device.Render();
-   // m_Heightmap.Render(CADevice::m_pImmediate_Device_Context,nullptr, &m_pMain_Cam->m_matView,&m_pMain_Cam->m_matProj);
+  //  m_Heightmap.Render(CADevice::m_pImmediate_Device_Context,nullptr, &m_pMain_Cam->m_matView,&m_pMain_Cam->m_matProj);
     Render();
     
 

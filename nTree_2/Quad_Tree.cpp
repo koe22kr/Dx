@@ -342,10 +342,13 @@ void Quad_Tree::Create_Index_Buffer(Tree_Node* pNode)
 
 void  Quad_Tree::Render(ID3D11DeviceContext* pContext)
 {
+
     m_Target_Map->PreRender(pContext);
-    m_Target_Map->SetMatrix(&m_pCamera->m_matWorld, &m_pCamera->m_matView, &m_pCamera->m_matProj);
+    m_Target_Map->SetMatrix(nullptr, &m_pCamera->m_matView, &m_pCamera->m_matProj);
+
     for (int a = 0; a < m_Draw_Node_List.size(); a++)
     {
+
         pContext->IASetIndexBuffer(m_Draw_Node_List[a]->m_Index_Buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
         pContext->DrawIndexed(m_Draw_Node_List[a]->m_Index_Data.size(), 0, 0);
     }

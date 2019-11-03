@@ -12,7 +12,7 @@ bool Sample::Frame()
 bool Sample::Render()
 {
     time += g_fSecondPerFrame;
-    DX_MGR.Render(CADevice::m_pImmediate_Device_Context, 0, time, 0, 0, nullptr, &m_pMain_Cam->m_matView, &m_pMain_Cam->m_matProj);
+    DX_MGR.Render(CADevice::m_pImmediate_Device_Context, 0, time, 0,8, nullptr, &m_pMain_Cam->m_matView, &m_pMain_Cam->m_matProj);
 
     return true;
 }

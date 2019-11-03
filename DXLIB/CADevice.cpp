@@ -170,8 +170,6 @@ bool CADevice::Create_Swap_Chain()
 
 bool CADevice::Set_Render_Target_View()
 {
-
-    
     hr= m_pSwap_Chain->GetBuffer(
         /* [in] UINT Buffer */ 0,                    //¹öÆÛ °¹¼ö 0 = 1°³;
         /*const IID __uuidof()*/__uuidof(ID3D11Texture2D),
@@ -189,7 +187,7 @@ bool CADevice::Set_Render_Target_View()
         /* [in]_In_opt_  const D3D11_RENDER_TARGET_VIEW_DESC *pDesc, */
         NULL,
         /* [_COM_Outptr_opt_]  ID3D11RenderTargetView **ppRTView */
-        &m_pRender_Target_View
+        m_pMain_RT.m_pRTV.GetAddressOf()
     );
     if (FAILED(hr))
     {
@@ -218,8 +216,8 @@ bool CADevice::Set_Render_Target_View()
     dsd.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     dsd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
-    hr = m_pDevice->CreateDepthStencilView(texture, &dsd, &m_pDepth_Stencil_View);
-    m_pImmediate_Device_Context->OMSetRenderTargets(1, &m_pRender_Target_View, m_pDepth_Stencil_View);
+    hr = m_pDevice->CreateDepthStencilView(texture, &dsd, m_pMain_RT.m_pDSDSV.GetAddressOf());
+    m_pImmediate_Device_Context->OMSetRenderTargets(1, m_pMain_RT.m_pRTV.GetAddressOf(), m_pMain_RT.m_pDSDSV.Get());
     if (texture)
     {
         texture->Release();
@@ -234,13 +232,13 @@ bool CADevice::Set_View_Port(float pos_x, float pos_y, float width, float height
     //FLOAT Height;
     //FLOAT MinDepth;
     //FLOAT MaxDepth;
-    m_View_Port.TopLeftX = pos_x;
-    m_View_Port.TopLeftY = pos_y;
-    m_View_Port.Width = width;
-    m_View_Port.Height = height;
-    m_View_Port.MinDepth = min_depth;
-    m_View_Port.MaxDepth = max_depth;
-    m_pImmediate_Device_Context->RSSetViewports(1, &m_View_Port);
+    m_pMain_RT.m_View_Port.TopLeftX = pos_x;
+    m_pMain_RT.m_View_Port.TopLeftY = pos_y;
+    m_pMain_RT.m_View_Port.Width = width;
+    m_pMain_RT.m_View_Port.Height = height;
+    m_pMain_RT.m_View_Port.MinDepth = min_depth;
+    m_pMain_RT.m_View_Port.MaxDepth = max_depth;
+    m_pImmediate_Device_Context->RSSetViewports(1, &m_pMain_RT.m_View_Port);
 
     return true;
 }
@@ -248,7 +246,7 @@ bool CADevice::Set_View_Port(float pos_x, float pos_y, float width, float height
 void CADevice::Resize()
 {
     m_pImmediate_Device_Context->OMSetRenderTargets(0, NULL, NULL);
-    m_pRender_Target_View->Release();
+    m_pMain_RT.Release();
 
     hr = m_pSwap_Chain->ResizeBuffers(m_Swap_Chain_Desc.BufferCount, g_rtClient.right, g_rtClient.bottom, m_Swap_Chain_Desc.BufferDesc.Format, m_Swap_Chain_Desc.Flags);
 
@@ -266,9 +264,7 @@ bool CADevice::Init()
     Set_Render_Target_View();
     Set_View_Port();
     //Set_View_Port(100, 100, 100, 100, 0, 1.0);
-
-
-    
+    m_pMain_RT.m_szName = "Main";
     
     
     return true;
@@ -283,20 +279,9 @@ bool CADevice::Pre_Render()
     m_pImmediate_Device_Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     float ClearColor[4] = { 0.1f,0.2f,0.6f,1 };//RGBA
-    m_pImmediate_Device_Context->ClearRenderTargetView(m_pRender_Target_View, ClearColor);
-    Set_View_Port();
-    m_pImmediate_Device_Context->ClearDepthStencilView(m_pDepth_Stencil_View, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    m_pMain_RT.Clear(m_pImmediate_Device_Context, ClearColor[0], ClearColor[1], ClearColor[2], ClearColor[3]);
 
-    m_pImmediate_Device_Context->OMSetRenderTargets(
-        /* [_In_range_(0, D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT) ] */
-        1,
-        /* [_In_reads_opt_(NumViews)]ID3D11RenderTargetView *const  */
-        &m_pRender_Target_View,
-        /* [_In_opt_  ID3D11DepthStencilView] */
-        m_pDepth_Stencil_View
-    );
-    
-    
+    m_pMain_RT.Set(m_pImmediate_Device_Context);
 
     return true;
 }
@@ -316,7 +301,7 @@ bool CADevice::Release()
 
 
     if (m_pImmediate_Device_Context)m_pImmediate_Device_Context->ClearState();
-    if (m_pRender_Target_View)m_pRender_Target_View->Release();
+    m_pMain_RT.Release();
     if (m_pSwap_Chain)m_pSwap_Chain->Release();
     if (m_pImmediate_Device_Context)m_pImmediate_Device_Context->Release();
     if (m_pDevice)m_pDevice->Release();
@@ -326,7 +311,7 @@ bool CADevice::Release()
 
     
     m_pBack_Buffer = NULL;
-    m_pRender_Target_View = NULL;
+    
     m_pSwap_Chain = NULL;
     m_pImmediate_Device_Context = NULL;
     m_pDevice = NULL;
@@ -340,7 +325,7 @@ bool CADevice::Release()
 CADevice::CADevice()
 {
     m_pBack_Buffer = NULL;
-    m_pRender_Target_View = NULL;
+
     m_pSwap_Chain = NULL;
     m_pImmediate_Device_Context = NULL;
     m_pDevice = NULL;
