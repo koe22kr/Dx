@@ -60,6 +60,7 @@ public:
     bool CACoreRelease();
   
     bool Run();
+    void SetTool(HWND hWnd, HINSTANCE hInstance);
     virtual void Msg_Proc(MSG msg);
 
     LRESULT		MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

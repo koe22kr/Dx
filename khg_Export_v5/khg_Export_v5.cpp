@@ -3,7 +3,9 @@
 //
 
 #include "stdafx.h"
+
 #define KHG_UTIL_CLASS_ID Class_ID(0x532703b3, 0x7d57553d)
+
 #include "resource.h"
 #include "khg_Skin_Exp.h"
 #include "khg_Matrix_Exp.h"

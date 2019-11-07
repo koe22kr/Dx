@@ -63,4 +63,7 @@
   <ItemGroup>
     <FxCompile Include="..\..\_Shader\Chara.hlsl" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
 </Project>

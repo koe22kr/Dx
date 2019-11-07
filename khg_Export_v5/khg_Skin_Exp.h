@@ -3,13 +3,9 @@
 #define NUM_WI_EXPORT 8
 
 
-
 class khg_Skin_Exp :public khg_Obj_Exp
 {
     std::vector<INode*> m_SkinObjList;
-
-public:
-   // std::vector<std::vector<Raw_WI_VERTEX>> m_Raw_wi_List;
 public:
     void GetMesh(INode* pNode, TimeValue time, tempMesh& desc) override;
     bool    Convert() override;
@@ -24,12 +20,7 @@ public:
     void ExportSkinData(INode* pNode, Modifier* pModi, tempMesh& tMesh);
     int GetFindIndex(INode* node);
     void SetUniqueBuffer(tempMesh& tMesh);
-   // void GetAnimation(INode* pNode, tempMesh& tMesh);
-
-
-    //
-   // void ExportIW(int index,FILE* pStream);
-    void SortRawData(Raw_WI_VERTEX& rawwi,IW_VERTEX& outwi);
+    void SortIWData(Raw_IW_VERTEX& rawwi,IW_VERTEX& outwi);
 public:
 
     khg_Skin_Exp();

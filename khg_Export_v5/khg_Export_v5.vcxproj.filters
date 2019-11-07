@@ -67,6 +67,7 @@
     <None Include="Source.def">
       <Filter>imm</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Read_Me.txt" />

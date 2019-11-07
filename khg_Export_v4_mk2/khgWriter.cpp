@@ -384,8 +384,8 @@ bool khgWriter::Export()
         }
     }
     // mesh list
-    //INode* pNode = m_ObjList[iMtl];
-    //_ftprintf(pStream, _T("\n%s %d %d"), pNode->GetName(), m_FaceInfoList.size(), m_tempMesh_List[iMtl].triList_List.size());
+   // INode* pNode = m_ObjList[iMtl];
+   // _ftprintf(pStream, _T("\n%s %d %d"), pNode->GetName(), m_FaceInfoList.size(), m_tempMesh_List[iMtl].triList_List.size());
 
     for (int iObj = 0; iObj < m_tempMesh_List.size(); iObj++)
     {
@@ -399,7 +399,7 @@ bool khgWriter::Export()
             m_tempMesh_List[iObj].bAnimation[2]
         );
 
-        _ftprintf(pStream, _T("\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f"),
+        /*_ftprintf(pStream, _T("\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f"),
             m_tempMesh_List[iObj].matWorld._11,
             m_tempMesh_List[iObj].matWorld._12,
             m_tempMesh_List[iObj].matWorld._13,
@@ -418,45 +418,49 @@ bool khgWriter::Export()
             m_tempMesh_List[iObj].matWorld._41,
             m_tempMesh_List[iObj].matWorld._42,
             m_tempMesh_List[iObj].matWorld._43,
-            m_tempMesh_List[iObj].matWorld._44);
+            m_tempMesh_List[iObj].matWorld._44);*/
 
 
         ///
         for (int iSubTri = 0; iSubTri < m_tempMesh_List[iObj].triList_List.size(); iSubTri++)
         {
             VertexList& vList = m_tempMesh_List[iObj].vb[iSubTri];
-            _ftprintf(pStream, _T("\nVertex: %d"), vList.size());
-            for (int iVer = 0; iVer < vList.size(); iVer++)
-            {
-                _ftprintf(pStream, _T("\n%10.4f %10.4f %10.4f"),
-                    vList[iVer].p.x,
-                    vList[iVer].p.y,
-                    vList[iVer].p.z);
-                _ftprintf(pStream, _T("%10.4f %10.4f %10.4f"),
-                    vList[iVer].n.x,
-                    vList[iVer].n.y,
-                    vList[iVer].n.z);
-                _ftprintf(pStream, _T("%10.4f %10.4f %10.4f %10.4f"),
-                    vList[iVer].c.x,
-                    vList[iVer].c.y,
-                    vList[iVer].c.z,
-                    vList[iVer].c.w);
-                _ftprintf(pStream, _T("%10.4f %10.4f"),
-                    vList[iVer].t.x,
-                    vList[iVer].t.y);
+           
+            
+                _ftprintf(pStream, _T("\nVertex: %d"), vList.size());
+                for (int iVer = 0; iVer < vList.size(); iVer++)
+                {
+                    _ftprintf(pStream, _T("\n%10.4f %10.4f %10.4f"),
+                        vList[iVer].p.x,
+                        vList[iVer].p.y,
+                        vList[iVer].p.z);
+                    _ftprintf(pStream, _T("%10.4f %10.4f %10.4f"),
+                        vList[iVer].n.x,
+                        vList[iVer].n.y,
+                        vList[iVer].n.z);
+                    _ftprintf(pStream, _T("%10.4f %10.4f %10.4f %10.4f"),
+                        vList[iVer].c.x,
+                        vList[iVer].c.y,
+                        vList[iVer].c.z,
+                        vList[iVer].c.w);
+                    _ftprintf(pStream, _T("%10.4f %10.4f"),
+                        vList[iVer].t.x,
+                        vList[iVer].t.y);
 
-            }
+                
 
-            IndexList& iList =
-                m_tempMesh_List[iObj].ib[iSubTri];
-            _ftprintf(pStream, _T("\nIndexList %d"), iList.size());
-            for (int iIndex = 0; iIndex < iList.size(); iIndex += 3)
-            {
-                _ftprintf(pStream, _T("\n%d %d %d"),
-                    iList[iIndex + 0],
-                    iList[iIndex + 1],
-                    iList[iIndex + 2]);
+                IndexList& iList =
+                    m_tempMesh_List[iObj].ib[iSubTri];
+                _ftprintf(pStream, _T("\nIndexList %d"), iList.size());
+                for (int iIndex = 0; iIndex < iList.size(); iIndex += 3)
+                {
+                    _ftprintf(pStream, _T("\n%d %d %d"),
+                        iList[iIndex + 0],
+                        iList[iIndex + 1],
+                        iList[iIndex + 2]);
+                }
             }
+          
         }
         //애니메이션 data 출력
         ExportAnimation(m_tempMesh_List[iObj], pStream);

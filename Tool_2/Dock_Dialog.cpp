@@ -9,10 +9,9 @@
 
 // Dock_Dialog 대화 상자
 
-IMPLEMENT_DYNAMIC(Dock_Dialog, CDialogEx)
+IMPLEMENT_DYNAMIC(Dock_Dialog, CFormView)
 
-Dock_Dialog::Dock_Dialog(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_Dock_Dialog, pParent)
+Dock_Dialog::Dock_Dialog() : CFormView(IDD_Dock_Dialog)
 {
 
 }
@@ -23,11 +22,11 @@ Dock_Dialog::~Dock_Dialog()
 
 void Dock_Dialog::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+    CFormView::DoDataExchange(pDX);
 }
 
 
-BEGIN_MESSAGE_MAP(Dock_Dialog, CDialogEx)
+BEGIN_MESSAGE_MAP(Dock_Dialog, CFormView)
 END_MESSAGE_MAP()
 
 

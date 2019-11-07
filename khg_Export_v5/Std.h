@@ -93,7 +93,7 @@ struct Scene
     }
 };
 
-struct Raw_WI_VERTEX
+struct Raw_IW_VERTEX
 {
     std::vector<int> i;
     std::vector<float> w; //w[3]에
@@ -117,6 +117,7 @@ struct tempMesh
     std::vector<AnimTrack> Anim_S;
     std::vector<AnimTrack> Anim_R;
     std::vector<AnimTrack> Anim_T;
+    std::vector<D3D_MATRIX> Anim_Mat;
     INode*  pINode;
     int     iSubMesh; //서브매쉬 갯수
     TSTR    name;//1
@@ -134,7 +135,7 @@ struct tempMesh
     std::vector<IWList> iwb;
     //std::vector<vertexList>   vbList;
     //std::vector<IndexList>    ibList;
-    std::vector<std::vector<Raw_WI_VERTEX>> wi_List;
+    std::vector<std::vector<Raw_IW_VERTEX>> wi_List;
 
     int     iMtrlID;
 

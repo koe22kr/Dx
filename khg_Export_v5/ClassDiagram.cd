@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="khg_Obj_Exp" Collapsed="true">
+    <Position X="2.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAIAAEACCAIBjAhAAIAABgAApAAAAgAAECAIAAgkEAA=</HashCode>
+      <FileName>khg_Obj_Exp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="khg_Matrix_Exp" Collapsed="true">
+    <Position X="4.25" Y="3.5" Width="1.5" />
+    <InheritanceLine Type="khg_Obj_Exp" FixedToPoint="true">
+      <Path>
+        <Point X="3.25" Y="3.441" />
+        <Point X="3.25" Y="3.875" />
+        <Point X="4.25" Y="3.875" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAQACAAAAAAABABAAIAABAAAYAAAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>khg_Matrix_Exp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="khg_Skin_Exp" Collapsed="true">
+    <Position X="4.25" Y="2.25" Width="1.5" />
+    <InheritanceLine Type="khg_Obj_Exp" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="3.25" Y="2.75" />
+        <Point X="3.25" Y="2.625" />
+        <Point X="4.25" Y="2.625" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAABBABAAIgABAAAJAgAAAAACCAAAAAQGgA=</HashCode>
+      <FileName>khg_Skin_Exp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="khg_Util" Collapsed="true">
+    <Position X="9" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAQAAAABAQQAgAAAAAAAAAAAQBEAAAAAAAAA=</HashCode>
+      <FileName>khg_Export_v5.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="khgExportClassDesc" Collapsed="true">
+    <Position X="10.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAACAAAAAAgAAAAAAACAEAkAAAAAAAAAACAA=</HashCode>
+      <FileName>khg_Export_v5.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="AscendingSort" Collapsed="true">
+    <Position X="10.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>khg_Obj_Exp.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="IsSameInt" Collapsed="true">
+    <Position X="14.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>khg_Obj_Exp.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="PNCT" Collapsed="true">
+    <Position X="12.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAAAAACAEEQAAAAAAAA=</HashCode>
+      <FileName>Std.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FaceInfo" Collapsed="true">
+    <Position X="12.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Std.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="TriList" Collapsed="true">
+    <Position X="14.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAQAAA=</HashCode>
+      <FileName>Std.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="texInfo" Collapsed="true">
+    <Position X="12.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Std.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="MtlInfo" Collapsed="true">
+    <Position X="10.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAQgAAAAAAAAAACAAAAIAA=</HashCode>
+      <FileName>Std.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="AnimTrack" Collapsed="true">
+    <Position X="9" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIGAAAAAAAAA=</HashCode>
+      <FileName>Std.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Scene" Collapsed="true">
+    <Position X="9" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAGAAAAAIAAAAAAAAIAIAAAAAAACAA=</HashCode>
+      <FileName>Std.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="IW_VERTEX" Collapsed="true">
+    <Position X="9" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAgCAAAAAAQBAAAAAAA=</HashCode>
+      <FileName>Std.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="tempMesh" Collapsed="true">
+    <Position X="10.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CQAAAAAAAAFWgEAAABAAAABAAABEAACCAGAAAAAAIAA=</HashCode>
+      <FileName>Std.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Exprot_Obj">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAABAQEAABAAAAAAAAACQAAAgACAIAAAAAA=</HashCode>
+      <FileName>Std.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="OBJECTTYPE" Collapsed="true">
+    <Position X="9" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAQAACAAAAA=</HashCode>
+      <FileName>Std.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="맑은 고딕" Size="9" />
+</ClassDiagram>

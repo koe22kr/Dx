@@ -5,7 +5,7 @@ bool Sample::Init()
     m_quad.Init(m_pMain_Cam,&m_Heightmap);
     m_quad.Build(0, m_Heightmap.m_iNumCols-1,
         (m_Heightmap.m_iNumRows - 1)*m_Heightmap.m_iNumCols, m_Heightmap.m_iNumRows*m_Heightmap.m_iNumCols-1,
-        2, 1.0f);
+        6, 1.0f);
     return true;
 }
 bool Sample::Frame()

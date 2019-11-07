@@ -75,10 +75,15 @@ namespace DX
 
     bool CADx_RT::Release()
     {
+        if (m_pTexture != nullptr)
         m_pTexture->Release();
+        if(m_pDSTexture)
         m_pDSTexture->Release();
+        if(m_pSRV)
         m_pSRV->Release();
+        if(m_pRTV)
         m_pRTV->Release();
+        if(m_pDSDSV)
         m_pDSDSV->Release();
         return true;
     }

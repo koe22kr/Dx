@@ -19,6 +19,9 @@ void Mat_Obj::Mat_Load(const char* mtxconvertfile, ID3D11Device* pDevice)
     ifstream in(mtxconvertfile);
 
     in >> key >> iObj_Size;
+    //
+    m_mat_test.resize(iObj_Size);
+    //
     in >> m_Scene.iFirst_Frame >> m_Scene.iLast_Frame >> m_Scene.iFrame_Speed >> m_Scene.iTick_Per_Frame;
     if (m_Scene.iLast_Frame != 0)
     {
@@ -36,7 +39,7 @@ void Mat_Obj::Mat_Load(const char* mtxconvertfile, ID3D11Device* pDevice)
         in >> dummy_str >> sizeS >> sizeR >> sizeT;
         in >> m_anim_obj_List[imain].mBox.vMin.x >> m_anim_obj_List[imain].mBox.vMin.y >> m_anim_obj_List[imain].mBox.vMin.z;
         in >> m_anim_obj_List[imain].mBox.vMax.x >> m_anim_obj_List[imain].mBox.vMax.y >> m_anim_obj_List[imain].mBox.vMax.z;
-       // if (sizeS > 1)
+        // if (sizeS > 1)
         {
             for (int iS = 0; iS < sizeS; iS++)
             {
@@ -44,12 +47,12 @@ void Mat_Obj::Mat_Load(const char* mtxconvertfile, ID3D11Device* pDevice)
                 m_anim_obj_List[imain].Anim_S.push_back(s_track);
             }
         }
-       /* else
-        {
-            in >> dummy >> s_track.i >> s_track.p.x >> s_track.p.y >> s_track.p.z >> s_track.q.x >> s_track.q.y >> s_track.q.z >> s_track.q.w;
-            m_anim_obj_List[imain].Anim_S.push_back(s_track);
-        }*/
-       // if (sizeR > 1)
+        /* else
+         {
+             in >> dummy >> s_track.i >> s_track.p.x >> s_track.p.y >> s_track.p.z >> s_track.q.x >> s_track.q.y >> s_track.q.z >> s_track.q.w;
+             m_anim_obj_List[imain].Anim_S.push_back(s_track);
+         }*/
+         // if (sizeR > 1)
         {
             for (int iR = 0; iR < sizeR; iR++)
             {
@@ -57,12 +60,12 @@ void Mat_Obj::Mat_Load(const char* mtxconvertfile, ID3D11Device* pDevice)
                 m_anim_obj_List[imain].Anim_R.push_back(r_track);
             }
         }
-       /* else
-        {
-            in >> dummy >> r_track.i >> r_track.q.x >> r_track.q.y >> r_track.q.z >> r_track.q.w;
-            m_anim_obj_List[imain].Anim_R.push_back(r_track);
-        }*/
-        //if (sizeT >1)
+        /* else
+         {
+             in >> dummy >> r_track.i >> r_track.q.x >> r_track.q.y >> r_track.q.z >> r_track.q.w;
+             m_anim_obj_List[imain].Anim_R.push_back(r_track);
+         }*/
+         //if (sizeT >1)
         {
             for (int iT = 0; iT < sizeT; iT++)
             {
@@ -75,6 +78,17 @@ void Mat_Obj::Mat_Load(const char* mtxconvertfile, ID3D11Device* pDevice)
             in >> dummy >> t_track.i >> t_track.p.x >> t_track.p.y >> t_track.p.z;
             m_anim_obj_List[imain].Anim_T.push_back(t_track);
         }*/
+        int size = (max(max(sizeT, sizeS), sizeR));
+        m_mat_test[imain].resize(size);
+        for (int imat = 0; imat < size; imat++)
+        {
+            D3DXMATRIX& TESTER = m_mat_test[imain][imat];
+            in >> TESTER._11 >> TESTER._12 >> TESTER._13 >> TESTER._14;
+            in >> TESTER._21 >> TESTER._22 >> TESTER._23 >> TESTER._24;
+            in >> TESTER._31 >> TESTER._32 >> TESTER._33 >> TESTER._34;
+            in >> TESTER._41 >> TESTER._42 >> TESTER._43 >> TESTER._44;
+        }
+
     }
     m_cur_mat.resize(iObj_Size);
     D3D11_BUFFER_DESC bd;
@@ -104,6 +118,7 @@ void Mat_Obj::Interpolate()
         for (int iframe = m_Scene.iFirst_Frame; iframe < m_Scene.iLast_Frame; iframe++)
         {
             D3DXMATRIX mat;
+           
             D3DXMatrixIdentity(&mat);
 
             D3DXMATRIX Rot;
@@ -112,21 +127,25 @@ void Mat_Obj::Interpolate()
             D3DXMatrixIdentity(&Tran);
             if (target->Anim_R.size() > 1)
             {
-                D3DXMatrixRotationQuaternion(&Rot, &target->Anim_R[iframe].q);
+                D3DXMatrixRotationQuaternion(&Rot, &target->Anim_R[iframe+1].q);
+
+                
             }
             else
             {
                 D3DXMatrixRotationQuaternion(&Rot, &target->Anim_R[0].q);
+
             }
 
             if (target->Anim_S.size() > 1)
             {
                 D3DXMATRIX matScaleVector;
                 D3DXMATRIX matScaleRotation, matScaleRotInverse;
-                D3DXMatrixScaling(&matScaleVector, target->Anim_S[iframe].p.x, target->Anim_S[iframe].p.y, target->Anim_S[iframe].p.z);
-                D3DXMatrixRotationQuaternion(&matScaleRotation, &target->Anim_S[iframe].q);
+                D3DXMatrixScaling(&matScaleVector, target->Anim_S[iframe+1].p.x, target->Anim_S[iframe+1].p.y, target->Anim_S[iframe+1].p.z);
+                D3DXMatrixRotationQuaternion(&matScaleRotation, &target->Anim_S[iframe+1].q);
                 D3DXMatrixInverse(&matScaleRotInverse, NULL, &matScaleRotation);
                 Scale = matScaleRotInverse * matScaleVector * matScaleRotation;
+               
             }
             else
             {
@@ -136,25 +155,29 @@ void Mat_Obj::Interpolate()
                 D3DXMatrixRotationQuaternion(&matScaleRotation, &target->Anim_S[0].q);
                 D3DXMatrixInverse(&matScaleRotInverse, NULL, &matScaleRotation);
                 Scale = matScaleRotInverse * matScaleVector * matScaleRotation;
+              
             }
             if (target->Anim_T.size() > 1)
             {
-               Tran._41 = target->Anim_T[iframe].p.x;
-               Tran._42 = target->Anim_T[iframe].p.y;
-               Tran._43 = target->Anim_T[iframe].p.z;
+               Tran._41 = target->Anim_T[iframe+1].p.x;
+               Tran._42 = target->Anim_T[iframe+1].p.y;
+               Tran._43 = target->Anim_T[iframe+1].p.z;
+              
             }
             else
             {
                 Tran._41 = target->Anim_T[0].p.x;
                 Tran._42 = target->Anim_T[0].p.y;
                 Tran._43 = target->Anim_T[0].p.z;
+               
             }
 
             mat = Scale * Rot;
             mat._41 = Tran._41;
             mat._42 = Tran._42;
             mat._43 = Tran._43;
-           // D3DXMatrixTranspose(&mat, &mat);
+          
+          //  D3DXMatrixTranspose(&mat, &mat);
             m_anim_obj_List[iobj].mat_Final_Anim_list.push_back(mat);
         }
 
@@ -171,16 +194,18 @@ void Mat_Obj::Find_curMat(float& elapsetime, int startframe, int lastframe)
     }
     for (int i = 0; i < m_cur_mat.size(); i++)
     {
-        if (m_anim_obj_List[i].mat_Final_Anim_list.size() == 1)
+       // if (m_anim_obj_List[i].mat_Final_Anim_list.size()==1)//m_mat_test[i].size() == 1)
         {
 
-            m_cur_mat[i] = m_anim_obj_List[i].mat_Final_Anim_list[0];
-            //
+         //  m_cur_mat[i] = m_anim_obj_List[i].mat_Final_Anim_list[0];
+          //  m_cur_mat[i] = m_mat_test[i][0];
+           // D3DXMatrixTranspose(&m_cur_mat[i], &m_mat_test[i][0]);
         }
-        else
+//        else
         {
             m_cur_mat[i] = m_anim_obj_List[i].mat_Final_Anim_list[curframe];
-            //
+          // m_cur_mat[i] = m_mat_test[i][curframe];
+           // D3DXMatrixTranspose(&m_cur_mat[i], &m_mat_test[i][curframe]);
         }
     }
 }

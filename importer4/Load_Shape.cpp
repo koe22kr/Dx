@@ -239,14 +239,14 @@ void Load_Shape::Skin_Load(const char* maxconvertfile, const TCHAR* texpath)
 
         find_my_parents(imain);
 
-      //  D3DXMATRIX matworld;
-      //  in >> matworld._11 >> matworld._12 >> matworld._13 >> matworld._14;
-      //  in >> matworld._21 >> matworld._22 >> matworld._23 >> matworld._24;
-      //  in >> matworld._31 >> matworld._32 >> matworld._33 >> matworld._34;
-      //  in >> matworld._41 >> matworld._42 >> matworld._43 >> matworld._44;
-      //  D3DXMatrixInverse(&m_obj_anim_List[imain].mat_world_inv, NULL, &matworld);
-      //  m_obj_anim_List[imain].mat_world = matworld;
-
+      /* D3DXMATRIX matworld;
+       in >> matworld._11 >> matworld._12 >> matworld._13 >> matworld._14;
+       in >> matworld._21 >> matworld._22 >> matworld._23 >> matworld._24;
+       in >> matworld._31 >> matworld._32 >> matworld._33 >> matworld._34;
+       in >> matworld._41 >> matworld._42 >> matworld._43 >> matworld._44;
+       D3DXMatrixInverse(&m_obj_anim_List[imain].mat_world_inv, NULL, &matworld);
+       m_obj_anim_List[imain].mat_world = matworld;
+*/
         for (int isub_mtl = 0; isub_mtl < iUse_Material_Size; isub_mtl++)
         {
 
@@ -278,6 +278,7 @@ void Load_Shape::Skin_Load(const char* maxconvertfile, const TCHAR* texpath)
             }
             int index_size;
             in >> dummy_str >> index_size;
+            m_obj_mtl_List[imain][isub_mtl].m_helper.m_iNumIndex = index_size;
             for (int iindex = 0; iindex < index_size; iindex++)
             {
                 DWORD index;
@@ -302,7 +303,7 @@ void Load_Shape::Skin_Load(const char* maxconvertfile, const TCHAR* texpath)
             }
 
         }//isub_mtl end
-/*
+
         int sizeS, sizeR, sizeT;
         AnimTrack s_track, r_track, t_track;
         in >> dummy_str >> sizeS >> sizeR >> sizeT;
@@ -344,7 +345,7 @@ void Load_Shape::Skin_Load(const char* maxconvertfile, const TCHAR* texpath)
         {
             in >> dummy >> t_track.i >> t_track.p.x >> t_track.p.y >> t_track.p.z;
             m_obj_anim_List[imain].Anim_T.push_back(t_track);
-        }*/
+        }
     }
 
 }
@@ -391,8 +392,12 @@ void  Load_Shape::LoaderRender(ID3D11DeviceContext* pContext, D3DXMATRIX* pView,
     {
         for (int i = 0; i < m_obj_mtl_List[j].size(); i++)
         {
-            m_obj_mtl_List[j][i].SetMatrix(&m_obj_anim_List[j].m_matCalculation, pView, pProj);
-            m_obj_mtl_List[j][i].Render(pContext);
+            if (m_obj_mtl_List[j][i].m_Vertex_List.size()>1)
+            {
+                m_obj_mtl_List[j][i].SetMatrix(&m_obj_anim_List[j].m_matCalculation, pView, pProj);
+                m_obj_mtl_List[j][i].Render(pContext);
+            }
+            
         }
     }
 

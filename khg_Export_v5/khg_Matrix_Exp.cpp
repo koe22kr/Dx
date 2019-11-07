@@ -11,6 +11,7 @@ bool    khg_Matrix_Exp::Convert()
         INode* pNode = m_ObjList[iObj];
         tempMesh tMesh;
         tMesh.name = FixupName(pNode->GetName());
+        tMesh.pINode = pNode;
         INode* pParentNode = pNode->GetParentNode();
         if (pParentNode &&
             // 가상의 부모가 존재
@@ -45,6 +46,10 @@ bool    khg_Matrix_Exp::Convert()
             tMesh.iType = CLASS_BIPED;
         }
         
+        if (tMesh.iType > 0)
+        {
+            GetMesh(pNode,0, tMesh);
+        }
         GetAnimation(pNode, tMesh);
         /*if (tMesh.iType > 0)
         {*/
@@ -73,7 +78,7 @@ bool    khg_Matrix_Exp::Export()
         ExportAnimation(m_tempMesh_List[iObj], pStream, iObj);
 
     }
-
+    
     fclose(pStream);
     //메시지 박스 하나
     MessageBox(GetActiveWindow(), m_filename.c_str(), L"Succsess", MB_OK);/////////////////////////////////////////
@@ -164,6 +169,59 @@ void khg_Matrix_Exp::ExportAnimation(tempMesh& tmesh, FILE* pstream,int index)
             tmesh.Anim_T[0].p.y);
 
     }
+    /////////////////////////
+    if (tmesh.bAnimation[0] || tmesh.bAnimation[1] || tmesh.bAnimation[2])
+    {
+        for (int tick = 0; tick <= m_Scene.iLast_Frame*m_Scene.iTick_Per_Frame; tick += m_Scene.iTick_Per_Frame)
+        {
+
+            Matrix3 mat = tmesh.pINode->GetNodeTM(tick);
+            D3D_MATRIX d3mat;
+            DumpMatrix3(mat, d3mat);
+            _ftprintf(pstream, _T("\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f"),
+                d3mat._11,
+                d3mat._12,
+                d3mat._13,
+                d3mat._14,
+                d3mat._21,
+                d3mat._22,
+                d3mat._23,
+                d3mat._24,
+                d3mat._31,
+                d3mat._32,
+                d3mat._33,
+                d3mat._34,
+                d3mat._41,
+                d3mat._42,
+                d3mat._43,
+                d3mat._44);
+
+        }
+    }
+    else
+    {
+        Matrix3 mat = tmesh.pINode->GetNodeTM(0);
+        D3D_MATRIX d3mat;
+        DumpMatrix3(mat, d3mat);
+        _ftprintf(pstream, _T("\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f\n\t%10.4f %10.4f %10.4f %10.4f"),
+            d3mat._11,
+            d3mat._12,
+            d3mat._13,
+            d3mat._14,
+            d3mat._21,
+            d3mat._22,
+            d3mat._23,
+            d3mat._24,
+            d3mat._31,
+            d3mat._32,
+            d3mat._33,
+            d3mat._34,
+            d3mat._41,
+            d3mat._42,
+            d3mat._43,
+            d3mat._44);
+
+    }
 }
 
 
@@ -171,11 +229,11 @@ void khg_Matrix_Exp::Set(Interface* mMax)
 {
 
     if (mMax == nullptr)return;
-    if (mMax == m_pMax && m_ObjList.size() != 0)
+    /*if (mMax == m_pMax && m_ObjList.size() != 0)
     {
         m_tempMesh_List.clear();
     }
-    else
+    else*/
     {
         m_ObjList.clear();
         m_MaterialList.clear();

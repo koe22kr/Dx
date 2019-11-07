@@ -39,6 +39,7 @@ using namespace std;
 #define WINRUN(x,y,width,height) int APIENTRY  wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow){Sample test_window; test_window.InitWindow(hInstance,x,y,width,height); test_window.Run();}
 #endif 
 
+
 extern HWND g_hWnd;
 extern HINSTANCE g_hInstance;
 //extern CAInputMap g_ActionInput;

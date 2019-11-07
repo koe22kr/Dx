@@ -40,6 +40,8 @@ public:
     void   DumpMatrix3(Matrix3& matWorld, D3D_MATRIX& world);
     //
     void GetAnimation(INode* pNode, tempMesh& tMesh);
+    void GetAnimation_Mat(INode* pNode, tempMesh& tMesh);
+
     //
     TCHAR* SaveFileDlg(TCHAR* szExt, TCHAR* szTitle);
 

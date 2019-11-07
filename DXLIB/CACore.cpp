@@ -8,7 +8,7 @@ void CACore::Debug_Init()
     Dx_Write.Init_Once(m_Device.m_pSwap_Chain);
     Dx_Write.Create_Fresh_Resource();
     //m_Debug_Shape.Create_Debug_Coordinate();
-    //m_Debug_Shape.Create(L"VS.vsh", L"PS.psh", "PS", "VS", nullptr, 0, 0, 0, true);
+    //m_Debug_Shape.Create(L"VS.vsh", L"PS.psh", L"PS", L"VS", nullptr, 0, 0, 0, true);
 }
 void CACore::Debug_Frame()
 {
@@ -96,7 +96,6 @@ void CACore::Refresh_m_Debug_Text()
     if (m_Device.m_pSwap_Chain != NULL)
     {
         Dx_Write.Release_Fresh_Resource();
-        m_Device.Resize();
 
         Dx_Write.Create_Fresh_Resource();
     }
@@ -162,7 +161,16 @@ bool CACore::Release()
 {
     return true;
 }
-
+void CACore::SetTool(HWND hWnd, HINSTANCE hInstance)
+{
+    m_hInstance = hInstance;
+    g_hInstance = hInstance;
+    m_hWnd = hWnd;
+    g_hWnd = hWnd;
+    GetClientRect(m_hWnd, &m_Src_rtClient);
+    GetWindowRect(m_hWnd, &m_Src_rtWindow);
+    g_rtClient = m_Src_rtClient;
+}
 bool CACore::CACoreInit()
 {
 
@@ -227,7 +235,7 @@ bool CACore::CACoreRender()
     Pre_Render();
     m_Device.Pre_Render();
     m_Device.Render();
-  //  m_Heightmap.Render(CADevice::m_pImmediate_Device_Context,nullptr, &m_pMain_Cam->m_matView,&m_pMain_Cam->m_matProj);
+   // m_Heightmap.Render(CADevice::m_pImmediate_Device_Context,nullptr, &m_pMain_Cam->m_matView,&m_pMain_Cam->m_matProj);
     Render();
     
 
@@ -294,6 +302,9 @@ void CACore::MessageProc(MSG msg)
     I_Input.MouseCheck(msg);
     if (msg.message == WM_SIZE)
     {
+        UINT width = LOWORD(msg.lParam);
+        UINT height = HIWORD(msg.lParam);
+        m_Device.Resize(width,height);
 
 #if defined _DEBUG || DEBUG
         Refresh_m_Debug_Text();

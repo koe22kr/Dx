@@ -8,7 +8,7 @@ class Dock_Dialog : public CFormView
 	DECLARE_DYNAMIC(Dock_Dialog)
 
 public:
-	Dock_Dialog(CWnd* pParent = nullptr);   // 표준 생성자입니다.
+	Dock_Dialog();   // 표준 생성자입니다.
 	virtual ~Dock_Dialog();
 
 // 대화 상자 데이터입니다.

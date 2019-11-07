@@ -189,7 +189,8 @@ void khg_Obj_Exp::GetAnimation(INode* pNode, tempMesh& tMesh)
     tMesh.bAnimation[2] = false;
     //0프래임의 값
     TimeValue startframe = m_Interval.Start();
-    Matrix3 tm =/* Inverse(pNode->GetNodeTM(startframe)) **/ pNode->GetNodeTM(startframe); //자신의tm * 부모 inv tm//원점의 변형tm
+    Matrix3 tm =  pNode->GetNodeTM(startframe);
+    //자신의tm * 부모 inv tm//원점의 변형tm
     //Matrix3 tm = pNode->GetNodeTM(startframe);
     AffineParts StartAP;
     decomp_affine(tm, &StartAP);
@@ -248,7 +249,7 @@ void khg_Obj_Exp::GetAnimation(INode* pNode, tempMesh& tMesh)
             }
             else
             {
-                if (Frame_RotValue != Frame_RotValue)
+                if (Start_RotValue != Frame_RotValue)
                 {
                     tMesh.bAnimation[1] = true;
                 }
@@ -565,6 +566,7 @@ void khg_Obj_Exp::ExportAnimation(tempMesh& tmesh, FILE* pstream)
             tmesh.Anim_T[0].p.y);
 
     }
+    
 }
 
 void    khg_Obj_Exp::AddObject(INode* pNode, TimeValue time)
@@ -604,6 +606,7 @@ bool khg_Obj_Exp::TMNegParity(Matrix3 tm)
 void    khg_Obj_Exp::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
 {
     Matrix3 tm = pNode->GetObjTMAfterWSM(time);
+   
     Matrix3 invtm;
     Inverse(invtm, pNode->GetNodeTM(time));
     ///////////////////////1) 트라이엥글 오브젝트[]
@@ -612,6 +615,7 @@ void    khg_Obj_Exp::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
     if (tri == nullptr) return;
     ///////////////////////2) 메쉬 오브젝트
     Mesh* mesh = &tri->GetMesh();
+    
     bool negScale = TMNegParity(tm);
     int v0, v1, v2;
     if (negScale)
@@ -726,9 +730,13 @@ void    khg_Obj_Exp::GetMesh(INode* pNode, TimeValue time, tempMesh& desc)
                 tri[iface].v[1].c.w = tri[iface].iSubIndex;
                 tri[iface].v[2].c.w = tri[iface].iSubIndex;
             }
-            desc.triList_List[
-                tri[iface].iSubIndex].push_back(
-                    tri[iface]);
+            if (tri[iface].iSubIndex != 255)//터렛 전용 예외처리
+            {
+                desc.triList_List[
+                    tri[iface].iSubIndex].push_back(
+                        tri[iface]);
+            }
+            
 
         }
         //vb 만들.

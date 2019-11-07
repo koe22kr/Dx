@@ -51,12 +51,13 @@ class Mat_Obj
 {
 public:
     string m_szMat_File;
-    float m_fElapseTick;
     Scene m_Scene;
     std::vector<Animation_Info>             m_anim_obj_List;
     std::vector<D3DXMATRIX> m_cur_mat;
     ID3D11Buffer* m_Cur_Mat_Buffer;
     ID3D11ShaderResourceView* m_Cur_Mat_SRV;
+    std::vector < std::vector<D3DXMATRIX>> m_mat_test;
+
 public:
     void Release();
     void Find_curMat(float& elapsetime, int startframe,int lastframe);

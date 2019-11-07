@@ -127,7 +127,7 @@ void Skin_Obj::Skin_Load(const char* maxconvertfile, const TCHAR* texpath, ID3D1
                 in >> temp.n.x >> temp.n.y >> temp.n.z;
                 in >> temp.c.x >> temp.c.y >> temp.c.z >> temp.c.w;
                 in >> temp.t.x >> temp.t.y;
-                in >> temp.i.x >> temp.i.y >> temp.i.z >> temp.i.w;
+                in >> temp.i[0] >> temp.i[1] >> temp.i[2] >> temp.i[3];
                 in >> dummy >> dummy >> dummy >> dummy;
                 in >> temp.w.x >> temp.w.y >> temp.w.z >> temp.w.w;
                 in >> dummyfloat >> dummyfloat >> dummyfloat >> dummyfloat;
@@ -202,12 +202,12 @@ void Skin_Obj::Skin_Load(const char* maxconvertfile, const TCHAR* texpath, ID3D1
                     in >> matinv._21 >> matinv._22 >> matinv._23 >> matinv._24;
                     in >> matinv._31 >> matinv._32 >> matinv._33 >> matinv._34;
                     in >> matinv._41 >> matinv._42 >> matinv._43 >> matinv._44;
-                   // D3DXMatrixTranspose(&m_matinv_World_List[imat], &matinv);
+                    //D3DXMatrixTranspose(&matinv, &matinv);
                     m_matinv_World_List[imat] = matinv;
                 }
                
             }
-
+            
         }//isub_mtl end
 
         
@@ -240,6 +240,9 @@ void Skin_Obj::Skin_Load(const char* maxconvertfile, const TCHAR* texpath, ID3D1
         pDevice->CreateShaderResourceView(m_pmatinv_World_Buffer, &vd, &m_pinv_World_SRV);
     }//obj end
 //    pDevice->CreateBuffer(,NULL,)
+
+
+
 }
 
 void Skin_Obj::Release()

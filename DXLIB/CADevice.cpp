@@ -243,16 +243,17 @@ bool CADevice::Set_View_Port(float pos_x, float pos_y, float width, float height
     return true;
 }
 
-void CADevice::Resize()
+void CADevice::Resize(UINT x, UINT y)
 {
+    if (m_pDevice == nullptr)return;
     m_pImmediate_Device_Context->OMSetRenderTargets(0, NULL, NULL);
-    m_pMain_RT.Release();
+  
+        m_pMain_RT.Release();
 
-    hr = m_pSwap_Chain->ResizeBuffers(m_Swap_Chain_Desc.BufferCount, g_rtClient.right, g_rtClient.bottom, m_Swap_Chain_Desc.BufferDesc.Format, m_Swap_Chain_Desc.Flags);
-
+    hr = m_pSwap_Chain->ResizeBuffers(m_Swap_Chain_Desc.BufferCount, x, y, m_Swap_Chain_Desc.BufferDesc.Format, m_Swap_Chain_Desc.Flags);
+    m_pSwap_Chain->GetDesc(&m_Swap_Chain_Desc);
     Set_Render_Target_View();
     Set_View_Port();
-
 }
 
 bool CADevice::Init()
@@ -301,7 +302,7 @@ bool CADevice::Release()
 
 
     if (m_pImmediate_Device_Context)m_pImmediate_Device_Context->ClearState();
-    m_pMain_RT.Release();
+    //m_pMain_RT.Release();
     if (m_pSwap_Chain)m_pSwap_Chain->Release();
     if (m_pImmediate_Device_Context)m_pImmediate_Device_Context->Release();
     if (m_pDevice)m_pDevice->Release();

@@ -33,5 +33,6 @@
   <ItemGroup>
     <FxCompile Include="color.hlsl" />
     <FxCompile Include="test.hlsl" />
+    <FxCompile Include="..\..\_Shader\obj.hlsl" />
   </ItemGroup>
 </Project>

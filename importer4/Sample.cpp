@@ -4,9 +4,9 @@ using namespace std;
 
 bool Sample::Init()
 {
-    m_loader.Skin_Load("t.MD", L"../../_data/obj/");
+    m_loader.Skin_Load("../../_data/obj/t.MD", L"../../_data/obj/");
     // m_loader.m_pnct_List = &m_pnct_List;
-    m_loader.LoaderCreate(CADevice::m_pDevice, L"test.hlsl", nullptr);
+    m_loader.LoaderCreate(CADevice::m_pDevice, L"../../_shader/obj.hlsl", nullptr);
     wstring temp;
     string atemp;
     //temp. = atemp.c_str();

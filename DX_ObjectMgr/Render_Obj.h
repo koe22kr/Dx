@@ -7,14 +7,17 @@ class Render_Obj :public DX::CADx_Model2
 {
 public:
     wstring m_szShader_Name;
+
+    //쉐이더 별로 재정의
+    virtual HRESULT SetInputLayout()override;
+
     bool Create_Render_Obj(ID3D11Device* pd3dDevice, const TCHAR* pLoadShaderFile);
 public:
-    //Create_Render_Obj로 토스//
+    //Create_Render_Obj로 연계
     bool  Create(ID3D11Device* pd3dDevice,
         const TCHAR* pLoadShaderFile,
         const TCHAR* pLoadTextureFile);
-
-    virtual HRESULT SetInputLayout()override;
+private:
     virtual HRESULT CreateVertexData()override;
     virtual HRESULT CreateIndexData()override;
     virtual HRESULT CreateVertexBuffer()override;

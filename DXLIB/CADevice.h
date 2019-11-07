@@ -32,7 +32,7 @@ public:
     bool Create_Swap_Chain();
     bool Set_Render_Target_View();
     bool Set_View_Port(float pos_x = 0, float pos_y = 0, float width = g_rtClient.right, float height = g_rtClient.bottom, float min_depth = 0.0f, float max_depth = 1.0f);
-    void Resize();
+    void Resize(UINT x,UINT y);
 public:
    // DWORD m_Const_Buffer_Data[MAX_CONST_BUFFER];
     

@@ -2,8 +2,7 @@
 
 void ObjectMgr::Render(ID3D11DeviceContext* pContext,int iskin,float& elapsetime, int startframe, int lastframe, D3DXMATRIX* matworld, D3DXMATRIX* matview, D3DXMATRIX* matproj)
 {
-    
-    //for (int iskin = 0; iskin < m_Skin_List.size(); iskin++)//이건 모두다 render
+    //for (int iskin = 0; iskin < m_Skin_List.size(); iskin++)//Render_All
     {
         //
         Render_Obj* pRO = &m_Render_Obj_List[m_Skin_List[iskin].Get_Render_Obj_index()];
@@ -14,19 +13,15 @@ void ObjectMgr::Render(ID3D11DeviceContext* pContext,int iskin,float& elapsetime
         pRO->SetMatrix(matworld, matview, matproj);
         pContext->UpdateSubresource(pRO->m_helper.m_pConstantBuffer.Get(), 0, NULL, &pRO->m_cb, 0, 0);
         pContext->VSSetConstantBuffers(0, 1, pRO->m_helper.m_pConstantBuffer.GetAddressOf());
-
         //
         Mat_Obj* pMO = &m_Mat_List[m_Skin_List[iskin].Get_Mat_index()];
         pMO->Find_curMat(elapsetime, startframe, lastframe);
         pMO->Update_Render_Mat(pContext);//상수버퍼 set은 여기서
 
-
         pContext->VSSetShaderResources(2, 1, &m_Skin_List[iskin].m_pinv_World_SRV);
-
         pContext->VSSetShaderResources(3, 1, &pMO->m_Cur_Mat_SRV);
         //
         //pContext->VSSetConstantBuffers(2, 1, &m_Skin_List[iskin].m_pmatinv_World_Buffer);
-
         for (int iobj = 0; iobj < m_Skin_List[iskin].Get_obj_size(); iobj++)
         {
             for (int imtl = 0; imtl < m_Skin_List[iskin].m_obj_mtl_List[iobj].size()-1; imtl++)
@@ -42,9 +37,8 @@ void ObjectMgr::Render(ID3D11DeviceContext* pContext,int iskin,float& elapsetime
                     pContext->VSSetShader(pRO->m_helper.m_pVertexShader.Get(), NULL, 0);
                     pContext->PSSetShader(pRO->m_helper.m_pPixelShader.Get(), NULL, 0);
                     pContext->PSSetShaderResources(0, 1, &m_Skin_List[iskin].m_obj_mtl_List[iobj][imtl].m_pSRV);
-                    int a = m_Skin_List[iskin].m_obj_mtl_List[iobj][imtl].m_Index_List.size();
-                    //pContext->Draw(m_Skin_List[iskin].m_obj_mtl_List[iobj][imtl].m_Vertex_List.size(), 0);
-                    pContext->DrawIndexed(a, 0, 0);
+                    int index = m_Skin_List[iskin].m_obj_mtl_List[iobj][imtl].m_Index_List.size();
+                    pContext->DrawIndexed(index, 0, 0);
                 }
             }
         }
@@ -63,6 +57,7 @@ int ObjectMgr::Load_Render_Obj(ID3D11Device* pDevice,const TCHAR* shader_file_na
         }
     }
     Render_Obj temp_obj;
+    
     if (temp_obj.Create_Render_Obj(pDevice, shader_file_name))
     {
         m_Render_Obj_List.push_back(temp_obj);
@@ -153,22 +148,22 @@ void ObjectMgr::Load_Cit(ID3D11Device* pDevice, const TCHAR* cit_file_name)
     }
 }
 
-bool ObjectMgr::Init()
-{
-    return true;
-}
-bool ObjectMgr::Frame()
-{
-    return true;
-}
-bool ObjectMgr::Render()
-{
-    return true;
-}
-bool ObjectMgr::Release()
-{
-    return true;
-}
+//bool ObjectMgr::Init()
+//{
+//    return true;
+//}
+//bool ObjectMgr::Frame()
+//{
+//    return true;
+//}
+//bool ObjectMgr::Render()
+//{
+//    return true;
+//}
+//bool ObjectMgr::Release()
+//{
+//    return true;
+//}
 
 ObjectMgr::ObjectMgr()
 {

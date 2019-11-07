@@ -34,7 +34,7 @@ struct PNCTI4W4
     DirectX::XMFLOAT3 n;
     DirectX::XMFLOAT4 c;
     DirectX::XMFLOAT2 t;
-    DirectX::XMFLOAT4 i;
+    UINT i[4];
     DirectX::XMFLOAT4 w;
     
 };
@@ -65,17 +65,17 @@ struct Sorted_Vertex_by_Texture
     }
 };
 
-class Skin_Obj /*: public DX::CADx_Model2*/
+class Skin_Obj
 {
 public:
     int m_iShader_index;
     int m_iMat_index;
-    std::vector<wstring> m_Tex_filename_list;
-    std::vector<Material_Info> m_Material_Info;
-    std::vector<Object_Info>               m_Obj_Info_List;
-    std::vector<D3DXMATRIX> m_matinv_World_List;
-    ID3D11Buffer* m_pmatinv_World_Buffer;
-    ID3D11ShaderResourceView* m_pinv_World_SRV;
+    std::vector<wstring>         m_Tex_filename_list;
+    std::vector<Material_Info>   m_Material_Info;
+    std::vector<Object_Info>     m_Obj_Info_List;
+    std::vector<D3DXMATRIX>      m_matinv_World_List;
+    ID3D11Buffer*                m_pmatinv_World_Buffer;
+    ID3D11ShaderResourceView*    m_pinv_World_SRV;
 
     std::vector<std::vector< Sorted_Vertex_by_Texture >>   m_obj_mtl_List;
 public:
