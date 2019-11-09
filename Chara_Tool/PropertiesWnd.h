@@ -1,6 +1,7 @@
 ﻿
 #pragma once
 
+
 class CPropertiesToolBar : public CMFCToolBar
 {
 public:

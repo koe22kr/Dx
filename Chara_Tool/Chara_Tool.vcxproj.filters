@@ -224,4 +224,9 @@
       <Filter>Sample</Filter>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="temp.txt">
+      <Filter>Sample</Filter>
+    </Text>
+  </ItemGroup>
 </Project>
