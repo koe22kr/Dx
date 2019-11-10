@@ -91,13 +91,22 @@ void CACore::Debug_Release()
 }
 
 
-void CACore::Refresh_m_Debug_Text()
+void CACore::ResizeCore(int x, int y)
 {
+    g_rtClient.right = x;
+    g_rtClient.bottom = y;
     if (m_Device.m_pSwap_Chain != NULL)
     {
-        Dx_Write.Release_Fresh_Resource();
 
+        Dx_Write.Release_Fresh_Resource();
+        m_Device.Resize(x,y);
         Dx_Write.Create_Fresh_Resource();
+       
+        if (m_pMain_Cam)
+        {
+            m_pMain_Cam->SetProjMatrix(D3DX_PI / 4.0f, (float)g_rtClient.right / (float)g_rtClient.bottom, 10.0f, 3000.0f);
+        }
+       
     }
 }
 
@@ -304,10 +313,10 @@ void CACore::MessageProc(MSG msg)
     {
         UINT width = LOWORD(msg.lParam);
         UINT height = HIWORD(msg.lParam);
-        m_Device.Resize(width,height);
+       ResizeCore(width,height);
 
 #if defined _DEBUG || DEBUG
-        Refresh_m_Debug_Text();
+     
 #endif
 
     }

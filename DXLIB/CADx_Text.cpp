@@ -67,6 +67,8 @@ namespace DX
 
         hr = m_p2DRender_Target->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Violet), &m_pBrush);
         EM(hr, CreateSolidColorBrush, CADx_Text);
+        m_pSurface->Release();
+        m_pSurface = NULL;
     }
 
 

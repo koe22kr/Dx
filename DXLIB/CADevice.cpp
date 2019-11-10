@@ -148,7 +148,7 @@ bool CADevice::Create_Swap_Chain()
 
     //DXGI_SWAP_CHAIN_FLAG;
     //UINT Flags = DXGI_SWAP_CHAIN_FLAG_NONPREROTATED;
-    m_Swap_Chain_Desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+    m_Swap_Chain_Desc.Flags = 0/*DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH*/;
 
 
 
@@ -189,6 +189,8 @@ bool CADevice::Set_Render_Target_View()
         /* [_COM_Outptr_opt_]  ID3D11RenderTargetView **ppRTView */
         m_pMain_RT.m_pRTV.GetAddressOf()
     );
+    m_pBack_Buffer->Release();
+    m_pBack_Buffer = NULL;
     if (FAILED(hr))
     {
         MessageBox(g_hWnd, L"Create_Render_Target_View_Fail", L"CADevice", MB_OK);
@@ -247,10 +249,16 @@ void CADevice::Resize(UINT x, UINT y)
 {
     if (m_pDevice == nullptr)return;
     m_pImmediate_Device_Context->OMSetRenderTargets(0, NULL, NULL);
-  
+        //m_pMain_RT.m_pRTV->Release();
         m_pMain_RT.Release();
 
-    hr = m_pSwap_Chain->ResizeBuffers(m_Swap_Chain_Desc.BufferCount, x, y, m_Swap_Chain_Desc.BufferDesc.Format, m_Swap_Chain_Desc.Flags);
+    hr = m_pSwap_Chain->ResizeBuffers(
+        m_Swap_Chain_Desc.BufferCount,
+        x,
+        y,
+        m_Swap_Chain_Desc.BufferDesc.Format,
+        m_Swap_Chain_Desc.Flags);
+
     m_pSwap_Chain->GetDesc(&m_Swap_Chain_Desc);
     Set_Render_Target_View();
     Set_View_Port();

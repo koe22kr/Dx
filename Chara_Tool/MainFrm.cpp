@@ -176,9 +176,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
     CreatePaneWindow(m_Ctl_Pane, L"Ctl_Pane", 361);
     CreatePaneWindow(m_Effect_Pane, L"Effect_Pane1", 362);
-
+    CreatePaneWindow(m_Effect_Pane2, L"Effect_Pane2", 363);
     m_Tabbed_Pane.AddTab(&m_Ctl_Pane);
     m_Tabbed_Pane.AddTab(&m_Effect_Pane);
+    m_Tabbed_Pane.AddTab(&m_Effect_Pane2);
+
 
 	return 0;
 }

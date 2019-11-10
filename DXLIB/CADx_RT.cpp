@@ -85,6 +85,7 @@ namespace DX
         m_pRTV->Release();
         if(m_pDSDSV)
         m_pDSDSV->Release();
+        
         return true;
     }
 

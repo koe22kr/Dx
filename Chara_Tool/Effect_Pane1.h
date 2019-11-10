@@ -10,7 +10,7 @@ class Effect_Pane1 : public CDockablePane
 public:
 	Effect_Pane1();
 	virtual ~Effect_Pane1();
-    Effect_Form1* m_Form;
+    Effect_Form1* m_Form1;
 protected:
 	DECLARE_MESSAGE_MAP()
 public:

@@ -194,7 +194,9 @@
     <ClInclude Include="Ctl_Form.h" />
     <ClInclude Include="Ctl_Pane.h" />
     <ClInclude Include="Effect_Form1.h" />
+    <ClInclude Include="Effect_Form2.h" />
     <ClInclude Include="Effect_Pane1.h" />
+    <ClInclude Include="Effect_Pane2.h" />
     <ClInclude Include="FileView.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OutputWnd.h" />
@@ -214,7 +216,9 @@
     <ClCompile Include="Ctl_Form.cpp" />
     <ClCompile Include="Ctl_Pane.cpp" />
     <ClCompile Include="Effect_Form1.cpp" />
+    <ClCompile Include="Effect_Form2.cpp" />
     <ClCompile Include="Effect_Pane1.cpp" />
+    <ClCompile Include="Effect_Pane2.cpp" />
     <ClCompile Include="FileView.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="OutputWnd.cpp" />

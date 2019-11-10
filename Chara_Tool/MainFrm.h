@@ -9,6 +9,8 @@
 #include "PropertiesWnd.h"
 #include "Ctl_Pane.h"
 #include "Effect_Pane1.h"
+#include "Effect_Pane2.h"
+
 class CMainFrame : public CFrameWndEx
 {
 	
@@ -21,6 +23,7 @@ public:
     CTabbedPane m_Tabbed_Pane;
     Effect_Pane1 m_Effect_Pane;
     Ctl_Pane m_Ctl_Pane;
+    Effect_Pane2 m_Effect_Pane2;
 
 // 작업입니다.
 public:

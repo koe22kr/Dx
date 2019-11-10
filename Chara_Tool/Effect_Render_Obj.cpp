@@ -84,7 +84,7 @@ HRESULT Effect_Render_Obj::CreateVertexBuffer()
 
     m_helper.m_pVertexBuffer.Attach(
         DX::CreateVertexBuffer(m_pDevice,
-            &m_Effect_Vertex_List.at(0), m_Effect_Vertex_List.size(), sizeof(Effect_VB))
+            &m_Effect_Vertex_List.at(0), m_Effect_Vertex_List.size(), sizeof(Effect_Data))
     );
     if (m_helper.m_pVertexBuffer.Get() == nullptr)
         return false;
@@ -152,15 +152,12 @@ HRESULT Effect_Render_Obj::CreateConstantBuffer()
 
 void Effect_Render_Obj::Update_Buffer()
 {
-    D3DXMATRIX matWorld, matTrans, matRotation, matScale;
-    //D3DXMatrixInverse(&matRotation, NULL, &m_cur_cam->m_matView);
-    matRotation._41 = 0.0f;
-    matRotation._42 = 0.0f;
-    matRotation._43 = 0.0f;
-    matRotation._44 = 1.0f;
-    std::vector<Effect_VB>::iterator iter;
+   
+    std::vector<Effect_Data>::iterator iter;
     for (iter= m_Effect_Vertex_List.begin(); iter != m_Effect_Vertex_List.end();)
     {
+
+
         iter->m_Delta_Time += g_fSecondPerFrame;
         if (iter->m_Delta_Time >= 0.1)
         {
@@ -168,21 +165,50 @@ void Effect_Render_Obj::Update_Buffer()
             iter->m_Delta_Time -= 0.1;
         }
 
-
-        iter->m_Life_Time -= g_fSecondPerFrame;
-        D3DXMatrixTranslation(&matTrans, iter->m_Pos.x, iter->m_Pos.y, iter->m_Pos.z);
-      //  m_Effect_Instance_List[ibuffer].m_matWorld = matRotation * matTrans;
-        //TODO 추가적인 VB 계산 필요할
-        if (iter->m_Life_Time <= 0)
+        if (iter->m_fFadeInDeltaTime > 0.0f)
         {
-            iter = m_Effect_Vertex_List.erase(iter);
-
+            iter->m_fFadeInDeltaTime -= g_fSecondPerFrame;
+            iter->m_Alpha += 1 / iter->m_fFadeInTime*g_fSecondPerFrame;
+            if (iter->m_Alpha > 1.0f)iter->m_Alpha = 1.0f;
         }
         else
         {
-            iter++;
+            if (iter->m_Life_Time > 0.0f)
+            {
+                iter->m_Life_Time -= g_fSecondPerFrame;
+            }
+            else
+            {
+                if (iter->m_fFadeOutTime > 0)
+                {
+                    iter->m_fFadeOutDeltaTime -= g_fSecondPerFrame;
+                    iter->m_Alpha -= 1 / iter->m_fFadeOutTime*g_fSecondPerFrame;
+                    if (iter->m_Alpha < 0.0f)iter->m_Alpha = 0.0f;
+                }
+            }
+
+
+            if (iter->m_fFadeOutTime <= 0 && iter->m_Life_Time <= 0)
+            {
+                iter = m_Effect_Vertex_List.erase(iter);
+            }
+            
         }
+        iter++;
+        
     }
+      //  m_Effect_Instance_List[ibuffer].m_matWorld = matRotation * matTrans;
+        //TODO 추가적인 VB 계산 필요할
+        
+        //D3DXMATRIX matWorld, matTrans, matRotation, matScale;
+        ////D3DXMatrixInverse(&matRotation, NULL, &m_cur_cam->m_matView);
+        //matRotation._41 = 0.0f;
+        //matRotation._42 = 0.0f;
+        //matRotation._43 = 0.0f;
+        //matRotation._44 = 1.0f;
+
+
+
    // D3D11_MAPPED_SUBRESOURCE sub;
    // if (SUCCEEDED(CADevice::m_pImmediate_Device_Context->Map(m_pEffect_Instance_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &sub)))
    // {
@@ -193,25 +219,25 @@ void Effect_Render_Obj::Update_Buffer()
 
 void Effect_Render_Obj::Add()
 {
-    Effect_VB data;
+    Effect_Data data;
     if (m_bRend)
     {
-        data.m_Alpha = 1.0f;
-        data.m_Color_Filter.x = 1.0f;
-        data.m_Color_Filter.y = 1.0f;
-        data.m_Color_Filter.z = 1.0f;
-        data.m_Color_Filter.w = 1.0f;
-        data.m_Normal.x = 0.0f;
-        data.m_Normal.y = 1.0f;
-        data.m_Normal.z = 0.0f;
-        data.m_Pos.x = 0;// randstep(-1.0f, 1.0f);
-        data.m_Pos.y = 0;//randstep(0.0f, 0.0f);
-        data.m_Pos.z = 0;//randstep(-1.0f, 1.0f);
-        //data.m_fFadeOutTime = randstep(1.0f, 3.0f);
-        //data.m_vGravity = D3DXVECTOR3(0.0, -9.8f, 0.0f);
-        //data.m_fSpeed = randstep(1.0f, 3.0f);
-        //data.m_iTexID = 1;
-        data.m_Life_Time = 1 + (rand() % 13);
+     //  data.m_Alpha = 1.0f;
+     //  data.m_Color_Filter.x = 1.0f;
+     //  data.m_Color_Filter.y = 1.0f;
+     //  data.m_Color_Filter.z = 1.0f;
+     //  data.m_Color_Filter.w = 1.0f;
+     //  data.m_Normal.x = 0.0f;
+     //  data.m_Normal.y = 1.0f;
+     //  data.m_Normal.z = 0.0f;
+     //  data.m_Pos.x = 0;// randstep(-1.0f, 1.0f);
+     //  data.m_Pos.y = 0;//randstep(0.0f, 0.0f);
+     //  data.m_Pos.z = 0;//randstep(-1.0f, 1.0f);
+     //  //data.m_fFadeOutTime = randstep(1.0f, 3.0f);
+     //  //data.m_vGravity = D3DXVECTOR3(0.0, -9.8f, 0.0f);
+     //  //data.m_fSpeed = randstep(1.0f, 3.0f);
+     //  //data.m_iTexID = 1;
+     //  data.m_Life_Time = 1 + (rand() % 13);
 
         //data.m_vTargetPos.x = randstep(0.1f, 1.0f);
         //data.m_vTargetPos.y = randstep(0.1f, 1.0f);
@@ -223,10 +249,24 @@ void Effect_Render_Obj::Add()
     }
     else
     {
-        m_Base_Effect.m_vVelocity = D3DXVECTOR3(50 - rand() % 100, 50 - rand() % 100, 50 - rand() % 100);
-        D3DXVec3Normalize(&m_Base_Effect.m_vVelocity, &m_Base_Effect.m_vVelocity);
-        data = m_Base_Effect;
-    }
+      //  m_Base_Effect.m_vVelocity = D3DXVECTOR3(50 - rand() % 100, 50 - rand() % 100, 50 - rand() % 100);
+      //  m_Base_Effect.m_Life_Time = 1 + (rand() % 13);
 
+      //  D3DXVec3Normalize(&m_Base_Effect.m_vVelocity, &m_Base_Effect.m_vVelocity);
+        data = m_Base_Effect;
+       
+
+    }
+    /////////////////////////////////////////////////
+    data.m_fFadeInDeltaTime = data.m_fFadeInTime;
+    data.m_fFadeOutDeltaTime = data.m_fFadeOutTime;
+    if (data.m_fFadeInTime == 0.0f)
+    {
+        data.m_Alpha = 1;
+    }
+    else
+    {
+        data.m_Alpha = 0;
+    }
     m_Effect_Vertex_List.push_back(data);
 }

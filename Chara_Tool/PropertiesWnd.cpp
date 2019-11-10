@@ -20,32 +20,32 @@ static char THIS_FILE[]=__FILE__;
 //};
 enum MY_Blend_Prop_ID
 {
-    ID_BLEND_ENABLE = 0,
-    ID_SRC_BLEND,
-    ID_DEST_BLEND,
-    ID_BLEND_OP,
-    ID_SRC_BLEND_ALPHA,
-    ID_DEST_BLEND_ALPHA,
-    ID_BLEND_OP_ALPHA,
-    ID_RT_WRITE_MASK,
+    ID_BLEND_BLEND_ENABLE = 100,
+    ID_BLEND_SRC_BLEND,
+    ID_BLEND_DEST_BLEND,
+    ID_BLEND_BLEND_OP,
+    ID_BLEND_SRC_BLEND_ALPHA,
+    ID_BLEND_DEST_BLEND_ALPHA,
+    ID_BLEND_BLEND_OP_ALPHA,
+    ID_BLEND_RT_WRITE_MASK,
 
 };
 enum MY_Sampler_Prop_ID
 {
-    ID_SAMPLER_FILTER,
+    ID_SAMPLER_FILTER = 200,
     ID_SAMPLER_ADDRESS_U,
     ID_SAMPLER_ADDRESS_V,
     ID_SAMPLER_ADDRESS_W,
 
 };
-enum MY_Resterizer_Prop_ID
+enum MY_Rasterizer_Prop_ID
 {
-    ID_RESTERIZER_FILL_MODE,
-    ID_RESTERIZER_CULL_MODE,
+    ID_RASTERIZER_FILL_MODE = 300,
+    ID_RASTERIZER_CULL_MODE,
 };
 enum MY_Depth_Stencil_Prop_ID
 {
-    ID_DEPTH_STENCIL_DEPTH_ENABLE,
+    ID_DEPTH_STENCIL_DEPTH_ENABLE = 400,
     ID_DEPTH_STENCIL_DEPTH_WRITE_MASK,
     ID_DEPTH_STENCIL_DEPTH_FUNC,
     
@@ -176,24 +176,24 @@ const TCHAR* MY_D3D11_SAMPLER_FILTER_STRING[] =
     _T("D3D11_FILTER_MAXIMUM_ANISOTROPIC"),
 };
 
-const int MY_D3D11_RESTERIZER_FILL_MODE_NUM[] =
+const int MY_D3D11_RASTERIZER_FILL_MODE_NUM[] =
 {
     2,
     3
 };
-const TCHAR* MY_D3D11_RESTERIZER_FILL_MODE_STIRNG[] =
+const TCHAR* MY_D3D11_RASTERIZER_FILL_MODE_STRING[] =
 {
     _T("D3D11_FILL_WIREFRAME"),
     _T("D3D11_FILL_SOLID"),
 };
 
-const int MY_D3D11_RESTERIZER_CULL_MODE_NUM[] =
+const int MY_D3D11_RASTERIZER_CULL_MODE_NUM[] =
 {
     1,
     2,
     3
 };
-const TCHAR* MY_D3D11_RESTERIZER_CULL_MODE_STRING[] =
+const TCHAR* MY_D3D11_RASTERIZER_CULL_MODE_STRING[] =
 {
     _T("D3D11_CULL_NONE"),
     _T("D3D11_CULL_FRONT"),
@@ -260,7 +260,323 @@ BEGIN_MESSAGE_MAP(CPropertiesWnd, CDockablePane)
 	ON_UPDATE_COMMAND_UI(ID_PROPERTIES2, OnUpdateProperties2)
 	ON_WM_SETFOCUS()
 	ON_WM_SETTINGCHANGE()
+
+
+    ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED,OnPropertyChanged)
 END_MESSAGE_MAP()
+
+//ID_BLEND_BLEND_ENABLE = 0,
+//ID_BLEND_SRC_BLEND,
+//ID_BLEND_DEST_BLEND,
+//ID_BLEND_BLEND_OP,
+//ID_BLEND_SRC_BLEND_ALPHA,
+//ID_BLEND_DEST_BLEND_ALPHA,
+//ID_BLEND_BLEND_OP_ALPHA,
+//ID_BLEND_RT_WRITE_MASK,
+
+//    ID_SAMPLER_FILTER,
+//    ID_SAMPLER_ADDRESS_U,
+//    ID_SAMPLER_ADDRESS_V,
+//    ID_SAMPLER_ADDRESS_W,
+//
+//    ID_RASTERIZER_FILL_MODE,
+//    ID_RASTERIZER_CULL_MODE,
+// 
+//    ID_DEPTH_STENCIL_DEPTH_ENABLE,
+//    ID_DEPTH_STENCIL_DEPTH_WRITE_MASK,
+//    ID_DEPTH_STENCIL_DEPTH_FUNC,
+LRESULT CPropertiesWnd::OnPropertyChanged(WPARAM w, LPARAM lParam)
+{
+    CMFCPropertyGridProperty* pProp =
+        (CMFCPropertyGridProperty*)lParam;
+
+    switch ((int)pProp->GetData())
+    {
+        //Blend//
+
+    case ID_BLEND_BLEND_ENABLE:
+    {
+        bool bEnable = pProp->GetValue().boolVal == VARIANT_TRUE;
+        TOOL.m_BlendDesc.RenderTarget[0].BlendEnable = bEnable;
+        TOOL.SetBlendState(&TOOL.m_BlendDesc);
+    }break;
+    case ID_BLEND_SRC_BLEND:
+    {
+        CString data = (LPCTSTR)(_bstr_t)pProp->GetValue();
+        int iSelBlend = -1;
+        int iNumBlend = sizeof(MY_D3D11_BLEND_STRING) /
+            sizeof(MY_D3D11_BLEND_STRING[0]);
+        for (int i = 0; i < iNumBlend; i++)
+        {
+            if (data == MY_D3D11_BLEND_STRING[i])
+            {
+                iSelBlend = MY_D3D11_BLEND_NUM[i];
+                TOOL.m_BlendDesc.RenderTarget[0].SrcBlend = (D3D11_BLEND)iSelBlend;
+                TOOL.SetBlendState(&TOOL.m_BlendDesc);
+                break;
+            }
+        }
+    }break;
+    case ID_BLEND_DEST_BLEND:
+    {
+        CString data = (LPCTSTR)(_bstr_t)pProp->GetValue();
+        int iSelBlend = -1;
+        int iNumBlend = sizeof(MY_D3D11_BLEND_STRING) /
+            sizeof(MY_D3D11_BLEND_STRING[0]);
+        for (int i = 0; i < iNumBlend; i++)
+        {
+            if (data == MY_D3D11_BLEND_STRING[i])
+            {
+                iSelBlend = MY_D3D11_BLEND_NUM[i];
+                TOOL.m_BlendDesc.RenderTarget[0].DestBlend = (D3D11_BLEND)iSelBlend;
+                TOOL.SetBlendState(&TOOL.m_BlendDesc);
+                break;
+            }
+        }
+
+    }break;
+    case ID_BLEND_BLEND_OP:
+    {
+        CString data = (LPCTSTR)(_bstr_t)pProp->GetValue();
+        int iSelBlend = -1;
+        int iNumBlend = sizeof(MY_D3D11_BLEND_OP_STRING) /
+            sizeof(MY_D3D11_BLEND_OP_STRING[0]);
+        for (int i = 0; i < iNumBlend; i++)
+        {
+            if (data == MY_D3D11_BLEND_OP_STRING[i])
+            {
+                iSelBlend = MY_D3D11_BLEND_OP_NUM[i];
+                TOOL.m_BlendDesc.RenderTarget[0].BlendOp = (D3D11_BLEND_OP)iSelBlend;
+                TOOL.SetBlendState(&TOOL.m_BlendDesc);
+                break;
+            }
+        }
+
+    }break;
+    case   ID_BLEND_SRC_BLEND_ALPHA:
+    {
+        CString data = (LPCTSTR)(_bstr_t)pProp->GetValue();
+        int iSelBlend = -1;
+        int iNumBlend = sizeof(MY_D3D11_BLEND_STRING) /
+            sizeof(MY_D3D11_BLEND_STRING[0]);
+        for (int i = 0; i < iNumBlend; i++)
+        {
+            if (data == MY_D3D11_BLEND_STRING[i])
+            {
+                iSelBlend = MY_D3D11_BLEND_NUM[i];
+                TOOL.m_BlendDesc.RenderTarget[0].SrcBlendAlpha = (D3D11_BLEND)iSelBlend;
+                TOOL.SetBlendState(&TOOL.m_BlendDesc);
+                break;
+            }
+        }
+    }break;
+    case   ID_BLEND_DEST_BLEND_ALPHA:
+    {
+        CString data = (LPCTSTR)(_bstr_t)pProp->GetValue();
+        int iSelBlend = -1;
+        int iNumBlend = sizeof(MY_D3D11_BLEND_STRING) /
+            sizeof(MY_D3D11_BLEND_STRING[0]);
+        for (int i = 0; i < iNumBlend; i++)
+        {
+            if (data == MY_D3D11_BLEND_STRING[i])
+            {
+                iSelBlend = MY_D3D11_BLEND_NUM[i];
+                TOOL.m_BlendDesc.RenderTarget[0].DestBlendAlpha = (D3D11_BLEND)iSelBlend;
+                TOOL.SetBlendState(&TOOL.m_BlendDesc);
+                break;
+            }
+        }
+    }break;
+    case   ID_BLEND_BLEND_OP_ALPHA:
+    {
+        CString data = (LPCTSTR)(_bstr_t)pProp->GetValue();
+        int iSelBlend = -1;
+        int iNumBlend = sizeof(MY_D3D11_BLEND_OP_STRING) /
+            sizeof(MY_D3D11_BLEND_OP_STRING[0]);
+        for (int i = 0; i < iNumBlend; i++)
+        {
+            if (data == MY_D3D11_BLEND_OP_STRING[i])
+            {
+                iSelBlend = MY_D3D11_BLEND_OP_NUM[i];
+                TOOL.m_BlendDesc.RenderTarget[0].BlendOpAlpha = (D3D11_BLEND_OP)iSelBlend;
+                TOOL.SetBlendState(&TOOL.m_BlendDesc);
+                break;
+            }
+        }
+
+    }break;
+    case   ID_BLEND_RT_WRITE_MASK:
+    {
+        CString data = (LPCTSTR)(_bstr_t)pProp->GetValue();
+        UINT8 iSelBlend = 0;
+        int iNumBlend = sizeof(MY_D3D11_COLOR_WRITE_ENABLE_STRING) /
+            sizeof(MY_D3D11_COLOR_WRITE_ENABLE_STRING[0]);
+        for (int i = 0; i < iNumBlend; i++)
+        {
+            if (data == MY_D3D11_COLOR_WRITE_ENABLE_STRING[i])
+            {
+                iSelBlend = MY_D3D11_COLOR_WRITE_ENABLE_NUM[i];
+                TOOL.m_BlendDesc.RenderTarget[0].RenderTargetWriteMask = (UINT8)iSelBlend;
+                TOOL.SetBlendState(&TOOL.m_BlendDesc);
+                break;
+            }
+        }
+
+    }break;
+    //Sampler//
+
+    case ID_SAMPLER_FILTER:
+    {
+        CString data = (LPCTSTR)(_bstr_t)pProp->GetValue();
+        int iSelSampler = 0;
+        int iNumSampler = sizeof(MY_D3D11_SAMPLER_FILTER_STRING) /
+            sizeof(MY_D3D11_SAMPLER_FILTER_STRING[0]);
+        for (int i = 0; i < iNumSampler; i++)
+        {
+            if (data == MY_D3D11_SAMPLER_FILTER_STRING[i])
+            {
+                iSelSampler = MY_D3D11_SAMPLER_FILTER_NUM[i];
+                TOOL.m_SamplerDesc.Filter = (D3D11_FILTER)iSelSampler;
+                TOOL.SetSamplerState(&TOOL.m_SamplerDesc);
+                break;
+            }
+        }
+    }break;
+    case ID_SAMPLER_ADDRESS_U:
+    {
+        CString data = (LPCTSTR)(_bstr_t)pProp->GetValue();
+        int iSelSampler = 0;
+        int iNumSampler = sizeof(MY_D3D11_SAMPLER_TEXTURE_ADDRESS_MODE_STRING) /
+            sizeof(MY_D3D11_SAMPLER_TEXTURE_ADDRESS_MODE_STRING[0]);
+        for (int i = 0; i < iNumSampler; i++)
+        {
+            if (data == MY_D3D11_SAMPLER_TEXTURE_ADDRESS_MODE_STRING[i])
+            {
+                iSelSampler = MY_D3D11_SAMPLER_TEXTURE_ADDRESS_MODE_NUM[i];
+                TOOL.m_SamplerDesc.AddressU = (D3D11_TEXTURE_ADDRESS_MODE)iSelSampler;
+                TOOL.SetSamplerState(&TOOL.m_SamplerDesc);
+                break;
+            }
+        }
+    }break;
+    case ID_SAMPLER_ADDRESS_V:
+    {
+        CString data = (LPCTSTR)(_bstr_t)pProp->GetValue();
+        int iSelSampler = 0;
+        int iNumSampler = sizeof(MY_D3D11_SAMPLER_TEXTURE_ADDRESS_MODE_STRING) /
+            sizeof(MY_D3D11_SAMPLER_TEXTURE_ADDRESS_MODE_STRING[0]);
+        for (int i = 0; i < iNumSampler; i++)
+        {
+            if (data == MY_D3D11_SAMPLER_TEXTURE_ADDRESS_MODE_STRING[i])
+            {
+                iSelSampler = MY_D3D11_SAMPLER_TEXTURE_ADDRESS_MODE_NUM[i];
+                TOOL.m_SamplerDesc.AddressV = (D3D11_TEXTURE_ADDRESS_MODE)iSelSampler;
+                TOOL.SetSamplerState(&TOOL.m_SamplerDesc);
+                break;
+            }
+        }
+    }break;
+    case ID_SAMPLER_ADDRESS_W:
+    {
+        CString data = (LPCTSTR)(_bstr_t)pProp->GetValue();
+        int iSelSampler = 0;
+        int iNumSampler = sizeof(MY_D3D11_SAMPLER_TEXTURE_ADDRESS_MODE_STRING) /
+            sizeof(MY_D3D11_SAMPLER_TEXTURE_ADDRESS_MODE_STRING[0]);
+        for (int i = 0; i < iNumSampler; i++)
+        {
+            if (data == MY_D3D11_SAMPLER_TEXTURE_ADDRESS_MODE_STRING[i])
+            {
+                iSelSampler = MY_D3D11_SAMPLER_TEXTURE_ADDRESS_MODE_NUM[i];
+                TOOL.m_SamplerDesc.AddressW = (D3D11_TEXTURE_ADDRESS_MODE)iSelSampler;
+                TOOL.SetSamplerState(&TOOL.m_SamplerDesc);
+                break;
+            }
+        }
+    }break;
+
+    //Rasterizer//
+    case ID_RASTERIZER_FILL_MODE:
+    {
+        CString data = (LPCTSTR)(_bstr_t)pProp->GetValue();
+        int iSelRaster = 0;
+        int iNumRaster = sizeof(MY_D3D11_RASTERIZER_FILL_MODE_STRING) /
+            sizeof(MY_D3D11_RASTERIZER_FILL_MODE_STRING[0]);
+        for (int i = 0; i < iNumRaster; i++)
+        {
+            if (data == MY_D3D11_RASTERIZER_FILL_MODE_STRING[i])
+            {
+                iSelRaster = MY_D3D11_RASTERIZER_FILL_MODE_NUM[i];
+                TOOL.m_RasterizerDesc.FillMode = (D3D11_FILL_MODE)iSelRaster;
+                TOOL.SetRasterizerState(&TOOL.m_RasterizerDesc);
+                break;
+            }
+        }
+    }break;
+    case ID_RASTERIZER_CULL_MODE:
+    {
+        CString data = (LPCTSTR)(_bstr_t)pProp->GetValue();
+        int iSelRaster = 0;
+        int iNumRaster = sizeof(MY_D3D11_RASTERIZER_CULL_MODE_STRING) /
+            sizeof(MY_D3D11_RASTERIZER_CULL_MODE_STRING[0]);
+        for (int i = 0; i < iNumRaster; i++)
+        {
+            if (data == MY_D3D11_RASTERIZER_CULL_MODE_STRING[i])
+            {
+                iSelRaster = MY_D3D11_RASTERIZER_CULL_MODE_NUM[i];
+                TOOL.m_RasterizerDesc.CullMode = (D3D11_CULL_MODE)iSelRaster;
+                TOOL.SetRasterizerState(&TOOL.m_RasterizerDesc);
+                break;
+            }
+        }
+    }break;
+
+    //DepthStencil//
+    case ID_DEPTH_STENCIL_DEPTH_ENABLE:
+    {
+        bool bEnable = pProp->GetValue().boolVal == VARIANT_TRUE;
+        TOOL.m_DepthStencilDesc.DepthEnable = bEnable;
+        TOOL.SetDepthStencilState(&TOOL.m_DepthStencilDesc);
+    }break;
+    case ID_DEPTH_STENCIL_DEPTH_WRITE_MASK:
+    {
+        CString data = (LPCTSTR)(_bstr_t)pProp->GetValue();
+        int iSelRaster = 0;
+        int iNumRaster = sizeof(MY_D3D11_DEPTH_STENCIL_DEPTH_WRITE_MASK_STRING) /
+            sizeof(MY_D3D11_DEPTH_STENCIL_DEPTH_WRITE_MASK_STRING[0]);
+        for (int i = 0; i < iNumRaster; i++)
+        {
+            if (data == MY_D3D11_DEPTH_STENCIL_DEPTH_WRITE_MASK_STRING[i])
+            {
+                iSelRaster = MY_D3D11_DEPTH_STENCIL_DEPTH_WRITE_MASK_NUM[i];
+                TOOL.m_DepthStencilDesc.DepthWriteMask = (D3D11_DEPTH_WRITE_MASK)iSelRaster;
+                TOOL.SetDepthStencilState(&TOOL.m_DepthStencilDesc);
+                break;
+            }
+        }
+    }break;
+    case ID_DEPTH_STENCIL_DEPTH_FUNC:
+    {
+        CString data = (LPCTSTR)(_bstr_t)pProp->GetValue();
+        int iSelRaster = 0;
+        int iNumRaster = sizeof(MY_D3D11_DEPTH_STENCIL_COMPARISON_FUNC_STRING) /
+            sizeof(MY_D3D11_DEPTH_STENCIL_COMPARISON_FUNC_STRING[0]);
+        for (int i = 0; i < iNumRaster; i++)
+        {
+            if (data == MY_D3D11_DEPTH_STENCIL_COMPARISON_FUNC_STRING[i])
+            {
+                iSelRaster = MY_D3D11_DEPTH_STENCIL_COMPARISON_FUNC_NUM[i];
+                TOOL.m_DepthStencilDesc.DepthFunc = (D3D11_COMPARISON_FUNC)iSelRaster;
+                TOOL.SetDepthStencilState(&TOOL.m_DepthStencilDesc);
+                break;
+            }
+        }
+    }break;
+
+    return 0;
+    }
+}
+
+
 
 /////////////////////////////////////////////////////////////////////////////
 // CResourceViewBar 메시지 처리기
@@ -408,10 +724,10 @@ void CPropertiesWnd::InitPropList()
     CMFCPropertyGridProperty* pBlend = new CMFCPropertyGridProperty(_T("Blend_State"));
 
     //BlendEnable
-    pBlend->AddSubItem(new CMFCPropertyGridProperty(_T("Enable"), (_variant_t)true, _T("알파블랜딩 ON/OFF"), ID_BLEND_ENABLE));
+    pBlend->AddSubItem(new CMFCPropertyGridProperty(_T("Enable"), (_variant_t)true, _T("알파블랜딩 ON/OFF"), ID_BLEND_BLEND_ENABLE));
     
     //SrcBlend
-    CMFCPropertyGridProperty* pSrcBlend = new CMFCPropertyGridProperty(_T("Src_Blend"), _T("D3D11_BLEND_SRC_ALPHA"), _T("Alpha_Blend_Src_Option"), ID_SRC_BLEND);
+    CMFCPropertyGridProperty* pSrcBlend = new CMFCPropertyGridProperty(_T("Src_Blend"), _T("D3D11_BLEND_SRC_ALPHA"), _T("Alpha_Blend_Src_Option"), ID_BLEND_SRC_BLEND);
     for (int i = 0; i < iNumBlend; i++)
     {
         pSrcBlend->AddOption(MY_D3D11_BLEND_STRING[i]);
@@ -420,7 +736,7 @@ void CPropertiesWnd::InitPropList()
     pBlend->AddSubItem(pSrcBlend);
     
     //DestBlend
-    CMFCPropertyGridProperty* pDestBlend = new CMFCPropertyGridProperty(_T("Dest_Blend"), _T("D3D11_BLEND_INV_SRC_ALPHA"), _T("Alpha_Blend_Dest_Option"), ID_DEST_BLEND);
+    CMFCPropertyGridProperty* pDestBlend = new CMFCPropertyGridProperty(_T("Dest_Blend"), _T("D3D11_BLEND_INV_SRC_ALPHA"), _T("Alpha_Blend_Dest_Option"), ID_BLEND_DEST_BLEND);
     for (int i = 0; i < iNumBlend; i++)
     {
         pDestBlend->AddOption(MY_D3D11_BLEND_STRING[i]);
@@ -429,7 +745,7 @@ void CPropertiesWnd::InitPropList()
     pBlend->AddSubItem(pDestBlend);
 
     //BlendOp
-    CMFCPropertyGridProperty* pBlendOp = new CMFCPropertyGridProperty(_T("Blend_Op"), _T("D3D11_BLEND_OP_ADD"), _T("Alpha_Blend_Op_Option"), ID_BLEND_OP);
+    CMFCPropertyGridProperty* pBlendOp = new CMFCPropertyGridProperty(_T("Blend_Op"), _T("D3D11_BLEND_OP_ADD"), _T("Alpha_Blend_Op_Option"), ID_BLEND_BLEND_OP);
     for (int i = 0; i < iNumBlendOp; i++)
     {
         pBlendOp->AddOption(MY_D3D11_BLEND_OP_STRING[i]);
@@ -438,7 +754,7 @@ void CPropertiesWnd::InitPropList()
     pBlend->AddSubItem(pBlendOp);
 
     //SrcBlendAlpha;
-    CMFCPropertyGridProperty* pSrcBlendAlpha = new CMFCPropertyGridProperty(_T("Src_Blend_Alpha"), _T("D3D11_BLEND_ONE"), _T("Alpha_Blend_Src_Alpha_Option"), ID_SRC_BLEND_ALPHA);
+    CMFCPropertyGridProperty* pSrcBlendAlpha = new CMFCPropertyGridProperty(_T("Src_Blend_Alpha"), _T("D3D11_BLEND_ONE"), _T("Alpha_Blend_Src_Alpha_Option"), ID_BLEND_SRC_BLEND_ALPHA);
     for (int i = 0; i < iNumBlend; i++)
     {
         pSrcBlendAlpha->AddOption(MY_D3D11_BLEND_STRING[i]);
@@ -447,7 +763,7 @@ void CPropertiesWnd::InitPropList()
     pBlend->AddSubItem(pSrcBlendAlpha);
 
     //DestBlendAlpha;
-    CMFCPropertyGridProperty* pDestBlendAlpha = new CMFCPropertyGridProperty(_T("Dest_Blend_Alpha"), _T("D3D11_BLEND_ZERO"), _T("Alpha_Blend_Dest_Alpha_Option"), ID_DEST_BLEND_ALPHA);
+    CMFCPropertyGridProperty* pDestBlendAlpha = new CMFCPropertyGridProperty(_T("Dest_Blend_Alpha"), _T("D3D11_BLEND_ZERO"), _T("Alpha_Blend_Dest_Alpha_Option"), ID_BLEND_DEST_BLEND_ALPHA);
     for (int i = 0; i < iNumBlend; i++)
     {
         pDestBlendAlpha->AddOption(MY_D3D11_BLEND_STRING[i]);
@@ -456,7 +772,7 @@ void CPropertiesWnd::InitPropList()
     pBlend->AddSubItem(pDestBlendAlpha);
 
     //BlendOpAlpha
-    CMFCPropertyGridProperty* pBlendOpAlpha = new CMFCPropertyGridProperty(_T("Blend_Op_Alpha"), _T("D3D11_BLEND_OP_ADD"), _T("Alpha_Blend_Op_Alpha_Option"), ID_BLEND_OP_ALPHA);
+    CMFCPropertyGridProperty* pBlendOpAlpha = new CMFCPropertyGridProperty(_T("Blend_Op_Alpha"), _T("D3D11_BLEND_OP_ADD"), _T("Alpha_Blend_Op_Alpha_Option"), ID_BLEND_BLEND_OP_ALPHA);
     for (int i = 0; i < iNumBlendOp; i++)
     {
         pBlendOpAlpha->AddOption(MY_D3D11_BLEND_OP_STRING[i]);
@@ -465,7 +781,7 @@ void CPropertiesWnd::InitPropList()
     pBlend->AddSubItem(pBlendOpAlpha);
 
     //RenderTargetWriteMask
-    CMFCPropertyGridProperty* pRenderTargetWriteMask = new CMFCPropertyGridProperty(_T("RT_Write_Mask"), _T("D3D11_COLOR_WRITE_ENABLE_ALL"), _T("Alpha_Blend_Render_Target_Write_Mask_Option"), ID_RT_WRITE_MASK);
+    CMFCPropertyGridProperty* pRenderTargetWriteMask = new CMFCPropertyGridProperty(_T("RT_Write_Mask"), _T("D3D11_COLOR_WRITE_ENABLE_ALL"), _T("Alpha_Blend_Render_Target_Write_Mask_Option"), ID_BLEND_RT_WRITE_MASK);
     int iNumRTWM = sizeof(MY_D3D11_COLOR_WRITE_ENABLE_STRING) / sizeof(MY_D3D11_COLOR_WRITE_ENABLE_STRING[0]);
     for (int i = 0; i < iNumRTWM; i++)
     {
@@ -493,28 +809,28 @@ void CPropertiesWnd::InitPropList()
     //BOOL MultisampleEnable;//TRUE
     //BOOL AntialiasedLineEnable; //TRUE
 
-    int iNumFill = sizeof(MY_D3D11_RESTERIZER_FILL_MODE_STIRNG) / sizeof(MY_D3D11_RESTERIZER_FILL_MODE_STIRNG[0]);
-    int iNumCull = sizeof(MY_D3D11_RESTERIZER_CULL_MODE_STRING) / sizeof(MY_D3D11_RESTERIZER_CULL_MODE_STRING[0]);
-    CMFCPropertyGridProperty* pResterizer = new CMFCPropertyGridProperty(_T("Resterizer_State"));
+    int iNumFill = sizeof(MY_D3D11_RASTERIZER_FILL_MODE_STRING) / sizeof(MY_D3D11_RASTERIZER_FILL_MODE_STRING[0]);
+    int iNumCull = sizeof(MY_D3D11_RASTERIZER_CULL_MODE_STRING) / sizeof(MY_D3D11_RASTERIZER_CULL_MODE_STRING[0]);
+    CMFCPropertyGridProperty* pRasterizer = new CMFCPropertyGridProperty(_T("Rasterizer_State"));
 
     //FillMode
-    CMFCPropertyGridProperty* pFillMode = new CMFCPropertyGridProperty(_T("Fill_Mode"), _T("D3D11_FILL_SOLID"), _T("Resterizer_Fill_Mode_Option"), ID_RESTERIZER_FILL_MODE);
+    CMFCPropertyGridProperty* pFillMode = new CMFCPropertyGridProperty(_T("Fill_Mode"), _T("D3D11_FILL_SOLID"), _T("Rasterizer_Fill_Mode_Option"), ID_RASTERIZER_FILL_MODE);
     for (int i = 0; i < iNumFill; i++)
     {
-        pFillMode->AddOption(MY_D3D11_RESTERIZER_FILL_MODE_STIRNG[i]);
+        pFillMode->AddOption(MY_D3D11_RASTERIZER_FILL_MODE_STRING[i]);
     }
     pFillMode->AllowEdit(FALSE);
-    pResterizer->AddSubItem(pFillMode);
+    pRasterizer->AddSubItem(pFillMode);
     //CullMode
-    CMFCPropertyGridProperty* pCullMode = new CMFCPropertyGridProperty(_T("Cull_Mode"), _T("D3D11_CULL_NONE"), _T("Resterizer_Cull_Mode_Option"), ID_RESTERIZER_CULL_MODE);
+    CMFCPropertyGridProperty* pCullMode = new CMFCPropertyGridProperty(_T("Cull_Mode"), _T("D3D11_CULL_NONE"), _T("Rasterizer_Cull_Mode_Option"), ID_RASTERIZER_CULL_MODE);
     for (int i = 0; i < iNumCull; i++)
     {
-        pCullMode->AddOption(MY_D3D11_RESTERIZER_CULL_MODE_STRING[i]);
+        pCullMode->AddOption(MY_D3D11_RASTERIZER_CULL_MODE_STRING[i]);
     }
     pCullMode->AllowEdit(FALSE);
-    pResterizer->AddSubItem(pCullMode);
+    pRasterizer->AddSubItem(pCullMode);
     // //ADD PROPERTY
-    m_wndPropList.AddProperty(pResterizer);
+    m_wndPropList.AddProperty(pRasterizer);
 
 #pragma endregion
 

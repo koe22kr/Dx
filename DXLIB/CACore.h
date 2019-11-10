@@ -27,7 +27,7 @@ class CACore :public CAWindow
     void Debug_Frame();
     void Debug_Render();
     void Debug_Release();
-    void Refresh_m_Debug_Text();
+    
     DX::CADx_Shape_Line m_Debug_Shape;
 
 #endif // DEBUG
@@ -51,6 +51,7 @@ public:
     virtual bool Render();
     bool Post_Render();
     virtual bool Release();
+    void ResizeCore(int x, int y);
 public:
 public:
 

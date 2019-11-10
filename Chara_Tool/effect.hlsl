@@ -61,5 +61,5 @@ float4 PS(VS_OUTPUT input) : SV_TARGET
     float4 vColor = float4(fDot, fDot, fDot,1.0f);
     float4 color = vColor * g_txDiffuse.Sample(s0, input.t);*/// *input.c;
     //float4 color = g_txDiffuse.Sample(s0, input.t)*input.c;
-    return g_txDiffuse.Sample(s0, input.t);
+    return g_txDiffuse.Sample(s0, input.t)*input.c.w;
 }

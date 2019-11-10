@@ -143,6 +143,6 @@ void CCharaToolView::OnSize(UINT nType, int cx, int cy)
 {
     CView::OnSize(nType, cx, cy);
     CCharaToolApp* pApp = (CCharaToolApp*)AfxGetApp();
-    pApp->m_Tool.m_Device.Resize(cx, cy);
+    pApp->m_Tool.ResizeCore(cx, cy);
     // TODO: 여기에 메시지 처리기 코드를 추가합니다.
 }

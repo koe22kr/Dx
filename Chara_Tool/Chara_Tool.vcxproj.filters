@@ -81,6 +81,12 @@
     <ClInclude Include="Effect_Render_Obj.h">
       <Filter>Sample</Filter>
     </ClInclude>
+    <ClInclude Include="Effect_Form2.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect_Pane2.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Chara_Tool.cpp">
@@ -130,6 +136,12 @@
     </ClCompile>
     <ClCompile Include="Effect_Render_Obj.cpp">
       <Filter>Sample</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect_Form2.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect_Pane2.cpp">
+      <Filter>Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

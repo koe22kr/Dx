@@ -53,6 +53,7 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnSettingChange(UINT uFlags, LPCTSTR lpszSection);
 
+    afx_msg LRESULT OnPropertyChanged(WPARAM w, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 	void InitPropList();

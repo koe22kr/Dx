@@ -39,7 +39,9 @@ int Effect_Pane1::OnCreate(LPCREATESTRUCT lpCreateStruct)
         return -1;
 
     // TODO:  여기에 특수화된 작성 코드를 추가합니다.
-    m_Form = Effect_Form1::CreateOne(this);
+    m_Form1 = Effect_Form1::CreateOne(this);
+   
+
     return 0;
 }
 
@@ -47,10 +49,11 @@ int Effect_Pane1::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void Effect_Pane1::OnSize(UINT nType, int cx, int cy)
 {
     CDockablePane::OnSize(nType, cx, cy);
-    if (m_Form)
+    if (m_Form1)
     {
-        m_Form->SetWindowPos(NULL, 0, 0, cx, cy, SWP_NOZORDER);
+        m_Form1->SetWindowPos(NULL, 0, 0, cx, cy, SWP_NOZORDER);
     }
+   
     // TODO: 여기에 메시지 처리기 코드를 추가합니다.
 }
 
