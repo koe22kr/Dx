@@ -252,6 +252,7 @@ namespace DX
         //m_tBox.vCenter.y = temp._42;
         //m_tBox.vCenter.z = temp._43;
         //m_tSphere.vCenter = *((DirectX::XMFLOAT3*)(&m_tBox.vCenter));
+
     }
     void  CADx_Model2::SetMatrix(D3DXMATRIX* pWorld,
         D3DXMATRIX* pView,

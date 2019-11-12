@@ -1,6 +1,7 @@
 #pragma once
 #include "CACore.h"
 #include "ObjectMgr.h"
+using namespace DX;
 
 class Sample :public CACore
 {

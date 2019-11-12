@@ -91,26 +91,34 @@ void CACore::Debug_Release()
 }
 
 
+
+
+#endif // DEBUG
+
 void CACore::ResizeCore(int x, int y)
 {
     g_rtClient.right = x;
     g_rtClient.bottom = y;
     if (m_Device.m_pSwap_Chain != NULL)
     {
+#if defined _DEBUG || DEBUG
 
         Dx_Write.Release_Fresh_Resource();
-        m_Device.Resize(x,y);
+#endif // DEBUG
+
+        m_Device.Resize(x, y);
+#if defined _DEBUG || DEBUG
         Dx_Write.Create_Fresh_Resource();
-       
+#endif // DEBUG
+
+
         if (m_pMain_Cam)
         {
             m_pMain_Cam->SetProjMatrix(D3DX_PI / 4.0f, (float)g_rtClient.right / (float)g_rtClient.bottom, 10.0f, 3000.0f);
         }
-       
+
     }
 }
-
-#endif // DEBUG
 
 LRESULT	CACore::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -131,10 +139,6 @@ bool CACore::Frame()
 }
 bool CACore::Pre_Render()
 {
-   
-   
-   
-   
 
     // sky
     D3DXMATRIX matSkyWorld;

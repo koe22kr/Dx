@@ -25,4 +25,12 @@ public:
     afx_msg void OnBnClickedForm2Update();
 //    afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
     virtual void OnInitialUpdate();
+    afx_msg void OnCbnSelchangeMoveXExp1();
+    afx_msg void OnCbnSelchangeMoveXExp2();
+    afx_msg void OnCbnSelchangeMoveYExp1();
+    afx_msg void OnCbnSelchangeMoveYExp2();
+    afx_msg void OnCbnSelchangeMoveZExp1();
+    afx_msg void OnCbnSelchangeMoveZExp2();
+    afx_msg void OnCbnSelchangeMoveRExp1();
+    afx_msg void OnCbnSelchangeMoveRExp2();
 };

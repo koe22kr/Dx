@@ -101,15 +101,22 @@
 #define IDC_POWER1_X                    1014
 #define IDC_POWER1_Y                    1015
 #define IDC_POWER1_Z                    1016
-#define IDC_CHECK2                      1017
-#define IDC_CHECK3                      1018
+#define IDC_FADEIN_TIME2                1017
+#define IDC_ADD_TIME                    1017
 #define IDC_FORM2_UPDATE                1020
+#define IDC_MOVE_X_EXP1                 1022
 #define IDC_POWER2_X                    1023
+#define IDC_MOVE_X_EXP2                 1024
 #define IDC_POWER2_Z                    1025
 #define IDC_POWER3_X                    1026
 #define IDC_POWER3_Y                    1027
 #define IDC_POWER3_Z                    1028
+#define IDC_MOVE_X_A                    1029
+#define IDC_MOVE_Y_A                    1030
 #define IDC_POWER2_Y                    1031
+#define IDC_MOVE_Y_EXP1                 1032
+#define IDC_MOVE_X_B                    1033
+#define IDC_MOVE_X_C                    1034
 #define IDC_SCALE_X                     1035
 #define IDC_SCALE_Y                     1036
 #define IDC_SCALE_Z                     1037
@@ -119,18 +126,39 @@
 #define IDC_TRANS_X                     1041
 #define IDC_TRANS_Y                     1042
 #define IDC_TRANS_Z                     1043
+#define IDC_MOVE_X_D                    1044
 #define IDC_TARGET_X                    1045
 #define IDC_TARGET_Y                    1046
 #define IDC_TARGET_Z                    1047
+#define IDC_MOVE_X_E                    1048
 #define IDC_SPEED                       1049
+#define IDC_MOVE_Y_B                    1050
+#define IDC_MOVE_Y_C                    1051
+#define IDC_MOVE_Y_D                    1052
+#define IDC_MOVE_Y_E                    1053
+#define IDC_MOVE_Y_EXP2                 1054
+#define IDC_MOVE_Z_A                    1055
+#define IDC_MOVE_Z_B                    1056
+#define IDC_MOVE_Z_C                    1057
+#define IDC_MOVE_Z_D                    1058
+#define IDC_MOVE_Z_E                    1059
+#define IDC_MOVE_Z_EXP1                 1060
+#define IDC_MOVE_Z_EXP2                 1061
+#define IDC_MOVE_R_A                    1065
+#define IDC_MOVE_R_B                    1066
+#define IDC_MOVE_R_C                    1067
+#define IDC_MOVE_R_D                    1068
+#define IDC_MOVE_R_E                    1069
+#define IDC_MOVE_R_EXP1                 1070
+#define IDC_MOVE_R_EXP2                 1071
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        314
+#define _APS_NEXT_RESOURCE_VALUE        315
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1021
+#define _APS_NEXT_CONTROL_VALUE         1083
 #define _APS_NEXT_SYMED_VALUE           314
 #endif
 #endif

@@ -2,6 +2,57 @@
 #include "Sample.h"
 
 
+
+HRESULT TPlaneObject::CreateVertexData()
+{
+    m_Vertex_List.resize(4);
+    m_Vertex_List[0].p = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(-10.0f, 10.0f, 0.0f);
+    m_Vertex_List[0].n = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(0.0f, 0.0f, -10.0f);
+    m_Vertex_List[0].c = *(DirectX::XMFLOAT4*)&D3DXVECTOR4(1.0f, 0.0f, 0.0f, 1.0f);
+    m_Vertex_List[0].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(0.0f, 0.0f);
+
+    m_Vertex_List[1].p = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(10.0f, 10.0f, 0.0f);
+    m_Vertex_List[1].n = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(0.0f, 0.0f, -10.0f);
+    m_Vertex_List[1].c = *(DirectX::XMFLOAT4*)&D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
+    m_Vertex_List[1].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(1.0f, 0.0f);
+
+    m_Vertex_List[2].p = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(10.0f, -10.0f, 0.0f);
+    m_Vertex_List[2].n = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(0.0f, 0.0f, -10.0f);
+    m_Vertex_List[2].c = *(DirectX::XMFLOAT4*)&D3DXVECTOR4(0.0f, 0.0f, 1.0f, 1.0f);
+    m_Vertex_List[2].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(1.0f, 0.5f);
+
+    m_Vertex_List[3].p = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(-10.0f, -10.0f, 0.0f);
+    m_Vertex_List[3].n = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(0.0f, 0.0f, -10.0f);
+    m_Vertex_List[3].c = *(DirectX::XMFLOAT4*)&D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
+    m_Vertex_List[3].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(0.0f, 0.5f);
+    return S_OK;
+}
+HRESULT TPlaneObject::CreateIndexData()
+{
+    m_Index_List.resize(6);
+    m_Index_List[0] = 1;
+    m_Index_List[1] = 2;
+    m_Index_List[2] = 0;
+
+    m_Index_List[3] = 2;
+    m_Index_List[4] = 3;
+    m_Index_List[5] = 0;
+    return S_OK;
+}
+
+
+TPlaneObject::TPlaneObject()
+{
+
+}
+
+TPlaneObject::~TPlaneObject()
+{
+
+}
+//////////////////////////
+
+
 void Sample::SetBlendState(D3D11_BLEND_DESC* pBD)
 {
     HRESULT hr;
@@ -51,7 +102,7 @@ void Sample::SetRasterizerState(D3D11_RASTERIZER_DESC* pRD)
     {
         m_RasterizerDesc = *pRD;
     }
-    
+
     if (FAILED(hr =
         m_Device.m_pDevice->CreateRasterizerState(&m_RasterizerDesc, &m_pRasterizerState)))
     {
@@ -72,12 +123,13 @@ void Sample::SetSamplerState(D3D11_SAMPLER_DESC* pSD)
         m_SamplerDesc.MaxLOD = FLT_MAX;
         m_SamplerDesc.MinLOD = FLT_MIN;
         m_SamplerDesc.MaxAnisotropy = 16;
+        m_SamplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+        m_SamplerDesc.MipLODBias = 0;
     }
     else
     {
         m_SamplerDesc = *pSD;
     }
-
     if (FAILED(hr = m_Device.m_pDevice->CreateSamplerState(&m_SamplerDesc, &m_pSamplerState)))
     {
         EM(hr, SetSamplerState, Sample);
@@ -105,55 +157,6 @@ void Sample::SetDepthStencilState(D3D11_DEPTH_STENCIL_DESC* pDSD)
         return;
     }
 
-    
-}
-
-
-HRESULT TPlaneObject::CreateVertexData()
-{
-    m_Vertex_List.resize(4);
-    m_Vertex_List[0].p = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(-10.0f, 10.0f, 0.0f);
-    m_Vertex_List[0].n = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(0.0f, 0.0f, -10.0f);
-    m_Vertex_List[0].c = *(DirectX::XMFLOAT4*)&D3DXVECTOR4(1.0f, 0.0f, 0.0f, 1.0f);
-    m_Vertex_List[0].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(0.0f, 0.0f);
-
-    m_Vertex_List[1].p = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(10.0f, 10.0f, 0.0f);
-    m_Vertex_List[1].n = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(0.0f, 0.0f, -10.0f);
-    m_Vertex_List[1].c = *(DirectX::XMFLOAT4*)&D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
-    m_Vertex_List[1].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(1.0f, 0.0f);
-
-    m_Vertex_List[2].p = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(10.0f, -10.0f, 0.0f);
-    m_Vertex_List[2].n = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(0.0f, 0.0f, -10.0f);
-    m_Vertex_List[2].c = *(DirectX::XMFLOAT4*)&D3DXVECTOR4(0.0f, 0.0f, 1.0f, 1.0f);
-    m_Vertex_List[2].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(1.0f, 0.5f);
-
-    m_Vertex_List[3].p = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(-10.0f, -10.0f, 0.0f);
-    m_Vertex_List[3].n = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(0.0f, 0.0f, -10.0f);
-    m_Vertex_List[3].c = *(DirectX::XMFLOAT4*)&D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
-    m_Vertex_List[3].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(0.0f, 0.5f);
-    return S_OK;
-}
-HRESULT TPlaneObject::CreateIndexData()
-{
-    m_Index_List.resize(6);
-    m_Index_List[0] = 1;
-    m_Index_List[1] = 2;
-    m_Index_List[2] = 0;
-
-    m_Index_List[3] = 2;
-    m_Index_List[4] = 3;
-    m_Index_List[5] = 0;
-    return S_OK;
-}
-
-
-TPlaneObject::TPlaneObject()
-{
-
-}
-
-TPlaneObject::~TPlaneObject()
-{
 
 }
 
@@ -179,10 +182,10 @@ bool Sample::Frame()
 
     static float tTime = 0.0f;
     tTime += g_fSecondPerFrame;
-    if (tTime > 1.1f)
+    if (tTime > m_Render_List.m_Add_Time)
     {
         m_Render_List.Add();
-        tTime -= 1.1f;
+        tTime -= m_Render_List.m_Add_Time;
     }
 
     return true;
@@ -208,16 +211,15 @@ bool Sample::Render()
     matBillboard._42 = 0.0f;
     matBillboard._43 = 0.0f;
     D3DXMatrixScaling(&Scale, m_Render_List.m_Base_Effect.m_vScale.x, m_Render_List.m_Base_Effect.m_vScale.y, m_Render_List.m_Base_Effect.m_vScale.z);
-    D3DXMatrixRotationYawPitchRoll(&Rot,m_Render_List.m_Base_Effect.m_vRotation.y, m_Render_List.m_Base_Effect.m_vRotation.x, m_Render_List.m_Base_Effect.m_vRotation.z);
-    
+    D3DXMatrixRotationYawPitchRoll(&Rot, D3DXToRadian(m_Render_List.m_Base_Effect.m_vRotation.y), D3DXToRadian(m_Render_List.m_Base_Effect.m_vRotation.x), D3DXToRadian(m_Render_List.m_Base_Effect.m_vRotation.z));
     
     D3DXMatrixTranslation(&Trans, m_Render_List.m_Base_Effect.m_vPos.x, m_Render_List.m_Base_Effect.m_vPos.y, m_Render_List.m_Base_Effect.m_vPos.z);
 
+    m_Render_List.Set_Move();
 
     matBillboard = Scale * Rot * Trans * matBillboard;
 
     //
-
 
     for (int a = 0; a < m_Render_List.m_Effect_Vertex_List.size(); a++)
     {
@@ -236,9 +238,9 @@ bool Sample::Render()
         matFinal = matBillboard;
         
 
-        m_Render_List.m_Effect_Vertex_List[a].m_vPos.x += (TargetVector.x*m_Render_List.m_Base_Effect.m_fSpeed_to_Target + Power.x)*g_fSecondPerFrame;
-        m_Render_List.m_Effect_Vertex_List[a].m_vPos.y += (TargetVector.y*m_Render_List.m_Base_Effect.m_fSpeed_to_Target + Power.y)*g_fSecondPerFrame;
-        m_Render_List.m_Effect_Vertex_List[a].m_vPos.z += (TargetVector.z*m_Render_List.m_Base_Effect.m_fSpeed_to_Target + Power.z)*g_fSecondPerFrame;
+        m_Render_List.m_Effect_Vertex_List[a].m_vPos.x += (TargetVector.x*m_Render_List.m_Base_Effect.m_fSpeed_to_Target + Power.x + m_Render_List.m_Move_Vector.x)*g_fSecondPerFrame;
+        m_Render_List.m_Effect_Vertex_List[a].m_vPos.y += (TargetVector.y*m_Render_List.m_Base_Effect.m_fSpeed_to_Target + Power.y + m_Render_List.m_Move_Vector.y)*g_fSecondPerFrame;
+        m_Render_List.m_Effect_Vertex_List[a].m_vPos.z += (TargetVector.z*m_Render_List.m_Base_Effect.m_fSpeed_to_Target + Power.z + m_Render_List.m_Move_Vector.z)*g_fSecondPerFrame;
 
         matFinal._41 += m_Render_List.m_Effect_Vertex_List[a].m_vPos.x;
         matFinal._42 += m_Render_List.m_Effect_Vertex_List[a].m_vPos.y;

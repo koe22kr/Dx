@@ -124,6 +124,7 @@ HRESULT Effect_Render_Obj::LoadTextures(ID3D11Device* pd3dDevice, const TCHAR* p
 Effect_Render_Obj::Effect_Render_Obj()
 {
     m_bRend = false;
+    m_Add_Time = 1.0f;
 }
 Effect_Render_Obj::~Effect_Render_Obj()
 {
@@ -188,13 +189,18 @@ void Effect_Render_Obj::Update_Buffer()
             }
 
 
-            if (iter->m_fFadeOutTime <= 0 && iter->m_Life_Time <= 0)
-            {
-                iter = m_Effect_Vertex_List.erase(iter);
-            }
+            
             
         }
-        iter++;
+        if (iter->m_fFadeOutTime <= 0 && iter->m_Life_Time <= 0)
+        {
+            iter = m_Effect_Vertex_List.erase(iter);
+        }
+        else
+        {
+            iter++;
+
+        }
         
     }
       //  m_Effect_Instance_List[ibuffer].m_matWorld = matRotation * matTrans;
@@ -269,4 +275,69 @@ void Effect_Render_Obj::Add()
         data.m_Alpha = 0;
     }
     m_Effect_Vertex_List.push_back(data);
+}
+
+float Effect_Render_Obj::EXP_Product(float a, float b,Radius_exp exp1,float c,float d, Radius_exp exp2,float e)
+{
+    return a + b * GetExp(c + d * GetExp(e, exp2), exp1);
+}
+float Effect_Render_Obj::GetExp(float in, Radius_exp exp)
+{
+    //if (in == 0.0f)
+    //{
+    //    return 0.0f;
+    //}
+
+    switch (exp)
+    {
+        case COS:
+        {
+            return cosf(in);
+        }break;
+        case SIN:
+        {
+            return sinf(in);
+        }break;
+        case TAN:
+        {
+            return tanf(in);
+        }break;
+        case COS_TIMER:
+        {
+            return cosf(g_fGameTimer);
+        }break;
+        case SIN_TIMER:
+        {
+            return sinf(g_fGameTimer);
+
+        }break;
+        case TAN_TIMER:
+        {
+            return tanf(g_fGameTimer);
+
+        }break;
+        case RETURN_ZERO:
+        {
+            return 0.0f;
+        }
+        case RETURN_ONE:
+        {
+            return 1.0f;
+        }
+        default:
+            return 0.0f;
+    }
+}
+
+void Effect_Render_Obj::Set_Move()
+{
+    m_fMove_Radius = EXP_Product(m_Move_Data_R.a, m_Move_Data_R.b, m_Move_Data_R.exp1, m_Move_Data_R.c, m_Move_Data_R.d, m_Move_Data_R.exp2, m_Move_Data_R.e);
+
+    m_Move_Vector.x = m_fMove_Radius* EXP_Product(m_Move_Data_X.a, m_Move_Data_X.b, m_Move_Data_X.exp1, m_Move_Data_X.c, m_Move_Data_X.d, m_Move_Data_X.exp2, m_Move_Data_X.e);
+
+    m_Move_Vector.y = m_fMove_Radius* EXP_Product(m_Move_Data_Y.a, m_Move_Data_Y.b, m_Move_Data_Y.exp1, m_Move_Data_Y.c, m_Move_Data_Y.d, m_Move_Data_Y.exp2, m_Move_Data_Y.e);
+
+    m_Move_Vector.z = m_fMove_Radius* EXP_Product(m_Move_Data_Z.a, m_Move_Data_Z.b, m_Move_Data_Z.exp1, m_Move_Data_Z.c, m_Move_Data_Z.d, m_Move_Data_Z.exp2, m_Move_Data_Z.e);
+
+    
 }

@@ -1,4 +1,5 @@
 #include "Skin_Obj.h"
+using namespace DX;
 
 int Skin_Obj::Get_obj_size()
 {

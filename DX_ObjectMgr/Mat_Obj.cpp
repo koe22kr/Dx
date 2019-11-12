@@ -1,4 +1,5 @@
 #include "Mat_Obj.h"
+using namespace DX;
 
 void Mat_Obj::Mat_Load(const char* mtxconvertfile, ID3D11Device* pDevice)
 {

@@ -280,7 +280,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="temp.txt" />
+    <Text Include="EffectRender_Obj.h.txt" />
+    <Text Include="Effect_Render_Obj.cpp.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

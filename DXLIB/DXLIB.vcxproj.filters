@@ -78,6 +78,12 @@
     <ClCompile Include="TModelViewCamera.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="CADx_Map.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CADx_Light.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="CADx_Helper2.cpp">
       <Filter>소스 파일\ex2</Filter>
     </ClCompile>
@@ -86,12 +92,6 @@
     </ClCompile>
     <ClCompile Include="CATexture_Mgr.cpp">
       <Filter>소스 파일\ex2</Filter>
-    </ClCompile>
-    <ClCompile Include="CADx_Map.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CADx_Light.cpp">
-      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +161,12 @@
     <ClInclude Include="TModelViewCamera.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="CADx_Map.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CADx_Light.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="CADx_Helper2.h">
       <Filter>소스 파일\ex2</Filter>
     </ClInclude>
@@ -169,12 +175,6 @@
     </ClInclude>
     <ClInclude Include="CATexture_Mgr.h">
       <Filter>소스 파일\ex2</Filter>
-    </ClInclude>
-    <ClInclude Include="CADx_Map.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CADx_Light.h">
-      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

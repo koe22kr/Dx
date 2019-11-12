@@ -1,10 +1,7 @@
 #pragma once
-//#include <iostream>
-//#include <fstream>
 #include "Skin_Obj.h"
 #include "Mat_Obj.h"
 #include "Render_Obj.h"
-
 
 
 class ObjectMgr
@@ -15,8 +12,11 @@ private:
     void Load_Skin(const char* skin_file_name, int shader_index, int mat_index, ID3D11Device* pDevice);
 public:
     wstring texture_path=L"../../_data/obj/";
+
     std::vector <Mat_Obj>  m_Mat_List;
+
     std::vector <Skin_Obj> m_Skin_List;
+
     std::vector<Render_Obj> m_Render_Obj_List;
 public:
     void Load_Cit(ID3D11Device* pDevice,const TCHAR* cit_file_name);

@@ -3,6 +3,7 @@
 #include "CADx_Model2.h"
 #include <iostream>
 #include <fstream>
+using namespace DX;
 
 struct Scene
 {
@@ -34,7 +35,7 @@ struct Animation_Info
 {
     std::string obj_name;
     std::string parent_name;
-    DX::T_BOX mBox;
+    T_BOX mBox;
     // D3DXMATRIX  m_matCalculation;
     // D3DXMATRIX mat_world;       //현 버전에서는 사용하지 않지만. 버전에 따라 필요할 수 있?
     // D3DXMATRIX mat_world_inv;   //현 버전에서는 사용하지 않지만. 버전에 따라 필요할 수 있?

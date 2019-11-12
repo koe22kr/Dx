@@ -69,10 +69,6 @@ namespace DX
     class CADx_Model2
     {
     public:
-
-
-
-    public:
         DirectX::XMMATRIX m_matWorld;
         DirectX::XMMATRIX m_matView;
         DirectX::XMMATRIX m_matProj;
@@ -127,6 +123,7 @@ namespace DX
 
 
         CADx_Model2();
+
         virtual ~CADx_Model2();
 
     };

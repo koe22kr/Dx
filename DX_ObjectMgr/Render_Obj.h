@@ -1,8 +1,8 @@
 #pragma once
 #include "CADx_Model2.h"
 
-using namespace DX;
 //InputLayout 다를경우 이 인터페이스를 상속받아서 재정의
+
 class Render_Obj :public DX::CADx_Model2
 {
 public:

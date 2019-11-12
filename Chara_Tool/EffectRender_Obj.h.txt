@@ -1,0 +1,121 @@
+#pragma once
+#include "CADx_Model2.h"
+#include "TCamera.h"
+
+#define MAX_EFFECT 1000
+
+struct Effect_VB
+{
+    D3DXVECTOR3 v_Pos;
+    Effect_VB() 
+    {
+        v_Pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+    }
+};
+struct Instance_VB
+{
+    D3DXVECTOR4 m_vColor;
+    D3DXVECTOR2 m_Tex_UV;
+    float m_Delta_Time;
+    float		m_fFadeInDeltaTime;
+    float		m_fFadeOutDeltaTime;
+    D3DXVECTOR3 m_vTargetVelocity;
+    D3DXMATRIX m_matControl;
+    int			m_iTexID; //단일 파일 애니메이션 에서 사용중.
+    Instance_VB()
+    {
+        m_Tex_UV = D3DXVECTOR2(0.0f, 0.0f);
+        m_Delta_Time = 0.0f;
+        m_fFadeInDeltaTime = 0.0f;
+        m_fFadeOutDeltaTime = 0.0f;
+        m_vTargetVelocity = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+         m_vColor = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
+        D3DXMatrixIdentity(&m_matControl);
+        m_iTexID = 0;
+    }
+
+};
+struct Effect_CB
+{
+    UINT nEffectNum;
+    D3DXVECTOR3 TotalPower;
+};
+
+using namespace DX;
+//InputLayout 다를경우 이 인터페이스를 상속받아서 재정의
+class Effect_Render_Obj :public DX::CADx_Model2
+{
+public:
+    bool m_bRend;
+    bool m_bLoop;
+public:
+   // TCamera* m_cur_cam;
+    wstring m_szShader_Name;
+    Instance_VB m_Base_Effect;
+
+    //컨트롤 행렬
+    D3DXVECTOR3 m_vScale;   //컨트롤 행렬 만들어서 INSTANCEBUFFER에 투척
+    D3DXVECTOR3 m_vRotation;//컨트롤 행렬 만들어서 INSTANCEBUFFER에 투척
+    D3DXVECTOR3 m_vPos;     //컨트롤 행렬 만들어서 INSTANCEBUFFER에 투척
+    //
+    D3DXVECTOR3 m_vTargetPos;//인스턴트로
+    float m_fSpeed_to_Target; //
+
+    D3DXVECTOR3 m_vPower1;//합해서 상수로
+    D3DXVECTOR3 m_vPower2;//
+    D3DXVECTOR3 m_vPower3;//
+
+    float       m_Life_Time;//상수로
+    float		m_fFadeInTime;//상수로
+    float		m_fFadeOutTime;
+
+    ////////////////////////////////////////////////현재 미사용
+    std::vector <Effect_VB> m_Effect_Vertex_List;
+    std::vector<Instance_VB> m_Effect_Instance_List;
+
+    ID3D11Buffer* m_pEffect_Instance_buffer;
+    // 재정의 함수
+    virtual HRESULT SetInputLayout()override;
+    //HRESULT CreateConstantBuffer()override;
+    virtual HRESULT CreateVertexBuffer()override;
+public:
+private:
+    //무효화 한 함수
+    virtual HRESULT CreateVertexData()override;
+    virtual HRESULT CreateIndexData()override;
+    
+    virtual HRESULT CreateIndexBuffer()override;
+    virtual HRESULT LoadTextures(
+        ID3D11Device* pd3dDevice,
+        const TCHAR* pLoadTextureFile)override;
+public:
+
+public:
+    Effect_Render_Obj()
+    {
+        m_bRend = false;
+
+        D3DXVECTOR3 m_vScale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+        D3DXVECTOR3 m_vRotation = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        D3DXVECTOR3 m_vPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+        m_vPower1 = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        m_vPower2 = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        m_vPower3 = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        m_vTargetPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        m_fSpeed_to_Target = 0.0f;
+        m_Life_Time = 5.0f;
+        m_fFadeInTime = 0.0f;
+        m_fFadeOutTime = 0.0f;
+
+    }
+    ~Effect_Render_Obj();
+
+
+public:
+    void Update_Buffer();
+    void Add();
+};
+//오버라이딩 해서 무시하지 않은 Model->Create() 내부 함수들
+//LoadShaderFile
+//SetInputLayout

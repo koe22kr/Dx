@@ -59,6 +59,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "khg_Export_v5", "khg_Export_v5\khg_Export_v5.vcxproj", "{A6427210-C4A2-48AA-AE83-BE017DCCC00E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX_ObjectMgr", "DX_ObjectMgr\DX_ObjectMgr.vcxproj", "{B989580A-FF41-471A-B210-E8BF3942E9B3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E11BF6D0-7A05-42CD-A4A6-8E6D53E1C337} = {E11BF6D0-7A05-42CD-A4A6-8E6D53E1C337}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nTree", "nTree\nTree.vcxproj", "{D6BBB30E-0710-4072-B07D-A66332EB0A5B}"
 EndProject

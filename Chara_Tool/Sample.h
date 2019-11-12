@@ -57,8 +57,8 @@ public:
     void SetSamplerState(D3D11_SAMPLER_DESC* pSD);
     void SetDepthStencilState(D3D11_DEPTH_STENCIL_DESC* pDSD);
 public:
-    int m_iSel_Tex;
-    int m_iSel_Obj;
+    int m_iSel_Tex=-1;
+    int m_iSel_Obj=-1;
     int m_iCut_Num = 4; //과제후 편집해야함
 public:
     /*std::vector< */Effect_Render_Obj/*>*/ m_Render_List;

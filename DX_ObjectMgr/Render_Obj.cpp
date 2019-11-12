@@ -1,5 +1,7 @@
 #include "Render_Obj.h"
 
+using namespace DX;
+
 bool Render_Obj::Create_Render_Obj(ID3D11Device* pd3dDevice, const TCHAR* pLoadShaderFile)
 {
     m_pDevice = pd3dDevice;

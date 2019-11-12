@@ -1,8 +1,12 @@
 #pragma once
+#include "CATexture_Mgr.h"
 #include "CADx_Shape.h"
 #include "CADx_Model2.h"
+
 #include <iostream>
 #include <fstream>
+
+using namespace DX;
 
 struct Texture_Info
 {

@@ -1,8 +1,9 @@
 #include "Sample.h"
+using namespace DX;
 
 bool Sample::Init()
 {
-    DX_MGR.Load_Cit(CADevice::m_pDevice, L"../../_data/chara/swat.cit");
+    DX_MGR.Load_Cit(CADevice::m_pDevice, L"../../_data/chara/mob.cit");
     return true;
 }
 bool Sample::Frame()

@@ -58,7 +58,7 @@ void Effect_Form1::OnBnClickedNewObj()
 
 void Effect_Form1::OnLbnSelchangeObjList()
 {
-    CCharaToolApp* pApp = (CCharaToolApp*)AfxGetApp();
+   
 
     int i = SendDlgItemMessageW(IDC_OBJ_LIST, LB_GETCURSEL, 0, 0);
     TOOL.m_iSel_Obj = i;

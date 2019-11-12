@@ -17,11 +17,13 @@
 //#pragma comment (lib, "CAWindow_Lib.lib") //ÀÌ³ğÀº ÁÁÀº³ğÀÌ´Ù.
 #include <dinput.h>
 #pragma comment (lib, "dinput8.lib")
-
+//
 #if defined(DEBUG) || (_DEBUG)
 #pragma comment(lib,"DXLIB.lib")
+
 #else
-#pragma commnet(lib,"DXLIB.lib")
+
+#pragma comment(lib,"DXLIB.lib")
 #endif
 
 //
