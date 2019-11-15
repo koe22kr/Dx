@@ -296,7 +296,7 @@ bool CADevice::Pre_Render()
 }
 bool CADevice::Post_Render()
 {   
-    m_pSwap_Chain->Present(0 ,0);//
+    hr = m_pSwap_Chain->Present(0 ,0);//
     return true;
 }
 bool CADevice::Render()

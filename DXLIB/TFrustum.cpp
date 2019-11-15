@@ -301,9 +301,9 @@ namespace DX
                 t_Position = P_SPANNING;
             }
 
-            if (fPlaneToCenter /*+ 1.0f*/ < -fDistance)// 화면밖 바로컷 하지말고 조금 여유 두고 컷하는?
+            if (fPlaneToCenter +1< -fDistance)// 화면밖 바로컷 하지말고 조금 여유 두고 컷하는?
             {
-                return P_BACK;
+                return  P_BACK;
             }
         }
         return t_Position;

@@ -2,7 +2,7 @@
 #include "CACore.h"
 #include "Effect_Render_Obj.h"
 
-#define MAX_EFFECT 255
+
 
 #define TOOL ((CCharaToolApp*)AfxGetApp())->m_Tool
 
@@ -61,7 +61,8 @@ public:
     int m_iSel_Obj=-1;
     int m_iCut_Num = 4; //과제후 편집해야함
 public:
-    /*std::vector< */Effect_Render_Obj/*>*/ m_Render_List;
+    Effect_Render_Obj m_Cur_Option;
+    /*std::vector<*/ Effect_Render_Obj/*>*/ m_Render_List;
     std::vector<Tex_Info> m_Tex_List;//로드된 텍스쳐 정보
     std::vector<Effect_Obj> m_Obj_List; //생성된 오브젝트 [각 오브젝트당 최대 n개 의 이펙트 들]
     //std::vector<Effect_Data> m_Effect_List;  //버텍스 데이터 정보 VB제작용

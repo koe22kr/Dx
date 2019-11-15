@@ -235,6 +235,9 @@
     <FxCompile Include="effect.hlsl">
       <Filter>Sample</Filter>
     </FxCompile>
+    <FxCompile Include="effect2.hlsl">
+      <Filter>Sample</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="EffectRender_Obj.h.txt" />

@@ -397,8 +397,12 @@ void  Quad_Tree::DrawFindNode(Tree_Node* pNode)
     DX::T_POSITION t_Pos =
         m_pCamera->CheckPoitionOBBInPlane(&pNode->m_BBox);
 
-    if (t_Pos == DX::P_BACK) return;
-    
+    if (t_Pos == DX::P_BACK) 
+        return;
+    if (t_Pos == DX::P_SPANNING&&pNode->m_is_Leaf)
+    {
+        m_Draw_Node_List.push_back(pNode);
+    }
     /*if (t_Pos == DX::P_FRONT)
     {
         VisibleNode_leaf(pNode);
@@ -408,12 +412,13 @@ void  Quad_Tree::DrawFindNode(Tree_Node* pNode)
     {
         Check_Visible_Object(pNode);
     }*/
-    if (t_Pos == DX::P_FRONT|| t_Pos == DX::P_SPANNING)
+    if (t_Pos == DX::P_FRONT)/*|| t_Pos == DX::P_SPANNING)*/
     {
         VisibleNode_leaf(pNode);
         Check_Visible_Object(pNode);
         return;
     }
+   
     for (int iNode = 0; iNode < pNode->m_Child_List.size();
         iNode++)
     {
@@ -426,7 +431,6 @@ void  Quad_Tree::Frame()
 {
     m_Draw_Obj_List.clear();
     m_Draw_Node_List.clear();
-
     DrawFindNode(m_pRoot_Node);
 
 }

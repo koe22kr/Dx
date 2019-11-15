@@ -24,6 +24,12 @@ namespace DX
         ID3DBlob** ppBlobOut = nullptr,
         const char* pFuntionName = 0,
         bool bBinary = false);
+    ID3D11GeometryShader* LoadGeometryShaderFile(
+        ID3D11Device* pd3dDevice,
+        const void* pShaderFileData,
+        ID3DBlob** ppBlobOut = nullptr,
+        const char* pFuntionName = 0,
+        bool bBinary = false);
 
     ID3D11InputLayout* CreateInputLayout(
         ID3D11Device* pd3dDevice,
@@ -66,6 +72,10 @@ namespace DX
         Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSRV;
         Microsoft::WRL::ComPtr<ID3DBlob> m_pVSBlob;
 
+        Microsoft::WRL::ComPtr<ID3D11GeometryShader> m_pGeometryShader;
+        Microsoft::WRL::ComPtr<ID3D11HullShader> m_pHullShader;
+        Microsoft::WRL::ComPtr<ID3D11DomainShader> m_pDomainShader;
+        Microsoft::WRL::ComPtr<ID3D11ComputeShader> m_pComputeShader;
     public:
         void PreRender(ID3D11DeviceContext* pContext, UINT iSize=0);
         void PostRender(ID3D11DeviceContext* pContext, UINT iCount=0);

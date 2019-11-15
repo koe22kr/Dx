@@ -17,6 +17,9 @@ namespace DX
         m_helper.m_pPixelShader.Attach(
             DX::LoadPixelShaderFile(pd3dDevice,
                 pLoadShaderFile));
+
+        m_helper.m_pGeometryShader.Attach(
+            DX::LoadGeometryShaderFile(pd3dDevice, pLoadShaderFile));
         return hr;
     }
     HRESULT CADx_Model2::SetInputLayout() {

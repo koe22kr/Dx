@@ -58,10 +58,11 @@ void Effect_Form1::OnBnClickedNewObj()
 
 void Effect_Form1::OnLbnSelchangeObjList()
 {
-   
-
     int i = SendDlgItemMessageW(IDC_OBJ_LIST, LB_GETCURSEL, 0, 0);
     TOOL.m_iSel_Obj = i;
+
+  //      TOOL.m_Cur_Option = TOOL.m_Render_List[TOOL.m_iSel_Obj];
+
   //  AfxMessageBox(pApp->m_Tool.m_Obj_List[i].m_szName);
     // TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }
@@ -113,7 +114,9 @@ void Effect_Form1::OnLbnSelchangeTextureList()
 
 void Effect_Form1::OnBnClickedUpdateButton()
 {
- 
-    TOOL.m_Obj_List[TOOL.m_iSel_Obj].m_iTex = TOOL.m_iSel_Tex;
+    if (TOOL.m_iSel_Tex != -1)
+    {
+        TOOL.m_Obj_List[TOOL.m_iSel_Obj].m_iTex = TOOL.m_iSel_Tex;
+    }
     // TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }

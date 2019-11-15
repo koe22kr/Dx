@@ -209,7 +209,7 @@ bool CACore::CACoreInit()
     
     
     
-    m_Heightmap.Init(L"../../_shader/light.hlsl", L"../../_data/map/castle.jpg",L"../../_data/map/HEIGHT_CASTLE_65.bmp");
+    //m_Heightmap.Init(L"../../_shader/light.hlsl", L"../../_data/map/castle.jpg",L"../../_data/map/HEIGHT_CASTLE_65.bmp");
 
     m_DiffuseLight.Init();
 

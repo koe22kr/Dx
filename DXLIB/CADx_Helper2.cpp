@@ -157,6 +157,70 @@ namespace DX
         }
         return pShader;
     }
+
+
+    ID3D11GeometryShader* LoadGeometryShaderFile(
+        ID3D11Device* pd3dDevice,
+        const void* pShaderFileData,
+        ID3DBlob** ppBlobOut,
+        const char* pFuntionName,
+        bool bBinary)
+    {
+        HRESULT hr;
+        ID3DBlob* pBlob = NULL;
+        ID3D11GeometryShader* pShader;
+        DWORD dwSize = 0;
+        LPCVOID lpData = 0;
+
+        if (bBinary == false)
+        {
+            if (pFuntionName == 0)
+            {
+                if (FAILED(hr = CompilerShaderFromFile(
+                    (TCHAR*)pShaderFileData,
+                    "GS", "gs_5_0", &pBlob)))
+                {
+                    return nullptr;
+                }
+            }
+            else
+            {
+                if (FAILED(hr = CompilerShaderFromFile(
+                    (TCHAR*)pShaderFileData,
+                    pFuntionName, "gs_5_0", &pBlob)))
+                {
+                    return nullptr;
+                }
+            }
+            dwSize = pBlob->GetBufferSize();
+            lpData = pBlob->GetBufferPointer();
+        }
+        else
+        {
+            pBlob = *ppBlobOut;
+            if (pBlob == nullptr) return nullptr;
+            dwSize = pBlob->GetBufferSize();
+            lpData = pBlob->GetBufferPointer();
+        }
+
+        if (FAILED(hr = pd3dDevice->CreateGeometryShader(
+            lpData, dwSize, NULL, &pShader)))
+        {
+            pBlob->Release();
+            return nullptr;
+        }
+
+        if (ppBlobOut == nullptr)
+        {
+            pBlob->Release();
+        }
+        else
+        {
+            *ppBlobOut = pBlob;
+        }
+        return pShader;
+    }
+
     ID3D11InputLayout* CreateInputLayout(
         ID3D11Device* pd3dDevice,
         DWORD dwSize, LPCVOID lpData,

@@ -156,8 +156,6 @@ void Sample::SetDepthStencilState(D3D11_DEPTH_STENCIL_DESC* pDSD)
         EM(hr, SetDepthStencilState, Sample);
         return;
     }
-
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -166,30 +164,28 @@ bool Sample::Init()
  /*   m_Render_List.m_Effect_Vertex_List.resize(MAX_EFFECT);
     m_Render_List.Create_Render_Obj(CADevice::m_pDevice,L"effect.hlsl");
     m_Render_List.Add();*/
-    m_Plane.Create(CADevice::m_pDevice, L"effect.hlsl", L"../../_data/obj/attack_damage_01.dds");
-
+   // m_Plane.Create(CADevice::m_pDevice, L"effect.hlsl", L"../../_data/obj/attack_damage_01.dds");
+    m_Cur_Option.m_pImmediateContext = m_Device.m_pImmediate_Device_Context;
     SetSamplerState(nullptr);
     SetDepthStencilState(nullptr);
     SetRasterizerState(nullptr);
     SetBlendState(nullptr);
-    
+    m_Cur_Option.Create(m_Device.m_pDevice, L"effect2.hlsl", L"../../_data/obj/attack_damage_01.dds");
     return true;
 }
 bool Sample::Frame()
 {
+    m_Cur_Option.Frame();
+   // m_Render_List.Update_Buffer();
 
-    m_Render_List.Update_Buffer();
-
-    static float tTime = 0.0f;
-    tTime += g_fSecondPerFrame;
-    if (tTime > m_Render_List.m_Add_Time)
-    {
-        m_Render_List.Add();
-        tTime -= m_Render_List.m_Add_Time;
-    }
-
+   // static float tTime = 0.0f;
+   // tTime += g_fSecondPerFrame;
+   // if (tTime > m_Render_List.m_Add_Time)
+   // {
+   //     m_Render_List.Add();
+   //     tTime -= m_Render_List.m_Add_Time;
+   // }
     return true;
-
 }
 bool Sample::Render()
 {
@@ -197,65 +193,64 @@ bool Sample::Render()
    DX::Set_DSState(m_Device.m_pImmediate_Device_Context, m_pDepthStencilState);
     DX::Set_RSState(m_Device.m_pImmediate_Device_Context, m_pRasterizerState);
     DX::Set_SState(m_Device.m_pImmediate_Device_Context, m_pSamplerState);
-
-    
+    m_Cur_Option.SetMatrix(nullptr, &m_pMain_Cam->m_matView, &m_pMain_Cam->m_matProj);
+    m_Cur_Option.Render();
     // 복수 오브젝트시 함수화
-    D3DXMATRIX matBillboard, Scale, Rot,Trans,matFinal;
-    D3DXMatrixIdentity(&matBillboard);
-    D3DXMatrixIdentity(&Scale);
-    D3DXMatrixIdentity(&Rot);
-
-    D3DXMatrixInverse(&matBillboard, NULL,
-        &m_pMain_Cam->m_matView);
-    matBillboard._41 = 0.0f;
-    matBillboard._42 = 0.0f;
-    matBillboard._43 = 0.0f;
-    D3DXMatrixScaling(&Scale, m_Render_List.m_Base_Effect.m_vScale.x, m_Render_List.m_Base_Effect.m_vScale.y, m_Render_List.m_Base_Effect.m_vScale.z);
-    D3DXMatrixRotationYawPitchRoll(&Rot, D3DXToRadian(m_Render_List.m_Base_Effect.m_vRotation.y), D3DXToRadian(m_Render_List.m_Base_Effect.m_vRotation.x), D3DXToRadian(m_Render_List.m_Base_Effect.m_vRotation.z));
-    
-    D3DXMatrixTranslation(&Trans, m_Render_List.m_Base_Effect.m_vPos.x, m_Render_List.m_Base_Effect.m_vPos.y, m_Render_List.m_Base_Effect.m_vPos.z);
-
-    m_Render_List.Set_Move();
-
-    matBillboard = Scale * Rot * Trans * matBillboard;
+ // D3DXMATRIX matBillboard, Scale, Rot,Trans,matFinal;
+ // D3DXMatrixIdentity(&matBillboard);
+ // D3DXMatrixIdentity(&Scale);
+ // D3DXMatrixIdentity(&Rot);
+ //
+ // D3DXMatrixInverse(&matBillboard, NULL,
+ //     &m_pMain_Cam->m_matView);
+ // matBillboard._41 = 0.0f;
+ // matBillboard._42 = 0.0f;
+ // matBillboard._43 = 0.0f;
+ // D3DXMatrixScaling(&Scale, m_Render_List.m_vScale.x, m_Render_List.m_vScale.y, m_Render_List.m_vScale.z);
+ // D3DXMatrixRotationYawPitchRoll(&Rot, D3DXToRadian(m_Render_List.m_vRotation.y), D3DXToRadian(m_Render_List.m_vRotation.x), D3DXToRadian(m_Render_List.m_vRotation.z));
+ // 
+ // D3DXMatrixTranslation(&Trans, m_Render_List.m_vPos.x, m_Render_List.m_vPos.y, m_Render_List.m_vPos.z);
+ //
+ // m_Render_List.Set_Move();
+ //
+ // matBillboard = Scale * Rot * Trans * matBillboard;
 
     //
 
-    for (int a = 0; a < m_Render_List.m_Effect_Vertex_List.size(); a++)
+   // for (int a = 0; a < m_Render_List.m_Effect_Vertex_List.size(); a++)
     {
       
-        D3DXVECTOR3 TargetVector;
-        TargetVector.x = (m_Render_List.m_Base_Effect.m_vTargetPos.x - m_Render_List.m_Effect_Vertex_List[a].m_vPos.x);
-        TargetVector.y = (m_Render_List.m_Base_Effect.m_vTargetPos.y - m_Render_List.m_Effect_Vertex_List[a].m_vPos.y);
-        TargetVector.z = (m_Render_List.m_Base_Effect.m_vTargetPos.z - m_Render_List.m_Effect_Vertex_List[a].m_vPos.z);
-        D3DXVec3Normalize(&TargetVector, &TargetVector);
-
-        D3DXVECTOR3 Power;
-        Power.x = (m_Render_List.m_Base_Effect.m_vPower1.x + m_Render_List.m_Base_Effect.m_vPower2.x +m_Render_List.m_Base_Effect.m_vPower3.x);
-        Power.y = (m_Render_List.m_Base_Effect.m_vPower1.y + m_Render_List.m_Base_Effect.m_vPower2.y +m_Render_List.m_Base_Effect.m_vPower3.y);
-        Power.z = (m_Render_List.m_Base_Effect.m_vPower1.z + m_Render_List.m_Base_Effect.m_vPower2.z +m_Render_List.m_Base_Effect.m_vPower3.z);
-
-        matFinal = matBillboard;
-        
-
-        m_Render_List.m_Effect_Vertex_List[a].m_vPos.x += (TargetVector.x*m_Render_List.m_Base_Effect.m_fSpeed_to_Target + Power.x + m_Render_List.m_Move_Vector.x)*g_fSecondPerFrame;
-        m_Render_List.m_Effect_Vertex_List[a].m_vPos.y += (TargetVector.y*m_Render_List.m_Base_Effect.m_fSpeed_to_Target + Power.y + m_Render_List.m_Move_Vector.y)*g_fSecondPerFrame;
-        m_Render_List.m_Effect_Vertex_List[a].m_vPos.z += (TargetVector.z*m_Render_List.m_Base_Effect.m_fSpeed_to_Target + Power.z + m_Render_List.m_Move_Vector.z)*g_fSecondPerFrame;
-
-        matFinal._41 += m_Render_List.m_Effect_Vertex_List[a].m_vPos.x;
-        matFinal._42 += m_Render_List.m_Effect_Vertex_List[a].m_vPos.y;
-        matFinal._43 += m_Render_List.m_Effect_Vertex_List[a].m_vPos.z;
-        
-        static float temp;
-        temp = m_Render_List.m_Effect_Vertex_List[a].m_vPos.x + (TargetVector.x*m_Render_List.m_Base_Effect.m_fSpeed_to_Target+ Power.x)*g_fSecondPerFrame;
-        Set_Alpha(m_Render_List.m_Effect_Vertex_List[a].m_Alpha, &m_Plane);
-        Get_UV(m_iCut_Num, m_iCut_Num, m_Render_List.m_Effect_Vertex_List[a].m_iTexID, &m_Plane);
-
-        CADevice::m_pImmediate_Device_Context->UpdateSubresource(m_Plane.m_helper.m_pVertexBuffer.Get(), 0, 0, &m_Plane.m_Vertex_List.at(0), 0, 0);
-        m_Plane.SetMatrix(&matFinal, &m_pMain_Cam->m_matView, &m_pMain_Cam->m_matProj);
-
-        m_Plane.Render(CADevice::m_pImmediate_Device_Context);
-
+       //D3DXVECTOR3 TargetVector;
+       //TargetVector.x = (m_Render_List.m_Base_CB.m_vTargetPos.x - m_Render_List.m_Effect_Vertex_List[a].m_vPos.x);
+       //TargetVector.y = (m_Render_List.m_Base_Effect.m_vTargetPos.y - m_Render_List.m_Effect_Vertex_List[a].m_vPos.y);
+       //TargetVector.z = (m_Render_List.m_Base_Effect.m_vTargetPos.z - m_Render_List.m_Effect_Vertex_List[a].m_vPos.z);
+       //D3DXVec3Normalize(&TargetVector, &TargetVector);
+       //
+       //D3DXVECTOR3 Power;//TOTAL_POWER로 대체
+       //Power.x = (m_Render_List.m_Base_Effect.m_vPower1.x + m_Render_List.m_Base_Effect.m_vPower2.x +m_Render_List.m_Base_Effect.m_vPower3.x);
+       //Power.y = (m_Render_List.m_Base_Effect.m_vPower1.y + m_Render_List.m_Base_Effect.m_vPower2.y +m_Render_List.m_Base_Effect.m_vPower3.y);
+       //Power.z = (m_Render_List.m_Base_Effect.m_vPower1.z + m_Render_List.m_Base_Effect.m_vPower2.z +m_Render_List.m_Base_Effect.m_vPower3.z);
+       //
+       //matFinal = matBillboard;
+       //
+       //
+       //m_Render_List.m_Effect_Vertex_List[a].m_vPos.x += (TargetVector.x*m_Render_List.m_Base_Effect.m_fSpeed_to_Target + Power.x + m_Render_List.m_Move_Vector.x)*g_fSecondPerFrame;
+       //m_Render_List.m_Effect_Vertex_List[a].m_vPos.y += (TargetVector.y*m_Render_List.m_Base_Effect.m_fSpeed_to_Target + Power.y + m_Render_List.m_Move_Vector.y)*g_fSecondPerFrame;
+       //m_Render_List.m_Effect_Vertex_List[a].m_vPos.z += (TargetVector.z*m_Render_List.m_Base_Effect.m_fSpeed_to_Target + Power.z + m_Render_List.m_Move_Vector.z)*g_fSecondPerFrame;
+       //
+       //matFinal._41 += m_Render_List.m_Effect_Vertex_List[a].m_vPos.x;
+       //matFinal._42 += m_Render_List.m_Effect_Vertex_List[a].m_vPos.y;
+       //matFinal._43 += m_Render_List.m_Effect_Vertex_List[a].m_vPos.z;
+       //
+       //static float temp;
+       //temp = m_Render_List.m_Effect_Vertex_List[a].m_vPos.x + (TargetVector.x*m_Render_List.m_Base_Effect.m_fSpeed_to_Target+ Power.x)*g_fSecondPerFrame;
+       //Set_Alpha(m_Render_List.m_Effect_Vertex_List[a].m_Alpha, &m_Plane);
+       //Get_UV(m_iCut_Num, m_iCut_Num, m_Render_List.m_Effect_Vertex_List[a].m_iTexID, &m_Plane);
+       //
+       //CADevice::m_pImmediate_Device_Context->UpdateSubresource(m_Plane.m_helper.m_pVertexBuffer.Get(), 0, 0, &m_Plane.m_Vertex_List.at(0), 0, 0);
+       //m_Plane.SetMatrix(&matFinal, &m_pMain_Cam->m_matView, &m_pMain_Cam->m_matProj);
+       //
+       //m_Plane.Render(CADevice::m_pImmediate_Device_Context);
     }
     return true;
 
