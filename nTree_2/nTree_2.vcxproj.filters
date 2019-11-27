@@ -36,6 +36,9 @@
     <ClInclude Include="Mini_Map.h">
       <Filter>RT_Mgr</Filter>
     </ClInclude>
+    <ClInclude Include="Pick.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sample.cpp">
@@ -56,5 +59,11 @@
     <ClCompile Include="Mini_Map.cpp">
       <Filter>RT_Mgr</Filter>
     </ClCompile>
+    <ClCompile Include="Pick.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

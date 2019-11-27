@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="N_Tree" Collapsed="true">
+    <Position X="0.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAACAAAMAAEABQAAIAAAAACACACAAAAAQAAAAAAAA=</HashCode>
+      <FileName>N_Tree.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Pick" Collapsed="true">
+    <Position X="6.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQQEASAQAAAAAAAAAAAABJDAAAAAAAAAAACABAAAAAA=</HashCode>
+      <FileName>Pick.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Quad_Tree" Collapsed="true">
+    <Position X="0.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACCAEAAiAAgABAAAEEAAACAJQBAgAAAQFACABBAAAE=</HashCode>
+      <FileName>Quad_Tree.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Tree_Node" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AMAAAAACIAAAAAAQAAAAAACAAAEAAAAAAAIAABAgAAE=</HashCode>
+      <FileName>Tree_Node.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Ray" Collapsed="true">
+    <Position X="6.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Pick.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="BASE_OBJ" Collapsed="true">
+    <Position X="9.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Tree_Node.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="맑은 고딕" Size="9" />
+</ClassDiagram>

@@ -101,13 +101,13 @@ namespace DX
     {
         HRESULT hr = S_OK;
         if (pLoadTextureFile == nullptr) return S_OK;
-        int iIndex = I_TextureMgr.Load(
+        m_iIndex = I_TextureMgr.Load(
             m_pDevice,
             pLoadTextureFile);
 
-        if (iIndex >= 0)
+        if (m_iIndex >= 0)
         {
-            m_helper.m_pSRV = I_TextureMgr.GetPtr(iIndex)->m_pSRV;
+            m_helper.m_pSRV = I_TextureMgr.GetPtr(m_iIndex)->m_pSRV;
         }
 
         return hr;

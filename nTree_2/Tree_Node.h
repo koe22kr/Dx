@@ -4,7 +4,7 @@
 
 struct BASE_OBJ
 {
-    //obj 추가시 구현예정.
+    //obj 내용 추가
     DX::T_BOX m_BBox;
 
 };
@@ -13,10 +13,9 @@ class Tree_Node
 public:
     bool m_is_Leaf;
     UINT m_nDepth;
-    //박스 obb[코너값 으로 박스] + index corner;
+    
     DX::T_BOX m_BBox;
     std::vector<DWORD> m_Corner_Index_List;
-
 
     std::vector< Tree_Node*> m_Child_List;
     std::vector< BASE_OBJ*> m_Obj_List;

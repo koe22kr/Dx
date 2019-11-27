@@ -1,200 +1,89 @@
 #include "stdafx.h"
 #include "Sample.h"
+#include "MainFrm.h"
 
-
-
-HRESULT TPlaneObject::CreateVertexData()
-{
-    m_Vertex_List.resize(4);
-    m_Vertex_List[0].p = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(-10.0f, 10.0f, 0.0f);
-    m_Vertex_List[0].n = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(0.0f, 0.0f, -10.0f);
-    m_Vertex_List[0].c = *(DirectX::XMFLOAT4*)&D3DXVECTOR4(1.0f, 0.0f, 0.0f, 1.0f);
-    m_Vertex_List[0].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(0.0f, 0.0f);
-
-    m_Vertex_List[1].p = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(10.0f, 10.0f, 0.0f);
-    m_Vertex_List[1].n = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(0.0f, 0.0f, -10.0f);
-    m_Vertex_List[1].c = *(DirectX::XMFLOAT4*)&D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
-    m_Vertex_List[1].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(1.0f, 0.0f);
-
-    m_Vertex_List[2].p = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(10.0f, -10.0f, 0.0f);
-    m_Vertex_List[2].n = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(0.0f, 0.0f, -10.0f);
-    m_Vertex_List[2].c = *(DirectX::XMFLOAT4*)&D3DXVECTOR4(0.0f, 0.0f, 1.0f, 1.0f);
-    m_Vertex_List[2].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(1.0f, 0.5f);
-
-    m_Vertex_List[3].p = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(-10.0f, -10.0f, 0.0f);
-    m_Vertex_List[3].n = *(DirectX::XMFLOAT3*)&D3DXVECTOR3(0.0f, 0.0f, -10.0f);
-    m_Vertex_List[3].c = *(DirectX::XMFLOAT4*)&D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
-    m_Vertex_List[3].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(0.0f, 0.5f);
-    return S_OK;
-}
-HRESULT TPlaneObject::CreateIndexData()
-{
-    m_Index_List.resize(6);
-    m_Index_List[0] = 1;
-    m_Index_List[1] = 2;
-    m_Index_List[2] = 0;
-
-    m_Index_List[3] = 2;
-    m_Index_List[4] = 3;
-    m_Index_List[5] = 0;
-    return S_OK;
-}
-
-
-TPlaneObject::TPlaneObject()
+void Sample::Copy_Effect_Data(Effect_Data& src, Effect_Render_Obj& dest)
 {
 
+    dest.m_data.m_Base_VB = src.m_Base_VB;
+    dest.m_data.m_Base_CB = src.m_Base_CB;
+
+    dest.m_data.m_Move_Data_X = src.m_Move_Data_X;
+    dest.m_data.m_Move_Data_Y = src.m_Move_Data_Y;
+    dest.m_data.m_Move_Data_Z = src.m_Move_Data_Z;
+    dest.m_data.m_fMove_Radius = src.m_fMove_Radius;
+    dest.m_data.m_Move_Data_R = src.m_Move_Data_R;
+    dest.m_data.m_vPower1 = src.m_vPower1;
+   // dest.m_data.m_vPower2 = src.m_vPower2;
+   // dest.m_data.m_vPower3 = src.m_vPower3;
+    //dest.m_data.m_vScale = src.m_vScale;
+    //dest.m_data.m_vRotation = src.m_vRotation;
+    //dest.m_data.m_vPos = src.m_vPos;
 }
-
-TPlaneObject::~TPlaneObject()
-{
-
-}
-//////////////////////////
-
-
-void Sample::SetBlendState(D3D11_BLEND_DESC* pBD)
-{
-    HRESULT hr;
-    if (m_pBlendState) m_pBlendState->Release();
-
-    if (pBD == nullptr)
-    {
-        ZeroMemory(&m_BlendDesc, sizeof(D3D11_BLEND_DESC));
-        m_BlendDesc.AlphaToCoverageEnable = FALSE;
-        m_BlendDesc.IndependentBlendEnable = TRUE;
-        m_BlendDesc.RenderTarget[0].BlendEnable = TRUE;
-        m_BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-        m_BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-        m_BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-
-        m_BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-        m_BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-        m_BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-
-        m_BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-    }
-    else
-    {
-        m_BlendDesc = *pBD;
-    }
-
-    if (FAILED(hr = m_Device.m_pDevice->CreateBlendState(
-        &m_BlendDesc, &m_pBlendState)))
-    {
-        EM(hr, SetBlendState, Sample);
-        return;
-    }
-}
-void Sample::SetRasterizerState(D3D11_RASTERIZER_DESC* pRD)
-{
-    HRESULT hr;
-    if (pRD == nullptr)
-    {
-        ZeroMemory(&m_RasterizerDesc, sizeof(D3D11_RASTERIZER_DESC));
-        m_RasterizerDesc.DepthClipEnable = TRUE;
-        m_RasterizerDesc.FillMode = D3D11_FILL_SOLID;
-        m_RasterizerDesc.CullMode = D3D11_CULL_NONE;
-        m_RasterizerDesc.MultisampleEnable = TRUE;
-        m_RasterizerDesc.AntialiasedLineEnable = TRUE;
-    }
-    else
-    {
-        m_RasterizerDesc = *pRD;
-    }
-
-    if (FAILED(hr =
-        m_Device.m_pDevice->CreateRasterizerState(&m_RasterizerDesc, &m_pRasterizerState)))
-    {
-        EM(hr, SetRasterizerState, Sample);
-        return;
-    }
-}
-void Sample::SetSamplerState(D3D11_SAMPLER_DESC* pSD)
-{
-    HRESULT hr;
-    if (pSD == nullptr)
-    {
-        ZeroMemory(&m_SamplerDesc, sizeof(D3D11_SAMPLER_DESC));
-        m_SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-        m_SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-        m_SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-        m_SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-        m_SamplerDesc.MaxLOD = FLT_MAX;
-        m_SamplerDesc.MinLOD = FLT_MIN;
-        m_SamplerDesc.MaxAnisotropy = 16;
-        m_SamplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-        m_SamplerDesc.MipLODBias = 0;
-    }
-    else
-    {
-        m_SamplerDesc = *pSD;
-    }
-    if (FAILED(hr = m_Device.m_pDevice->CreateSamplerState(&m_SamplerDesc, &m_pSamplerState)))
-    {
-        EM(hr, SetSamplerState, Sample);
-        return;
-    }
-}
-void Sample::SetDepthStencilState(D3D11_DEPTH_STENCIL_DESC* pDSD)
-{
-    HRESULT hr = S_OK;
-    if (pDSD == nullptr)
-    {
-        ZeroMemory(&m_DepthStencilDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-        m_DepthStencilDesc.DepthEnable = TRUE;
-        m_DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-        m_DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    }
-    else
-    {
-        m_DepthStencilDesc = *pDSD;
-    }
-
-    if (FAILED(hr = CADevice::m_pDevice->CreateDepthStencilState(&m_DepthStencilDesc, &m_pDepthStencilState)))
-    {
-        EM(hr, SetDepthStencilState, Sample);
-        return;
-    }
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 bool Sample::Init()
 {
- /*   m_Render_List.m_Effect_Vertex_List.resize(MAX_EFFECT);
-    m_Render_List.Create_Render_Obj(CADevice::m_pDevice,L"effect.hlsl");
-    m_Render_List.Add();*/
-   // m_Plane.Create(CADevice::m_pDevice, L"effect.hlsl", L"../../_data/obj/attack_damage_01.dds");
-    m_Cur_Option.m_pImmediateContext = m_Device.m_pImmediate_Device_Context;
-    SetSamplerState(nullptr);
-    SetDepthStencilState(nullptr);
-    SetRasterizerState(nullptr);
-    SetBlendState(nullptr);
-    m_Cur_Option.Create(m_Device.m_pDevice, L"effect2.hlsl", L"../../_data/obj/attack_damage_01.dds");
+  //  Effect_Render_Obj* obj = new Effect_Render_Obj;
+  //  m_Render_List.push_back(obj);
+  //  m_Tex_List.resize(1);
+  ////  Copy_Effect_Data(m_Cur_Option,m_Render_List[0]);
+  //  m_Render_List[0]->Create(m_Device.m_pDevice, L"D:\\DIR\\_Shader\\effect2.hlsl", L"..\\..\\_data\\obj\\attack_damage_01.dds");
+  //  
+  //  m_Tex_List[0].m_szName = L"D:/DIR/_data/obj/attack_damage_01.dds";
+  //  m_Tex_List[0].m_iTex = m_Render_List[0]->m_iIndex;
+  //  m_Render_List[0]->m_iTex = 0;
+  //  m_Render_List[0]->m_szName = L"Default";
+  //  m_Render_List[0]->m_data.m_Base_CB.nRand_Loop_cutx_cuty.z = 4;
+  //  m_Render_List[0]->m_data.m_Base_CB.nRand_Loop_cutx_cuty.w = 4;
+  //  m_Render_List[0]->m_data.m_Base_CB.nRand_Loop_cutx_cuty.y = 1;
+  //  m_Render_List[0]->m_data.m_Base_CB.etc.x = 3;
+  //  m_Render_List[0]->m_bRend = true;
+    
+    GetCurrentDirectoryA(MAX_PATH, m_CurrentDir);
+  //  char temp[] = { "\\" };
+  //  strcat_s(m_CurrentDir, temp);
     return true;
 }
 bool Sample::Frame()
 {
-    m_Cur_Option.Frame();
-   // m_Render_List.Update_Buffer();
+    D3DXMATRIX matbil;
+    D3DXMatrixInverse(&matbil, NULL, &m_pMain_Cam->m_matView);
+    matbil._41 = 0;
+    matbil._42 = 0;
+    matbil._43 = 0;
 
-   // static float tTime = 0.0f;
-   // tTime += g_fSecondPerFrame;
-   // if (tTime > m_Render_List.m_Add_Time)
-   // {
-   //     m_Render_List.Add();
-   //     tTime -= m_Render_List.m_Add_Time;
-   // }
+    m_fEffect_delta_Time += g_fSecondPerFrame;
+
+    while (m_fEffect_delta_Time > m_fEffect_End_Time)
+    {
+        m_fEffect_delta_Time = 0;
+        for (int i = 0; i < m_Render_List.size(); i++)
+        {
+            m_Render_List[i]->m_bFirst = true;
+        }
+        /*FRM->m_wndProperties.m_pSrcBlend->SetValue(COleVariant((double)0));*/
+        //FRM->m_wndProperties.Custom_Update_Property(0, FRM->m_wndProperties.m_pSrcBlend);
+    }
+    for (int iobj = 0; iobj < m_Render_List.size(); iobj++)
+    {
+        m_Render_List[iobj]->m_matbill = matbil;
+        m_Render_List[iobj]->m_cb.etc[1] = m_fEffect_delta_Time;
+        //m_fEffect_delta_Time
+        m_Render_List[iobj]->Frame();
+    }
+  
     return true;
 }
 bool Sample::Render()
 {
-    DX::Set_BState(m_Device.m_pImmediate_Device_Context, m_pBlendState);
-   DX::Set_DSState(m_Device.m_pImmediate_Device_Context, m_pDepthStencilState);
-    DX::Set_RSState(m_Device.m_pImmediate_Device_Context, m_pRasterizerState);
-    DX::Set_SState(m_Device.m_pImmediate_Device_Context, m_pSamplerState);
-    m_Cur_Option.SetMatrix(nullptr, &m_pMain_Cam->m_matView, &m_pMain_Cam->m_matProj);
-    m_Cur_Option.Render();
+  
+    for (int iobj = 0; iobj < m_Render_List.size(); iobj++)
+    {
+        m_Render_List[iobj]->SetMatrix(nullptr, &m_pMain_Cam->m_matView, &m_pMain_Cam->m_matProj);
+        m_Render_List[iobj]->Render();
+    }
+    
     // 복수 오브젝트시 함수화
  // D3DXMATRIX matBillboard, Scale, Rot,Trans,matFinal;
  // D3DXMatrixIdentity(&matBillboard);
@@ -214,9 +103,7 @@ bool Sample::Render()
  // m_Render_List.Set_Move();
  //
  // matBillboard = Scale * Rot * Trans * matBillboard;
-
     //
-
    // for (int a = 0; a < m_Render_List.m_Effect_Vertex_List.size(); a++)
     {
       
@@ -271,37 +158,234 @@ Sample::~Sample()
 {
 }
 
-void Sample::Get_UV(int cutx, int cuty, int& texnum, TPlaneObject* m_pplane)
+//void Sample::Get_UV(int cutx, int cuty, int& texnum, TPlaneObject* m_pplane)
+//{
+//    float x = 1.0f / cutx;
+//    float y = 1.0f / cuty;
+//    if (cutx*cutx  <= texnum)
+//    {
+//        m_pplane->m_Vertex_List[0].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(0.0f, 0.0f);
+//        m_pplane->m_Vertex_List[1].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(x, 0.0f);
+//        m_pplane->m_Vertex_List[2].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(x, y);
+//        m_pplane->m_Vertex_List[3].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(0.0f, y);
+//        texnum = 0;
+//    }
+//    for (int i = 0; i < cuty; i++)
+//    {
+//        for (int j = 0; j < cutx; j++)
+//        {
+//            if (cutx*i + j == texnum)
+//            {
+//                D3DXVECTOR2 temp;
+//                m_pplane->m_Vertex_List[0].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(x*j, y*i);
+//                m_pplane->m_Vertex_List[1].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(x*(j+1), y*i);
+//                m_pplane->m_Vertex_List[2].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(x*(j + 1), y*(i+1));
+//                m_pplane->m_Vertex_List[3].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(x*j, y*(i + 1));
+//            }
+//        }
+//    }
+//}
+//void Sample::Set_Alpha(float m_Alpha, TPlaneObject* m_pplane)
+//{
+//    m_pplane->m_Vertex_List[0].c.w = m_Alpha;
+//    m_pplane->m_Vertex_List[1].c.w = m_Alpha;
+//    m_pplane->m_Vertex_List[2].c.w = m_Alpha;
+//    m_pplane->m_Vertex_List[3].c.w = m_Alpha;
+//}
+void Sample::Save()
 {
-    float x = 1.0f / cutx;
-    float y = 1.0f / cuty;
-    if (cutx*cutx  <= texnum)
+
+    TCHAR szFile[MAX_PATH] = { 0, };
+    TCHAR szFileTitleFile[MAX_PATH] = { L"skx", };
+    static TCHAR *szFilter = { L"KHG_EFFECT_TOOL(*.kht)\0*.ket\0AllFiles(*.*)\0*.*\0" };
+    OPENFILENAME ofn;
+    ZeroMemory(&ofn, sizeof(OPENFILENAME));
+    _tcscpy_s(szFile, _T("*."));
+    _tcscat_s(szFile, _T("ket"));
+    _tcscat_s(szFile, _T("\0"));
+
+    ofn.lStructSize = sizeof(OPENFILENAME);
+
+    CString path;
+    path = m_CurrentDir;
+    ofn.lpstrInitialDir = path;
+    ofn.hwndOwner = GetActiveWindow();
+    ofn.lpstrFilter = szFilter;
+    ofn.lpstrCustomFilter = NULL;
+    ofn.nMaxCustFilter = 0L;
+    ofn.nFilterIndex = 3;
+    ofn.lpstrFile = szFile;
+    ofn.nMaxFile = sizeof(szFile);
+    ofn.lpstrFileTitle = szFileTitleFile;
+    ofn.nMaxFileTitle = sizeof(szFileTitleFile);
+    ofn.lpstrTitle = L"저장하기";
+    ofn.Flags = 0L;
+    ofn.nFileOffset = 0;
+    ofn.nFileExtension = 0;
+    ofn.lpstrDefExt = _T("ket");
+    if (!GetSaveFileName(&ofn))
     {
-        m_pplane->m_Vertex_List[0].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(0.0f, 0.0f);
-        m_pplane->m_Vertex_List[1].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(x, 0.0f);
-        m_pplane->m_Vertex_List[2].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(x, y);
-        m_pplane->m_Vertex_List[3].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(0.0f, y);
-        texnum = 0;
+        return;
     }
-    for (int i = 0; i < cuty; i++)
+    std::wstring szFilename = szFile;
+    ///////////////////////////////////
+    FILE* Filestream = nullptr;
+    _tfopen_s(&Filestream, szFilename.c_str(), _T("wt"));
+    
+    _ftprintf(Filestream, _T("%s\n"), _T("KHG_EFFECT_TOOL_V100"));// , m_Tex_List.size(), m_Render_List.size());
+    _ftprintf(Filestream, _T("%d\n"), m_Tex_List.size());
+    _ftprintf(Filestream, _T("%d\n"), m_Render_List.size());
+
+    for (int i = 0; i < m_Tex_List.size(); i++)
     {
-        for (int j = 0; j < cutx; j++)
+        _ftprintf(Filestream, _T("%s\n"), m_Tex_List[i].m_szName.GetString());
+        //로드시는 이거 읽어서 Texture_mgr 에서 로드 해서 id받아야함.
+    }
+    for (int ieffect = 0; ieffect < m_Render_List.size(); ieffect++)
+    {
+        _ftprintf(Filestream, _T("%s\n"), m_Render_List[ieffect]->m_szName.GetString());
+        _ftprintf(Filestream, _T("%s\n"), m_Render_List[ieffect]->m_szShader.GetString());
+        _ftprintf(Filestream, _T("%s\n"), m_Render_List[ieffect]->m_szTextureName.GetString());
+        fwrite(&m_Render_List[ieffect]->m_data, sizeof(Effect_Data), 1, Filestream);
+        _ftprintf(Filestream, _T("\n"));
+    }
+        
+    fclose(Filestream);
+
+}
+void Sample::Load()
+{
+    TCHAR szFile[MAX_PATH] = { 0, };
+    TCHAR szFileTitleFile[MAX_PATH] = { L"skx", };
+    static TCHAR *szFilter = { L"KHG_EFFECT_TOOL(*.kht)\0*.ket\0AllFiles(*.*)\0*.*\0" };
+    OPENFILENAME ofn;
+    ZeroMemory(&ofn, sizeof(OPENFILENAME));
+    _tcscpy_s(szFile, _T("*."));
+    _tcscat_s(szFile, _T("ket"));
+    _tcscat_s(szFile, _T("\0"));
+
+    
+    ofn.lStructSize = sizeof(OPENFILENAME);
+    
+    ofn.hwndOwner = GetActiveWindow();
+    ofn.lpstrFilter = szFilter;
+    ofn.lpstrCustomFilter = NULL;
+    ofn.nMaxCustFilter = 0L;
+    ofn.nFilterIndex = 3;
+    ofn.lpstrFile = szFile;
+    ofn.nMaxFile = sizeof(szFile);
+    ofn.lpstrFileTitle = szFileTitleFile;
+    ofn.nMaxFileTitle = sizeof(szFileTitleFile);
+    ofn.lpstrTitle = L"저장하기";
+    ofn.Flags = 0L;
+    ofn.nFileOffset = 0;
+    ofn.nFileExtension = 0;
+    ofn.lpstrDefExt = _T("ket");
+    CString path;
+    path = m_CurrentDir;
+    ofn.lpstrInitialDir = path;
+    if (!GetOpenFileName(&ofn))
+    {
+        return;
+    }
+    std::wstring szFilename = szFile;
+    FILE* Filestream = nullptr;
+
+    _tfopen_s(&Filestream, szFilename.c_str(), L"rt");
+
+    int texnum = 0;
+    int objnum = 0;
+    char data[4];
+    char dummy[MAX_PATH];
+    fgets(dummy, MAX_PATH, Filestream);
+    texnum = fgetc(Filestream)-48;// 인티저로 하드코딩 변환.
+    fgetc(Filestream);
+    objnum = fgetc(Filestream)-48;
+    fgetc(Filestream);
+    //fgets(data, sizeof(int), Filestream);
+
+    for (int itex = 0; itex < texnum; itex++)
+    {
+        Tex_Info info;
+        char texname[MAX_PATH];
+        char texname2[MAX_PATH];
+
+        fgets(texname, MAX_PATH, Filestream);//wstr 변환 되는지 확인
+        strncpy_s(texname2, texname, strlen(texname) - 1);
+        //strcpy_s(texname2, strlen(texname) - 2, texname);
+        info.m_szName = texname2;
+        CString name;
+        name = m_CurrentDir;
+        name += m_szTeexture_Path;
+        name += texname2;
+        info.m_iTex = I_TextureMgr.Load(CADevice::m_pDevice, name.GetBuffer());
+        m_Tex_List.push_back(info);
+    }
+    for (int iobj = 0; iobj < objnum; iobj++)
+    {
+        Effect_Render_Obj* obj= new Effect_Render_Obj;
+
+        char mem[sizeof(Effect_Data)];
+        char string[MAX_PATH];
+        char string2[MAX_PATH];
+        CString shadername;
+        fgets(string, MAX_PATH, Filestream);
+        strncpy_s(string2, string, strlen(string) - 1);
+        obj->m_szName = string2;
+
+        fgets(string, MAX_PATH, Filestream);
+        strncpy_s(string2, string, strlen(string) - 1);
+        char tester[MAX_PATH] = { 0 };
+        
+
+
+        shadername += m_CurrentDir;
+        shadername += m_szShader_Path;
+        shadername += string2;
+      //  strcpy_s(tester, m_CurrentDir);
+      //  strcpy_s(tester, m_szShader_Path);
+      //  strcat_s(tester, string2);
+        obj->m_szShader = string2;
+        //shadername = tester;
+        fgets(string, MAX_PATH, Filestream);
+        strncpy_s(string2, string, strlen(string) - 1);
+        obj->m_szTextureName = string2;
+        obj->Create(CADevice::m_pDevice, shadername, nullptr);
+        fgets(mem, sizeof(Effect_Data), Filestream);
+        memcpy(&obj->m_data, mem, sizeof(Effect_Data));
+        m_Render_List.push_back(obj);
+        int srvid = Find_Texture(&obj->m_szTextureName);
+        if (srvid > -1)
         {
-            if (cutx*i + j == texnum)
-            {
-                D3DXVECTOR2 temp;
-                m_pplane->m_Vertex_List[0].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(x*j, y*i);
-                m_pplane->m_Vertex_List[1].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(x*(j+1), y*i);
-                m_pplane->m_Vertex_List[2].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(x*(j + 1), y*(i+1));
-                m_pplane->m_Vertex_List[3].t = *(DirectX::XMFLOAT2*)&D3DXVECTOR2(x*j, y*(i + 1));
-            }
+            obj->m_helper.m_pSRV.Attach(I_TextureMgr.GetPtr(m_Tex_List[srvid].m_iTex)->m_pSRV);
+            obj->m_bRend = true;
+
+        }
+        else
+        {
+            MessageBox(NULL, L"NOT FIND TEXTURE", obj->m_szTextureName.GetBuffer(), S_OK);
+            obj->m_bRend = false;
+
         }
     }
+    fclose(Filestream);
+
+
 }
-void Sample::Set_Alpha(float m_Alpha, TPlaneObject* m_pplane)
+int Sample::Find_Texture(CString* texname)
 {
-    m_pplane->m_Vertex_List[0].c.w = m_Alpha;
-    m_pplane->m_Vertex_List[1].c.w = m_Alpha;
-    m_pplane->m_Vertex_List[2].c.w = m_Alpha;
-    m_pplane->m_Vertex_List[3].c.w = m_Alpha;
+    if(m_Tex_List.size()<1)
+    {
+        return -1;
+    }
+    int index = 0;
+    for (auto iter : m_Tex_List)
+    {
+        if (iter.m_szName == *texname)
+        {
+            return index;
+        }
+        index++;
+    }
+    return -1;
 }

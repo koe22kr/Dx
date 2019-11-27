@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>../../output/</OutDir>
+    <OutDir>C:\Users\KGCA3671\Desktop\자료 형식서들\게임 알고리즘\exe\exe</OutDir>
     <IntDir>../../output/$(ProjectName)/debug</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="Mini_Map.h" />
     <ClInclude Include="N_Tree.h" />
+    <ClInclude Include="Pick.h" />
     <ClInclude Include="Quad_Tree.h" />
     <ClInclude Include="RT_Mgr.h" />
     <ClInclude Include="Sample.h" />
@@ -157,10 +158,14 @@
   <ItemGroup>
     <ClCompile Include="Mini_Map.cpp" />
     <ClCompile Include="N_Tree.cpp" />
+    <ClCompile Include="Pick.cpp" />
     <ClCompile Include="Quad_Tree.cpp" />
     <ClCompile Include="RT_Mgr.cpp" />
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="Tree_Node.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

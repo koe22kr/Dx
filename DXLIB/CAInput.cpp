@@ -110,24 +110,24 @@ bool       CAInput::Frame()
         m_dwBeforeMouseState[iButton] = m_dwMouseState[iButton];
     }
 
-    HRESULT hr;
-    if (m_pMouseDevice == NULL || m_pKeyDevice == NULL) return false;
-
-    if (FAILED(hr = m_pKeyDevice->GetDeviceState(256, m_dwKeyState)))
-    {
-        while (m_pKeyDevice->Acquire() == DIERR_INPUTLOST);
-        //return true;
-    }
-
-    if (FAILED(hr = m_pMouseDevice->GetDeviceState(sizeof(DIMOUSESTATE), &m_DIMouseState)))
-    {
-        while (m_pMouseDevice->Acquire() == DIERR_INPUTLOST);
-        //return true;
-    }
-    for (int iButton = 0; iButton < 3; iButton++)
-    {
-        m_dwBeforeMouseState[iButton] = m_DIMouseState.rgbButtons[iButton];
-    }
+   // HRESULT hr;
+   // if (m_pMouseDevice == NULL || m_pKeyDevice == NULL) return false;
+   //
+   // if (FAILED(hr = m_pKeyDevice->GetDeviceState(256, m_dwKeyState)))
+   // {
+   //     while (m_pKeyDevice->Acquire() == DIERR_INPUTLOST);
+   //     //return true;
+   // }
+   //
+   // if (FAILED(hr = m_pMouseDevice->GetDeviceState(sizeof(DIMOUSESTATE), &m_DIMouseState)))
+   // {
+   //     while (m_pMouseDevice->Acquire() == DIERR_INPUTLOST);
+   //     //return true;
+   // }
+   // for (int iButton = 0; iButton < 3; iButton++)
+   // {
+   //     m_dwBeforeMouseState[iButton] = m_DIMouseState.rgbButtons[iButton];
+   // }
 
     return true;
 
@@ -168,7 +168,7 @@ LRESULT CAInput::MouseCheck(MSG dwmouse)
         //LB
         case WM_LBUTTONDOWN:
         {
-            if (dwmouse.wParam & MK_LBUTTON) // ´­·¯Á®ÀÕÀ½
+            if (m_dwBeforeMouseState[0]== KEY_PUSH) // ´­·¯Á®ÀÕÀ½
             {
                 m_dwMouseState[0] = KEY_HOLD;
             }
@@ -189,7 +189,7 @@ LRESULT CAInput::MouseCheck(MSG dwmouse)
         //MB
         case WM_MBUTTONDOWN:
         {
-            if (dwmouse.wParam & MK_MBUTTON) // ´­·¯Á®ÀÕÀ½
+            if (m_dwBeforeMouseState[1] == KEY_PUSH) // ´­·¯Á®ÀÕÀ½
             {
                 m_dwMouseState[1] = KEY_HOLD;
             }
@@ -206,7 +206,7 @@ LRESULT CAInput::MouseCheck(MSG dwmouse)
         //RB
         case WM_RBUTTONDOWN:
         {
-            if (dwmouse.wParam & MK_MBUTTON) // ´­·¯Á®ÀÕÀ½
+            if (m_dwBeforeMouseState[2] == KEY_PUSH) // ´­·¯Á®ÀÕÀ½
             {
                 m_dwMouseState[2] = KEY_HOLD;
             }

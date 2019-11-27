@@ -26,5 +26,11 @@ public:
     afx_msg void OnLbnSelchangeObjList();
     afx_msg void OnBnClickedNewTexture();
     afx_msg void OnLbnSelchangeTextureList();
-    afx_msg void OnBnClickedUpdateButton();
+   // afx_msg void OnBnClickedUpdateButton();
+    afx_msg int OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message);
+    afx_msg void OnBnClickedSelectTexture();
+    afx_msg void OnBnClickedSave();
+    afx_msg void OnBnClickedLoad();
+    afx_msg void OnBnClickedBackColor();
+    afx_msg void OnBnClickedNameMody();
 };

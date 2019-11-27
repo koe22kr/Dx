@@ -133,9 +133,9 @@ LRESULT CCharaToolView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
     // TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
     CCharaToolApp* pApp = (CCharaToolApp*)AfxGetApp();
     HWND hWnd = pApp->m_Tool.m_hWnd;
-
+    
     pApp->m_Tool.MsgProc(hWnd, message, wParam, lParam);
-    return CView::WindowProc(message, wParam, lParam);
+   return CView::WindowProc(message, wParam, lParam);
 }
 
 

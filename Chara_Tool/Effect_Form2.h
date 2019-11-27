@@ -33,4 +33,12 @@ public:
     afx_msg void OnCbnSelchangeMoveZExp2();
     afx_msg void OnCbnSelchangeMoveRExp1();
     afx_msg void OnCbnSelchangeMoveRExp2();
+    afx_msg int OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message);
+    afx_msg void OnBnClickedOn();
+    afx_msg void OnBnClickedOff();
+    afx_msg void OnBnClickedBloop();
+    BOOL bAnimLoop;
+    afx_msg void OnBnClickedBbill();
+    BOOL bUseBillboard;
+    afx_msg void OnBnClickedFilterColor();
 };

@@ -5,19 +5,7 @@
 
 
 #define TOOL ((CCharaToolApp*)AfxGetApp())->m_Tool
-
-//////////////////////////////////////////////////////////
-class TPlaneObject : public CADx_Model2
-{
-public:
-    virtual HRESULT CreateVertexData() override;
-    virtual HRESULT CreateIndexData() override;
-
-public:
-    TPlaneObject();
-    virtual ~TPlaneObject();
-};
-/////////////////////////////////////////////////////////임시 객체
+#define FRM ((CMainFrame*)(CMainFrame*)AfxGetMainWnd())
 
 struct Tex_Info
 {
@@ -40,43 +28,40 @@ struct Effect_Obj
 class Sample : public CACore
 {
 public:
-    D3D11_BLEND_DESC    m_BlendDesc;
-    ID3D11BlendState*	m_pBlendState;
-
-    D3D11_RASTERIZER_DESC m_RasterizerDesc;
-    ID3D11RasterizerState*  m_pRasterizerState;
-
-    D3D11_SAMPLER_DESC m_SamplerDesc;
-    ID3D11SamplerState*   m_pSamplerState;
-
-    D3D11_DEPTH_STENCIL_DESC m_DepthStencilDesc;
-    ID3D11DepthStencilState* m_pDepthStencilState;
+   
 public:
-    void SetBlendState(D3D11_BLEND_DESC* pBD);
-    void SetRasterizerState(D3D11_RASTERIZER_DESC* pRD);
-    void SetSamplerState(D3D11_SAMPLER_DESC* pSD);
-    void SetDepthStencilState(D3D11_DEPTH_STENCIL_DESC* pDSD);
 public:
-    int m_iSel_Tex=-1;
-    int m_iSel_Obj=-1;
-    int m_iCut_Num = 4; //과제후 편집해야함
+    CString m_szTeexture_Path = { L"\\..\\..\\_data\\" };
+    CString m_szShader_Path = { L"\\..\\..\\_shader\\" };
+    CString m_szMain_Shader = { L"effect2.hlsl" };
+    
+    char m_CurrentDir[MAX_PATH];
+    int m_iSel_Tex=0;
+    int m_iSel_Obj=0;
+    
+    float m_fEffect_End_Time = 9999;
+    float m_fEffect_delta_Time = 0;
+
 public:
-    Effect_Render_Obj m_Cur_Option;
-    /*std::vector<*/ Effect_Render_Obj/*>*/ m_Render_List;
+    //Effect_Data m_Cur_Option;
+    std::vector< Effect_Render_Obj*> m_Render_List;
     std::vector<Tex_Info> m_Tex_List;//로드된 텍스쳐 정보
-    std::vector<Effect_Obj> m_Obj_List; //생성된 오브젝트 [각 오브젝트당 최대 n개 의 이펙트 들]
-    //std::vector<Effect_Data> m_Effect_List;  //버텍스 데이터 정보 VB제작용
+   // std::vector<Effect_Obj> m_Obj_List; //생성된 오브젝트 [각 오브젝트당 최대 n개 의 이펙트 들]
 
 
-    TPlaneObject m_Plane;
-public://일단 하드로 만들기
-    void Get_UV(int cutx,int cuty,int& texnum, TPlaneObject* m_pplane);
-    void Set_Alpha(float m_Alpha, TPlaneObject* m_pplane);
+
+public:
+    void Copy_Effect_Data(Effect_Data& src, Effect_Render_Obj& dest);
+    int Find_Texture(CString* texname);
+  //  void Get_UV(int cutx,int cuty,int& texnum, TPlaneObject* m_pplane);
+  //  void Set_Alpha(float m_Alpha, TPlaneObject* m_pplane);
     bool Init();
     bool Frame();
     bool Render();
     bool Release();
 public:
+    void Save();
+    void Load();
     Sample();
     ~Sample();
 };

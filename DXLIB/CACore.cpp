@@ -211,7 +211,7 @@ bool CACore::CACoreInit()
     
     //m_Heightmap.Init(L"../../_shader/light.hlsl", L"../../_data/map/castle.jpg",L"../../_data/map/HEIGHT_CASTLE_65.bmp");
 
-    m_DiffuseLight.Init();
+    //m_DiffuseLight.Init();
 
     /*if (!Sky_box.Create(CADevice::m_pDevice, L"sky.hlsl", nullptr))
     {
@@ -235,7 +235,7 @@ bool CACore::CACoreFrame()
     I_Input.Frame();
     I_SoundMgr.Frame();
     m_pMain_Cam->Frame();
-    m_DiffuseLight.Frame(m_pMain_Cam);
+  //  m_DiffuseLight.Frame(m_pMain_Cam);
 
 #if defined _DEBUG || DEBUG
     Debug_Frame();
@@ -248,7 +248,7 @@ bool CACore::CACoreRender()
     Pre_Render();
     m_Device.Pre_Render();
     m_Device.Render();
-   // m_Heightmap.Render(CADevice::m_pImmediate_Device_Context,nullptr, &m_pMain_Cam->m_matView,&m_pMain_Cam->m_matProj);
+    //m_Heightmap.Render(CADevice::m_pImmediate_Device_Context,nullptr, &m_pMain_Cam->m_matView,&m_pMain_Cam->m_matProj);
     Render();
     
 

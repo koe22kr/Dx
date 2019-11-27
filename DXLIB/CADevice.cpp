@@ -4,6 +4,7 @@ IDXGIFactory*            CADevice::m_pFactory = nullptr;
 ID3D11Device*            CADevice::m_pDevice = nullptr;
 ID3D11DeviceContext*     CADevice::m_pImmediate_Device_Context = nullptr;
 map<UINT, CATexture*> CADevice::m_Texture_Map;
+float CADevice::m_ClearColor[4] = { 0.1f,0.2f,0.6f,1 };//RGBA
 bool CADevice::Create_Device()
 {
     UINT Create_Device_Flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT /*| D3D11_CREATE_DEVICE_PREVENT_INTERNAL_THREADING_OPTIMIZATIONS*/;
@@ -287,8 +288,8 @@ bool CADevice::Pre_Render()
 {
     m_pImmediate_Device_Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-    float ClearColor[4] = { 0.1f,0.2f,0.6f,1 };//RGBA
-    m_pMain_RT.Clear(m_pImmediate_Device_Context, ClearColor[0], ClearColor[1], ClearColor[2], ClearColor[3]);
+   
+    m_pMain_RT.Clear(m_pImmediate_Device_Context, m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], m_ClearColor[3]);
 
     m_pMain_RT.Set(m_pImmediate_Device_Context);
 

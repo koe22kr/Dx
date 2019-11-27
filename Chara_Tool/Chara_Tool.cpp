@@ -132,8 +132,8 @@ BOOL CCharaToolApp::InitInstance()
 	if (!ProcessShellCommand(cmdInfo))
 		return FALSE;
 
-    CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
-    CCharaToolView* pView = (CCharaToolView*)pFrame->GetActiveView();
+    CMainFrame* m_pFrame = (CMainFrame*)AfxGetMainWnd();
+    CCharaToolView* pView = (CCharaToolView*)m_pFrame->GetActiveView();
     m_Tool.SetTool(pView->m_hWnd,AfxGetInstanceHandle());
     m_Tool.CACoreInit();
 	// 창 하나만 초기화되었으므로 이를 표시하고 업데이트합니다.

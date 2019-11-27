@@ -230,14 +230,12 @@
     <None Include="res\CharaTool.rc2">
       <Filter>리소스 파일</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="effect.hlsl">
+    <None Include="effect.hlsl">
       <Filter>Sample</Filter>
-    </FxCompile>
-    <FxCompile Include="effect2.hlsl">
+    </None>
+    <None Include="..\..\_Shader\effect2.hlsl">
       <Filter>Sample</Filter>
-    </FxCompile>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="EffectRender_Obj.h.txt" />

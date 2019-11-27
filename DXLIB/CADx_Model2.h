@@ -69,6 +69,7 @@ namespace DX
     class CADx_Model2
     {
     public:
+        int m_iIndex;
         DirectX::XMMATRIX m_matWorld;
         DirectX::XMMATRIX m_matView;
         DirectX::XMMATRIX m_matProj;
@@ -94,7 +95,7 @@ namespace DX
         virtual bool  Render(ID3D11DeviceContext* pContext);
         virtual bool  PostRender(ID3D11DeviceContext* pContext);
         virtual bool  Release();
-        bool  Create(ID3D11Device* pd3dDevice,
+       virtual bool  Create(ID3D11Device* pd3dDevice,
             const TCHAR* pLoadShaderFile,
             const TCHAR* pLoadTextureFile);
 

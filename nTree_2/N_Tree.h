@@ -14,13 +14,15 @@ public:
     UINT m_iMax_Depth_Limit;
     float m_fMinDividSize;  
     ////////////////////////////////
-protected:
+
+//protected:
+
     std::vector<Tree_Node*> m_Node_List;
-    std::vector<std::vector<Tree_Node*>> m_Depth_Node_List;//TODO
+
+    std::vector<std::vector<Tree_Node*>> m_Depth_Node_List;
 
     std::vector<Tree_Node*> m_Draw_Node_List;
     std::vector<BASE_OBJ*> m_Draw_Obj_List;
-    
     std::queue<Tree_Node*> m_Node_Queue; //자식 탐색용 큐
 
     DX::TCamera* m_pCamera;

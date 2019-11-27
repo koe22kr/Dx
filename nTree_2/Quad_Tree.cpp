@@ -214,6 +214,7 @@ bool Quad_Tree::SubDivideQuad_float(Tree_Node* pNode)
 }
 bool  Quad_Tree::SubDivideQuad_index(Tree_Node* pNode)
 {
+    
     if (m_iMax_Depth_Limit <= pNode->m_nDepth)
     {
         Create_Index_Buffer(pNode);

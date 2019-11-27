@@ -64,6 +64,7 @@ namespace DX
 #pragma endregion SAMPLER
 
 #pragma region BLEND
+        
         D3D11_BLEND_DESC ds;
         ZeroMemory(&ds, sizeof(D3D11_BLEND_DESC));
         ds.AlphaToCoverageEnable = FALSE;////acts as an Alpha Test, clipping pixels with alpha<0.5

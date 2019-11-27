@@ -45,7 +45,7 @@ namespace DX
 
     bool CADx_Shape_Line::Draw_Line(ID3D11DeviceContext* pContext, D3DXVECTOR3 vStart, D3DXVECTOR3 vEnd, D3DXVECTOR4 vColor)
     {
-        PNCT_VERTEX2 vertices[2];
+        PC_VERTEX vertices[2];
         vertices[0].p = *(XMFLOAT3 *)&vStart;
         vertices[0].c = *(XMFLOAT4 *)&vColor;
         vertices[1].p = *(XMFLOAT3 *)& vEnd;
@@ -59,7 +59,7 @@ namespace DX
     HRESULT				CADx_Shape_Line::SetInputLayout()
     {
         HRESULT hr = S_OK;
-        ID3D10Blob* pEM = nullptr;
+      //  ID3D10Blob* pEM = nullptr;
 
         D3D11_INPUT_ELEMENT_DESC layout[] =
         {
@@ -67,9 +67,10 @@ namespace DX
             { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         };
         UINT numElements = sizeof(layout) / sizeof(layout[0]);
-        CADevice::m_pDevice->CreateInputLayout(layout, 2, pEM, sizeof(PC_VERTEX),&m_helper.m_pInputLayout);
+        m_helper.m_pInputLayout.Attach(CreateInputLayout(CADevice::m_pDevice, m_helper.m_pVSBlob->GetBufferSize(),
+            m_helper.m_pVSBlob->GetBufferPointer(), layout, numElements));
 
-        if (pEM)pEM->Release();
+    //    if (pEM)pEM->Release();
         return hr;
     }
     HRESULT				CADx_Shape_Line::CreateVertexBuffer()

@@ -10,9 +10,9 @@
 #include <dxgi.h>
 #include <d3dx10math.h>
 #include <D3DCompiler.h>
-
-#include <dinput.h>
-#pragma comment (lib, "dinput8.lib")
+//
+//#include <dinput.h>
+//#pragma comment (lib, "dinput8.lib")
 #pragma comment( lib, "dxguid.lib" )
 
 //#include "dxdiag.h"

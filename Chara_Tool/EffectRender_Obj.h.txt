@@ -20,7 +20,7 @@ struct Instance_VB
     float		m_fFadeInDeltaTime;
     float		m_fFadeOutDeltaTime;
     D3DXVECTOR3 m_vTargetVelocity;
-    D3DXMATRIX m_matControl;
+    D3DXMATRIX m_matbill;
     int			m_iTexID; //단일 파일 애니메이션 에서 사용중.
     Instance_VB()
     {
@@ -30,7 +30,7 @@ struct Instance_VB
         m_fFadeOutDeltaTime = 0.0f;
         m_vTargetVelocity = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
          m_vColor = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
-        D3DXMatrixIdentity(&m_matControl);
+        D3DXMatrixIdentity(&m_matbill);
         m_iTexID = 0;
     }
 

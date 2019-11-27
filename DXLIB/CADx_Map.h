@@ -85,7 +85,7 @@ namespace DX
     public:
         virtual float   GetHeightMap(UINT index)
         {
-            return m_fHeightList[index] / 5.0f;
+            return m_fHeightList[index] / 15.0f;
         };
         /*virtual  Vector3  GetNormalMap(UINT index)
         {

@@ -139,6 +139,8 @@ namespace DX
         // 마우스 휠값 초기화
         m_nMouseWheelDelta = 0;
         m_fPrevRadius = m_fRadius;
+        SetMatrix(&m_matWorld, &m_matView, &m_matProj);
+
         return UpdateVector();
     }
     void TBackViewCamera::MoveSide(float fValue)

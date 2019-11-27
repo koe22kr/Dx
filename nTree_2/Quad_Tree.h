@@ -9,17 +9,13 @@ class Quad_Tree :public N_Tree
 public:
     bool Build(float fMinX, float fMaxX, float fMinY, float fMaxY, float fMinZ, float fMaxZ, int iMaxDepth = 5, float fMinSize = 10.0f);
     bool Build(DWORD FarL, DWORD FarR, DWORD NearL, DWORD NearR, int iMaxDepth, float fMinSize);
-    
     void  AddObject(BASE_OBJ* pModel);
-
-    
     void  Init(DX::TCamera* pCamera, DX::CADx_Map* pMap);
-
-
 private:
     virtual Tree_Node*  CreateNode(Tree_Node* pParenTree_Node, float fMinX, float fMaxX, float fMinY, float fMaxY, float fMinZ, float fMaxZ);
     virtual Tree_Node*  CreateNode(Tree_Node* pParenTree_Node, DWORD FarL, DWORD FarR, DWORD NearL, DWORD NearR);
     D3DXVECTOR2 GetHeightFromNode(DWORD FarL, DWORD FarR, DWORD NearL, DWORD NearR);
+
     bool  BuildTree_float(Tree_Node* pNode);
     bool  BuildTree_index(Tree_Node* pNode);
 

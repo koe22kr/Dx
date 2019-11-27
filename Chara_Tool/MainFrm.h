@@ -40,6 +40,7 @@ public:
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
+    CPropertiesWnd    m_wndProperties;
 
 protected:  // 컨트롤 모음이 포함된 멤버입니다.
 	CMFCMenuBar       m_wndMenuBar;
@@ -47,7 +48,6 @@ protected:  // 컨트롤 모음이 포함된 멤버입니다.
 	CMFCStatusBar     m_wndStatusBar;
 	CMFCToolBarImages m_UserImages;
 	COutputWnd        m_wndOutput;
-	CPropertiesWnd    m_wndProperties;
 
 // 생성된 메시지 맵 함수
 protected:

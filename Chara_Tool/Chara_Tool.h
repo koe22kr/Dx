@@ -19,8 +19,8 @@ class CCharaToolApp : public CWinAppEx
 public:
 	CCharaToolApp() noexcept;
     Sample m_Tool;
-
 // 재정의입니다.
+
 public:
 	virtual BOOL InitInstance();
 	virtual int ExitInstance();
