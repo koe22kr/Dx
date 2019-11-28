@@ -824,7 +824,14 @@ void CPropertiesWnd::Update_Property_List()
                 break;
             }
         }
-
+       
+        
+            TOOL.m_Render_List[TOOL.m_iSel_Obj]->SetBlendState(&TOOL.m_Render_List[TOOL.m_iSel_Obj]->m_BlendDesc);
+            TOOL.m_Render_List[TOOL.m_iSel_Obj]->SetRasterizerState(&TOOL.m_Render_List[TOOL.m_iSel_Obj]->m_RasterizerDesc);
+            TOOL.m_Render_List[TOOL.m_iSel_Obj]->SetDepthStencilState(&TOOL.m_Render_List[TOOL.m_iSel_Obj]->m_DepthStencilDesc);
+            TOOL.m_Render_List[TOOL.m_iSel_Obj]->SetSamplerState(&TOOL.m_Render_List[TOOL.m_iSel_Obj]->m_SamplerDesc);
+        
+       
 }
 
 LRESULT CPropertiesWnd::OnPropertyChanged(WPARAM w, LPARAM lParam)

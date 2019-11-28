@@ -90,7 +90,6 @@
 #define IDD_Effect_Form2                313
 #define ID_NEW_OBJ                      1000
 #define IDC_OBJ_LIST                    1001
-#define ID_NEW_OBJ2                     1002
 #define ID_NAME_MODY                    1002
 #define ID_NEW_TEXTURE                  1006
 #define IDC_OBJ_NAME_EDIT               1007
@@ -120,6 +119,7 @@
 #define IDC_RPOWER_MIN_Z                1028
 #define IDC_MOVE_X_A                    1029
 #define IDC_MOVE_Y_A                    1030
+#define IDC_FADEOUT_TIME2               1031
 #define IDC_MOVE_Y_EXP1                 1032
 #define IDC_MOVE_X_B                    1033
 #define IDC_MOVE_X_C                    1034
@@ -180,6 +180,7 @@
 #define IDC_RANDOM_POS_MAX_X            1092
 #define IDC_RANDOM_POS_MAX_Y            1093
 #define IDC_RANDOM_POS_MAX_Z            1094
+#define IDC_ALPHA                       1095
 
 // Next default values for new objects
 // 
@@ -187,7 +188,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        315
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1083
+#define _APS_NEXT_CONTROL_VALUE         1096
 #define _APS_NEXT_SYMED_VALUE           314
 #endif
 #endif

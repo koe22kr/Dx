@@ -110,6 +110,10 @@ void Effect_Form2::DoDataExchange(CDataExchange* pDX)
         // DDX_Text(pDX, IDC_MOVE_R_EXP2, *(UINT*)&TOOL.m_Render_List.m_Move_Data_R.exp2);
 
         DDX_Text(pDX, IDC_ADD_TIME, data.m_Base_CB.Time_add_life_fadein_fadeout.x);
+        if (!data.m_Base_CB.Time_add_life_fadein_fadeout.x>0)
+        {
+            data.m_Base_CB.Time_add_life_fadein_fadeout.x = 0.0001f;
+        }
         DDX_Text(pDX, IDC_LIFE_TIME, data.m_Base_CB.Time_add_life_fadein_fadeout.y);
         DDX_Text(pDX, IDC_FADEIN_TIME, data.m_Base_CB.Time_add_life_fadein_fadeout.z);
         DDX_Text(pDX, IDC_FADEOUT_TIME, data.m_Base_CB.Time_add_life_fadein_fadeout.w);
@@ -147,7 +151,7 @@ void Effect_Form2::DoDataExchange(CDataExchange* pDX)
             bUseBillboard = data.m_bUse_billboard;
             DDX_Check(pDX, IDC_BBILL, bUseBillboard);
         }
-        //DDX_Text(pDX, IDC_COLOR_ALPHA, data.m_Base_CB.m_vColor.w);
+        DDX_Text(pDX, IDC_ALPHA, data.m_Base_CB.m_vColor.w);
 
     }
 }

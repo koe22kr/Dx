@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Sample.h"
 #include "MainFrm.h"
+#define _CRT_SECURE_NO_WARNINGS
 
 void Sample::Copy_Effect_Data(Effect_Data& src, Effect_Render_Obj& dest)
 {
@@ -197,7 +198,7 @@ void Sample::Save()
 
     TCHAR szFile[MAX_PATH] = { 0, };
     TCHAR szFileTitleFile[MAX_PATH] = { L"skx", };
-    static TCHAR *szFilter = { L"KHG_EFFECT_TOOL(*.kht)\0*.ket\0AllFiles(*.*)\0*.*\0" };
+    static TCHAR *szFilter = { L"KHG_EFFECT_TOOL(*.ket)\0*.ket\0AllFiles(*.*)\0*.*\0" };
     OPENFILENAME ofn;
     ZeroMemory(&ofn, sizeof(OPENFILENAME));
     _tcscpy_s(szFile, _T("*."));
@@ -257,7 +258,7 @@ void Sample::Load()
 {
     TCHAR szFile[MAX_PATH] = { 0, };
     TCHAR szFileTitleFile[MAX_PATH] = { L"skx", };
-    static TCHAR *szFilter = { L"KHG_EFFECT_TOOL(*.kht)\0*.ket\0AllFiles(*.*)\0*.*\0" };
+    static TCHAR *szFilter = { L"KHG_EFFECT_TOOL(*.ket)\0*.ket\0AllFiles(*.*)\0*.*\0" };
     OPENFILENAME ofn;
     ZeroMemory(&ofn, sizeof(OPENFILENAME));
     _tcscpy_s(szFile, _T("*."));
@@ -291,13 +292,13 @@ void Sample::Load()
     std::wstring szFilename = szFile;
     FILE* Filestream = nullptr;
 
-    _tfopen_s(&Filestream, szFilename.c_str(), L"rt");
-
+    _tfopen_s(&Filestream, szFilename.c_str(), L"r");
+    
     int texnum = 0;
     int objnum = 0;
     char data[4];
-    char dummy[MAX_PATH];
-    fgets(dummy, MAX_PATH, Filestream);
+    char dummy[100];
+    fgets(dummy, 100, Filestream);
     texnum = fgetc(Filestream)-48;// 인티저로 하드코딩 변환.
     fgetc(Filestream);
     objnum = fgetc(Filestream)-48;
@@ -307,10 +308,10 @@ void Sample::Load()
     for (int itex = 0; itex < texnum; itex++)
     {
         Tex_Info info;
-        char texname[MAX_PATH];
-        char texname2[MAX_PATH];
+        char texname[100];
+        char texname2[100];
 
-        fgets(texname, MAX_PATH, Filestream);//wstr 변환 되는지 확인
+        fgets(texname, 100, Filestream);//wstr 변환 되는지 확인
         strncpy_s(texname2, texname, strlen(texname) - 1);
         //strcpy_s(texname2, strlen(texname) - 2, texname);
         info.m_szName = texname2;
@@ -325,19 +326,20 @@ void Sample::Load()
     {
         Effect_Render_Obj* obj= new Effect_Render_Obj;
 
-        char mem[sizeof(Effect_Data)];
-        char string[MAX_PATH];
-        char string2[MAX_PATH];
+        char mem[sizeof(Effect_Data)+2];
+        char string[100];
+        char string2[100];
         CString shadername;
-        fgets(string, MAX_PATH, Filestream);
+        char* error = fgets(string, 100, Filestream);
+        int eof = feof(Filestream);
         strncpy_s(string2, string, strlen(string) - 1);
         obj->m_szName = string2;
-
-        fgets(string, MAX_PATH, Filestream);
+        int errno;
+        error = fgets(string, 100, Filestream);
         strncpy_s(string2, string, strlen(string) - 1);
-        char tester[MAX_PATH] = { 0 };
+        char tester[100] = { 0 };
         
-
+        
 
         shadername += m_CurrentDir;
         shadername += m_szShader_Path;
@@ -347,11 +349,13 @@ void Sample::Load()
       //  strcat_s(tester, string2);
         obj->m_szShader = string2;
         //shadername = tester;
-        fgets(string, MAX_PATH, Filestream);
+        error=fgets(string, 100, Filestream);
         strncpy_s(string2, string, strlen(string) - 1);
         obj->m_szTextureName = string2;
-        obj->Create(CADevice::m_pDevice, shadername, nullptr);
-        fgets(mem, sizeof(Effect_Data), Filestream);
+        obj->Create(CADevice::m_pDevice, shadername, nullptr,true);
+        error=  fgets(mem, sizeof(Effect_Data)+2, Filestream);
+        //error=fgets(string, 2, Filestream);
+    
         memcpy(&obj->m_data, mem, sizeof(Effect_Data));
         m_Render_List.push_back(obj);
         int srvid = Find_Texture(&obj->m_szTextureName);
@@ -367,6 +371,7 @@ void Sample::Load()
             obj->m_bRend = false;
 
         }
+
     }
     fclose(Filestream);
 

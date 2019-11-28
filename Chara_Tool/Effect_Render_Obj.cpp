@@ -24,7 +24,7 @@ void Effect_Render_Obj::SetBlendState(D3D11_BLEND_DESC* pBD)
         m_BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
     }
-    else
+    else if(pBD!= &m_BlendDesc)
     {
         m_BlendDesc = *pBD;
     }
@@ -35,6 +35,13 @@ void Effect_Render_Obj::SetBlendState(D3D11_BLEND_DESC* pBD)
         EM(hr, SetBlendState, Sample);
         return;
     }
+    else
+    {
+        return;
+
+    }
+    return;
+
 }
 void Effect_Render_Obj::SetRasterizerState(D3D11_RASTERIZER_DESC* pRD)
 {
@@ -269,21 +276,80 @@ Effect_Render_Obj::~Effect_Render_Obj()
 {
 }
 
-bool Effect_Render_Obj::InitState()
+bool Effect_Render_Obj::InitState(bool bLoad)
 {
-    SetSamplerState(nullptr);
-    SetDepthStencilState(nullptr);
-    SetRasterizerState(nullptr);
-    SetBlendState(nullptr);
+   // m_data.m_State;
+    if (bLoad)
+    {
+        //D3D11_BLEND_DESC
+        //D3D11_BLEND_DESC bd;
+        ZeroMemory(&m_BlendDesc, sizeof(D3D11_BLEND_DESC));
+        m_BlendDesc.AlphaToCoverageEnable = FALSE;
+        m_BlendDesc.IndependentBlendEnable = FALSE;
+        m_BlendDesc.RenderTarget[0].BlendEnable = (BOOL)m_data.m_State.blend[0];//1
+        m_BlendDesc.RenderTarget[0].SrcBlend = (D3D11_BLEND)m_data.m_State.blend[1];//2
+        m_BlendDesc.RenderTarget[0].DestBlend = (D3D11_BLEND)m_data.m_State.blend[2];//3
+        m_BlendDesc.RenderTarget[0].BlendOp = (D3D11_BLEND_OP)m_data.m_State.blend[3];//4
+        m_BlendDesc.RenderTarget[0].SrcBlendAlpha = (D3D11_BLEND)m_data.m_State.blend[4];//5
+        m_BlendDesc.RenderTarget[0].DestBlendAlpha = (D3D11_BLEND)m_data.m_State.blend[5];//6
+        m_BlendDesc.RenderTarget[0].BlendOpAlpha = (D3D11_BLEND_OP)m_data.m_State.blend[6];//7
+        m_BlendDesc.RenderTarget[0].RenderTargetWriteMask = m_data.m_State.blend[7];//8
+        SetBlendState(&m_BlendDesc);
+      
+
+        //D3D11_RASTERIZER_DESC
+        D3D11_RASTERIZER_DESC rd;
+        ZeroMemory(&rd, sizeof(D3D11_RASTERIZER_DESC));
+        rd.DepthClipEnable = TRUE;
+        rd.FillMode = (D3D11_FILL_MODE)m_data.m_State.rasterizer[0];
+        rd.CullMode = (D3D11_CULL_MODE)m_data.m_State.rasterizer[1];
+        rd.MultisampleEnable = TRUE;
+        rd.AntialiasedLineEnable = TRUE;
+        SetRasterizerState(&rd);
+
+        //D3D11_SAMPLER_DESC
+        D3D11_SAMPLER_DESC sd;
+        ZeroMemory(&sd, sizeof(D3D11_SAMPLER_DESC));
+        sd.AddressU = (D3D11_TEXTURE_ADDRESS_MODE)m_data.m_State.sampler[1];
+        sd.AddressV = (D3D11_TEXTURE_ADDRESS_MODE)m_data.m_State.sampler[2];
+        sd.AddressW = (D3D11_TEXTURE_ADDRESS_MODE)m_data.m_State.sampler[3];
+        sd.Filter = (D3D11_FILTER)m_data.m_State.sampler[0];
+        sd.MaxLOD = FLT_MAX;
+        sd.MinLOD = FLT_MIN;
+        sd.MaxAnisotropy = 16;
+        sd.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+        sd.MipLODBias = 0;
+        SetSamplerState(&sd);
+
+        //D3D11_DEPTH_STENCIL_DESC
+        D3D11_DEPTH_STENCIL_DESC dd;
+        ZeroMemory(&dd, sizeof(D3D11_DEPTH_STENCIL_DESC));
+        dd.DepthEnable = (BOOL)m_data.m_State.depthstencil[0];
+        dd.DepthFunc = (D3D11_COMPARISON_FUNC)m_data.m_State.depthstencil[2];
+        dd.DepthWriteMask = (D3D11_DEPTH_WRITE_MASK)m_data.m_State.depthstencil[1];
+        SetDepthStencilState(&dd);
+
+
+        
+
+    }
+    else
+    {
+        SetSamplerState(nullptr);
+        SetDepthStencilState(nullptr);
+        SetRasterizerState(nullptr);
+        SetBlendState(nullptr);
+    }
+    
     return true;
 }
 bool  Effect_Render_Obj::Create(ID3D11Device* pd3dDevice,
     const TCHAR* pLoadShaderFile,
-    const TCHAR* pLoadTextureFile)
+    const TCHAR* pLoadTextureFile, bool bLoad)
 {
     
     CADx_Model2::Create(pd3dDevice, pLoadShaderFile, pLoadTextureFile);
-    InitState();
+    InitState(bLoad);
     return true;
 }
 bool Effect_Render_Obj::Frame()
@@ -557,20 +623,32 @@ void Effect_Render_Obj::Update()
     Set_Power();
     Set_CtrlMatrix();
     srand(time(NULL));
-    if (fabs(m_data.m_vRandom_Pos_Max.x) > 0)
+    if (fabs(m_data.m_vRandom_Pos_Max.x) > 0.0001)
 
     {
 
         m_data.m_Base_CB.m_vrandom.x = ((int)(rand() - m_data.m_vRandom_Pos_Min.x) % (int)m_data.m_vRandom_Pos_Max.x) + m_data.m_vRandom_Pos_Min.x;
     }
-    if (fabs(m_data.m_vRandom_Pos_Max.y) > 0)
+    else
+    {
+        m_data.m_Base_CB.m_vrandom.x = 0;
+    }
+    if (fabs(m_data.m_vRandom_Pos_Max.y) > 0.0001)
     {
         m_data.m_Base_CB.m_vrandom.y = ((int)(rand() - m_data.m_vRandom_Pos_Min.y) % (int)m_data.m_vRandom_Pos_Max.y) + m_data.m_vRandom_Pos_Min.y;
        
     }
-    if (fabs(m_data.m_vRandom_Pos_Max.z) > 0)
+    else
+    {
+        m_data.m_Base_CB.m_vrandom.y = 0;
+    }
+    if (fabs(m_data.m_vRandom_Pos_Max.z) > 0.0001)
     {
         m_data.m_Base_CB.m_vrandom.z = ((int)(rand() - m_data.m_vRandom_Pos_Min.z) % (int)m_data.m_vRandom_Pos_Max.z) + m_data.m_vRandom_Pos_Min.z;
+    }
+    else
+    {
+        m_data.m_Base_CB.m_vrandom.z = 0;
     }
 
 

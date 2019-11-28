@@ -34,7 +34,7 @@ public:
     CString m_szTeexture_Path = { L"\\..\\..\\_data\\" };
     CString m_szShader_Path = { L"\\..\\..\\_shader\\" };
     CString m_szMain_Shader = { L"effect2.hlsl" };
-    
+    bool m_bFirstNewTex = true;
     char m_CurrentDir[MAX_PATH];
     int m_iSel_Tex=0;
     int m_iSel_Obj=0;

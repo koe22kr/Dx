@@ -65,7 +65,7 @@ void Effect_Form1::OnBnClickedNewObj()
     shader += TOOL.m_szShader_Path;
     shader += TOOL.m_szMain_Shader;
     newobj->m_szShader = TOOL.m_szMain_Shader;
-    newobj->Create(TOOL.m_Device.m_pDevice, shader.GetBuffer(), nullptr);
+    newobj->Create(TOOL.m_Device.m_pDevice, shader.GetBuffer(), nullptr,false);
 
     GetDlgItemTextW(IDC_OBJ_NAME_EDIT, newobj->m_szName);
 
@@ -101,19 +101,24 @@ void Effect_Form1::OnLbnSelchangeObjList()
 void Effect_Form1::OnBnClickedNewTexture()
 {
     // TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-    CString path;
-    path = TOOL.m_CurrentDir;
+    
+    //path += TOOL.m_szTeexture_Path2;
     //path += L"..\\..\\";
    // wcscat_s(PATH, L"\\..\\..\\");
-    
+    //SetCurrentDirectory(path);
     CString filename;
     CFileDialog dlg(
         TRUE, L"dds", NULL,
         OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST,
         L"dds Files(*.dds)|*.dds|All Files(*.*)|*.*|", this
     );
-    dlg.m_ofn.lpstrInitialDir = path;
-    
+    if (TOOL.m_bFirstNewTex)
+    {
+        CString path;
+        path = TOOL.m_CurrentDir;
+        dlg.m_pOFN->lpstrInitialDir = path;
+      
+    }
     if (dlg.DoModal() == IDOK)
     {
         Tex_Info tex;
@@ -136,8 +141,8 @@ void Effect_Form1::OnBnClickedNewTexture()
         for (int i = 0; i<TOOL.m_Tex_List.size(); i++)
         {
             SendDlgItemMessageW(IDC_TEXTURE_LIST, LB_ADDSTRING, 0, (LPARAM)TOOL.m_Tex_List[i].m_szName.GetBuffer());
-
         }
+          TOOL.m_bFirstNewTex = false;
     }
 
 }

@@ -17,7 +17,7 @@ struct Effect_VB
         alpha = 0.0f;
         m_Pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         m_Tex_UV = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
-        m_Delta_Time = 0.0f;
+        m_Delta_Time = 99999.0f;
         /*m_fFadeInDeltaTime = 0.0f;
         m_fFadeOutDeltaTime = 0.0f;*/
        // D3DXMatrixIdentity(&m_matbill);
@@ -180,7 +180,7 @@ public:
         const TCHAR* pLoadShaderFile)override;
    virtual bool  Create(ID3D11Device* pd3dDevice,
         const TCHAR* pLoadShaderFile,
-        const TCHAR* pLoadTextureFile)override;
+        const TCHAR* pLoadTextureFile, bool bLoad);
 public:
   
 private:
@@ -192,7 +192,7 @@ private:
     //
 public:
 
-    bool InitState();
+    bool InitState(bool bLoad=false);
     bool Frame();
     bool Render();
 public:
