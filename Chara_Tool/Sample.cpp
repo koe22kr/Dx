@@ -247,10 +247,12 @@ void Sample::Save()
         _ftprintf(Filestream, _T("%s\n"), m_Render_List[ieffect]->m_szName.GetString());
         _ftprintf(Filestream, _T("%s\n"), m_Render_List[ieffect]->m_szShader.GetString());
         _ftprintf(Filestream, _T("%s\n"), m_Render_List[ieffect]->m_szTextureName.GetString());
-        fwrite(&m_Render_List[ieffect]->m_data, sizeof(Effect_Data), 1, Filestream);
-        _ftprintf(Filestream, _T("\n"));
     }
-        
+    for (int ieffect = 0; ieffect < m_Render_List.size(); ieffect++)
+    {
+        fwrite(&m_Render_List[ieffect]->m_data, sizeof(Effect_Data), 1, Filestream);
+    }
+
     fclose(Filestream);
 
 }
@@ -326,7 +328,7 @@ void Sample::Load()
     {
         Effect_Render_Obj* obj= new Effect_Render_Obj;
 
-        char mem[sizeof(Effect_Data)+2];
+        
         char string[100];
         char string2[100];
         CString shadername;
@@ -353,10 +355,8 @@ void Sample::Load()
         strncpy_s(string2, string, strlen(string) - 1);
         obj->m_szTextureName = string2;
         obj->Create(CADevice::m_pDevice, shadername, nullptr,true);
-        error=  fgets(mem, sizeof(Effect_Data)+2, Filestream);
         //error=fgets(string, 2, Filestream);
     
-        memcpy(&obj->m_data, mem, sizeof(Effect_Data));
         m_Render_List.push_back(obj);
         int srvid = Find_Texture(&obj->m_szTextureName);
         if (srvid > -1)
@@ -373,6 +373,14 @@ void Sample::Load()
         }
 
     }
+    for (int i = 0; i < m_Render_List.size(); i++)
+    {
+        char mem[sizeof(Effect_Data)];
+        fgets(mem, sizeof(Effect_Data), Filestream);
+        memcpy(&m_Render_List[i]->m_data, mem, sizeof(Effect_Data));
+
+    }
+    
     fclose(Filestream);
 
 
