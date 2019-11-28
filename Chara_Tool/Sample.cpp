@@ -332,12 +332,11 @@ void Sample::Load()
         char string[100];
         char string2[100];
         CString shadername;
-        char* error = fgets(string, 100, Filestream);
+        fgets(string, 100, Filestream);
         int eof = feof(Filestream);
         strncpy_s(string2, string, strlen(string) - 1);
         obj->m_szName = string2;
-        int errno;
-        error = fgets(string, 100, Filestream);
+        fgets(string, 100, Filestream);
         strncpy_s(string2, string, strlen(string) - 1);
         char tester[100] = { 0 };
         
@@ -351,7 +350,7 @@ void Sample::Load()
       //  strcat_s(tester, string2);
         obj->m_szShader = string2;
         //shadername = tester;
-        error=fgets(string, 100, Filestream);
+        fgets(string, 100, Filestream);
         strncpy_s(string2, string, strlen(string) - 1);
         obj->m_szTextureName = string2;
         obj->Create(CADevice::m_pDevice, shadername, nullptr,true);
